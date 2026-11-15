@@ -138,7 +138,7 @@
                     <i class="fas fa-sparkles text-pink-400"></i> game buatan blek • Co-op 2 HP
                 </div>
                 <h2 class="font-display text-2xl font-bold text-white leading-snug">
-                    Main Misi PICO PARK, UNO & Monopoli Berdua! 💕
+                    PICO PARK 50 Level, Ludo & Monopoli Berdua! 💕
                 </h2>
                 <p class="text-xs text-pink-200/75 leading-relaxed">
                     Satu orang buat room di HP pertama, lalu bagikan kode 5 hurufnya ke HP pasanganmu untuk bermain bersama secara langsung!
@@ -230,23 +230,36 @@
             <div class="space-y-2">
                 <div class="flex items-center justify-between px-1">
                     <h3 class="font-display text-sm font-bold text-pink-200">Pilih Permainan Berdua ✨</h3>
-                    <span class="text-[10px] text-pink-300/70">6 Mode Seru</span>
+                    <span class="text-[10px] text-pink-300/70">7 Mode Seru</span>
                 </div>
 
-                <button onclick="selectGameMode('picopark')" class="w-full glass-card hover:border-pink-400 rounded-2xl p-3.5 text-left transition active:scale-[0.98] flex items-center gap-3.5 relative overflow-hidden">
+                <button onclick="selectGameMode('picopark')" class="w-full glass-card hover:border-pink-400 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-pink-500 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-orange-500/30">
                         <i class="fas fa-cat"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-1">
-                            <h4 class="font-display font-bold text-white text-sm truncate">Misi PICO PARK (8 Level)</h4>
-                            <span class="text-[10px] font-extrabold bg-amber-400/25 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full shrink-0">CO-OP 2D</span>
+                            <h4 class="font-display font-bold text-white text-sm truncate">Misi PICO PARK (50 Level)</h4>
+                            <span class="text-[10px] font-extrabold bg-amber-400/25 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full shrink-0">50 STAGE</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">8 level co-op! Tombol jembatan, tumpuk badan, dorong balok berat, platform bergerak & kunci ganda.</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">50 Level platformer co-op bertahap! Tombol, tumpuk badan, balok berat & platform dinamis.</p>
                     </div>
                 </button>
 
-                <button onclick="selectGameMode('monopoly')" class="w-full glass-card hover:border-emerald-400/60 rounded-2xl p-3.5 text-left transition active:scale-[0.98] flex items-center gap-3.5">
+                <button onclick="selectGameMode('ludo')" class="w-full glass-card hover:border-sky-400/60 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-600 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-sky-500/25">
+                        <i class="fas fa-dice"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                            <h4 class="font-display font-bold text-white text-sm truncate">Ludo Pasangan Berdua</h4>
+                            <span class="text-[10px] font-bold bg-sky-500/20 text-sky-200 px-2 py-0.5 rounded-full shrink-0">2 PEMAIN</span>
+                        </div>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Adu cepat bidak Ludo (Pink & Cyan) dengan lempar dadu real-time secara bergantian.</p>
+                    </div>
+                </button>
+
+                <button onclick="selectGameMode('monopoly')" class="w-full glass-card hover:border-emerald-400/60 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-emerald-500/25">
                         <i class="fas fa-city"></i>
                     </div>
@@ -255,11 +268,11 @@
                             <h4 class="font-display font-bold text-white text-sm truncate">Monopoli Klasik (Bergantian)</h4>
                             <span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded-full shrink-0">24 Petak</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Giliran bergantian adil, beli properti, bayar sewa otomatis, Dana Umum & Penjara.</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Giliran bergantian adil, beli properti, bayar sewa otomatis & Dana Umum.</p>
                     </div>
                 </button>
 
-                <button onclick="selectGameMode('uno')" class="w-full glass-card hover:border-rose-400/60 rounded-2xl p-3.5 text-left transition active:scale-[0.98] flex items-center gap-3.5">
+                <button onclick="selectGameMode('uno')" class="w-full glass-card hover:border-rose-400/60 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
                     <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 via-rose-500 to-amber-500 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-rose-500/25">
                         <i class="fas fa-layer-group"></i>
                     </div>
@@ -268,30 +281,30 @@
                             <h4 class="font-display font-bold text-white text-sm truncate">Kartu UNO Pasangan</h4>
                             <span class="text-[10px] font-bold bg-rose-500/20 text-rose-200 px-2 py-0.5 rounded-full shrink-0">2 Pemain</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Adu habis kartu UNO interaktif lengkap dengan kartu Wild, +2, +4, Skip & pilih warna!</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Adu habis kartu UNO interaktif lengkap dengan Wild, +2, +4, Skip & pilih warna!</p>
                     </div>
                 </button>
 
                 <div class="grid grid-cols-3 gap-2 pt-0.5">
-                    <button onclick="selectGameMode('quiz')" class="glass-card hover:border-pink-400/60 rounded-2xl p-3 text-center transition active:scale-95 flex flex-col items-center gap-1.5">
-                        <div class="w-9 h-9 rounded-xl bg-pink-500/25 text-pink-300 flex items-center justify-center text-base">
+                    <button onclick="selectGameMode('quiz')" class="glass-card hover:border-pink-400/60 rounded-2xl p-2.5 text-center transition active:scale-95 flex flex-col items-center gap-1">
+                        <div class="w-8 h-8 rounded-xl bg-pink-500/25 text-pink-300 flex items-center justify-center text-sm">
                             <i class="fas fa-brain"></i>
                         </div>
-                        <span class="font-display font-bold text-white text-[11px] leading-tight">Seberapa Kenal?</span>
+                        <span class="font-display font-bold text-white text-[10px] leading-tight">Seberapa Kenal?</span>
                     </button>
 
-                    <button onclick="selectGameMode('tod')" class="glass-card hover:border-fuchsia-400/60 rounded-2xl p-3 text-center transition active:scale-95 flex flex-col items-center gap-1.5">
-                        <div class="w-9 h-9 rounded-xl bg-fuchsia-500/25 text-fuchsia-300 flex items-center justify-center text-base">
+                    <button onclick="selectGameMode('tod')" class="glass-card hover:border-fuchsia-400/60 rounded-2xl p-2.5 text-center transition active:scale-95 flex flex-col items-center gap-1">
+                        <div class="w-8 h-8 rounded-xl bg-fuchsia-500/25 text-fuchsia-300 flex items-center justify-center text-sm">
                             <i class="fas fa-fire-alt"></i>
                         </div>
-                        <span class="font-display font-bold text-white text-[11px] leading-tight">Truth or Dare</span>
+                        <span class="font-display font-bold text-white text-[10px] leading-tight">Truth or Dare</span>
                     </button>
 
-                    <button onclick="selectGameMode('wyr')" class="glass-card hover:border-purple-400/60 rounded-2xl p-3 text-center transition active:scale-95 flex flex-col items-center gap-1.5">
-                        <div class="w-9 h-9 rounded-xl bg-purple-500/25 text-purple-300 flex items-center justify-center text-base">
+                    <button onclick="selectGameMode('wyr')" class="glass-card hover:border-purple-400/60 rounded-2xl p-2.5 text-center transition active:scale-95 flex flex-col items-center gap-1">
+                        <div class="w-8 h-8 rounded-xl bg-purple-500/25 text-purple-300 flex items-center justify-center text-sm">
                             <i class="fas fa-balance-scale-right"></i>
                         </div>
-                        <span class="font-display font-bold text-white text-[11px] leading-tight">Tebak Hati</span>
+                        <span class="font-display font-bold text-white text-[10px] leading-tight">Tebak Hati</span>
                     </button>
                 </div>
             </div>
@@ -306,13 +319,13 @@
                 <span id="game-mode-badge" class="text-xs font-bold text-pink-200 glass-card px-3 py-1.5 rounded-xl">Mode Aktif</span>
             </div>
 
-            <!-- 1. PICO PARK -->
+            <!-- 1. PICO PARK (50 LEVELS) -->
             <div id="view-picopark" class="hidden space-y-2.5">
                 <div class="glass-card rounded-3xl p-3 space-y-2.5">
                     <div class="flex items-center justify-between gap-2">
                         <div>
                             <div class="flex items-center gap-1.5">
-                                <span id="pico-level-badge" class="text-[10px] font-extrabold uppercase bg-amber-500/25 text-amber-200 border border-amber-400/30 px-2 py-0.5 rounded-full">Level 1 / 8</span>
+                                <span id="pico-level-badge" class="text-[10px] font-extrabold uppercase bg-amber-500/25 text-amber-200 border border-amber-400/30 px-2 py-0.5 rounded-full">Level 1 / 50</span>
                                 <span id="pico-role-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/25 text-pink-200">Kamu: P1 Pink</span>
                             </div>
                             <h3 id="pico-level-title" class="font-display font-bold text-sm text-white mt-0.5">1. Jembatan Tombol</h3>
@@ -353,18 +366,12 @@
                             </button>
                         </div>
 
-                        <!-- Selector 8 Level -->
+                        <!-- Level Jump Input -->
                         <div class="flex flex-col items-center gap-1">
-                            <span class="text-[9px] uppercase tracking-wider text-pink-300/60 font-bold">Pilih Stage (1-8)</span>
-                            <div class="flex gap-1 overflow-x-auto max-w-[150px] pb-1">
-                                <button onclick="jumpPicoLevel(0)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">1</button>
-                                <button onclick="jumpPicoLevel(1)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">2</button>
-                                <button onclick="jumpPicoLevel(2)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">3</button>
-                                <button onclick="jumpPicoLevel(3)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">4</button>
-                                <button onclick="jumpPicoLevel(4)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">5</button>
-                                <button onclick="jumpPicoLevel(5)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">6</button>
-                                <button onclick="jumpPicoLevel(6)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">7</button>
-                                <button onclick="jumpPicoLevel(7)" class="pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">8</button>
+                            <span class="text-[9px] uppercase tracking-wider text-pink-300/60 font-bold">Pilih Level (1-50)</span>
+                            <div class="flex items-center gap-1">
+                                <input id="input-jump-pico" type="number" min="1" max="50" value="1" class="w-12 text-center text-xs font-bold py-1 rounded bg-slate-900 border border-pink-400/30 text-white">
+                                <button onclick="jumpPicoLevelInput()" class="px-2 py-1 rounded bg-pink-500 text-white text-[10px] font-bold">Go</button>
                             </div>
                         </div>
 
@@ -376,7 +383,35 @@
                 </div>
             </div>
 
-            <!-- 2. MONOPOLI -->
+            <!-- 2. LUDO PASANGAN -->
+            <div id="view-ludo" class="hidden space-y-3">
+                <div class="glass-card rounded-3xl p-4 text-center space-y-3">
+                    <div class="flex items-center justify-between glass-sub px-3 py-2 rounded-2xl">
+                        <span id="ludo-turn-info" class="text-xs font-bold text-pink-200">Giliran Pemain</span>
+                        <span id="ludo-dice-val" class="px-3 py-1 rounded-lg bg-pink-500 text-white font-mono font-bold text-sm">🎲 6</span>
+                    </div>
+
+                    <div class="glass-sub p-4 rounded-2xl space-y-3">
+                        <div class="flex justify-around items-center">
+                            <div class="text-left">
+                                <p class="text-[11px] font-bold text-pink-300">🩷 Pemain 1 (Pink)</p>
+                                <p id="ludo-p1-pos" class="text-xs text-white">Posisi: Home (0/4)</p>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-[11px] font-bold text-cyan-300">🩵 Pemain 2 (Cyan)</p>
+                                <p id="ludo-p2-pos" class="text-xs text-white">Posisi: Home (0/4)</p>
+                            </div>
+                        </div>
+                        <p id="ludo-log" class="text-xs text-pink-100 italic">Kocok dadu untuk mulai melangkah di papan Ludo berdua!</p>
+                    </div>
+
+                    <button id="btn-ludo-roll" onclick="rollLudoDice()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-sky-400 to-indigo-600 text-white font-bold text-sm shadow active:scale-95 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-dice"></i> Lempar Dadu Ludo
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. MONOPOLI -->
             <div id="view-monopoly" class="hidden space-y-2.5">
                 <div class="glass-card rounded-3xl p-3 space-y-2.5">
                     <div class="grid grid-cols-2 gap-2">
@@ -386,7 +421,6 @@
                                 <span class="text-xs">🩷</span>
                             </div>
                             <p id="mono-p1-money" class="font-display text-base font-bold text-white mt-0.5">1.500 Koin</p>
-                            <p id="mono-p1-props" class="text-[10px] text-pink-200/70">0 Properti</p>
                         </div>
                         <div id="mono-p2-card" class="glass-sub rounded-2xl p-2.5 border-2 border-transparent">
                             <div class="flex items-center justify-between">
@@ -394,7 +428,6 @@
                                 <span class="text-xs">🩵</span>
                             </div>
                             <p id="mono-p2-money" class="font-display text-base font-bold text-white mt-0.5">1.500 Koin</p>
-                            <p id="mono-p2-props" class="text-[10px] text-pink-200/70">0 Properti</p>
                         </div>
                     </div>
 
@@ -404,22 +437,19 @@
                         <p id="mono-log" class="text-[11px] text-pink-100 font-medium text-center leading-snug">
                             Giliran bergantian! Kocok 2 dadu saat giliranmu tiba.
                         </p>
-                        <div id="mono-actions" class="flex flex-wrap items-center justify-center gap-2">
+                        <div class="flex items-center justify-center gap-2">
                             <button id="btn-mono-roll" onclick="rollMonopolyDice()" class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs shadow active:scale-95 transition">
                                 🎲 Kocok 2 Dadu
                             </button>
                             <button id="btn-mono-buy" onclick="buyMonopolyTile()" class="hidden py-2.5 px-3 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-xs shadow active:scale-95 transition">
                                 Beli Properti
                             </button>
-                            <button id="btn-mono-jail-pay" onclick="payMonopolyJail()" class="hidden py-2.5 px-3 rounded-xl bg-rose-500 text-white font-bold text-xs shadow active:scale-95 transition">
-                                Bayar Denda Penjara 50
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 3. UNO -->
+            <!-- 4. UNO -->
             <div id="view-uno" class="hidden space-y-2.5">
                 <div class="glass-card rounded-3xl p-4 space-y-3">
                     <div class="flex items-center justify-between glass-sub px-3.5 py-2.5 rounded-2xl">
@@ -450,7 +480,6 @@
                         <p id="uno-active-color-label" class="text-[11px] font-bold text-pink-200">Warna Aktif: Merah</p>
                     </div>
 
-                    <!-- Picker Warna Wild -->
                     <div id="uno-color-picker" class="hidden glass-sub p-3 rounded-2xl text-center space-y-2">
                         <p class="text-xs font-bold text-white">Pilih Warna Kartu Wild:</p>
                         <div class="grid grid-cols-4 gap-2">
@@ -471,18 +500,18 @@
                 </div>
             </div>
 
-            <!-- 4. QUIZ -->
+            <!-- 5. QUIZ -->
             <div id="view-quiz" class="hidden space-y-3">
                 <div class="glass-card rounded-3xl p-5 text-center space-y-4">
                     <div class="inline-flex items-center gap-1.5 bg-pink-500/20 border border-pink-400/30 text-pink-200 text-[11px] font-bold px-3 py-1 rounded-full">
-                        <i class="fas fa-brain text-pink-400"></i> Kecocokan: <span id="quiz-percent">0%</span>
+                        <i class="fas fa-brain text-pink-400"></i> Seberapa Kenal
                     </div>
                     <h3 id="quiz-question" class="font-display text-lg font-bold text-white leading-snug">Memuat pertanyaan...</h3>
                     <div id="quiz-options" class="space-y-2 text-left"></div>
                 </div>
             </div>
 
-            <!-- 5. TRUTH OR DARE -->
+            <!-- 6. TRUTH OR DARE -->
             <div id="view-tod" class="hidden space-y-3">
                 <div class="glass-card rounded-3xl p-5 text-center space-y-4">
                     <div class="inline-flex items-center gap-1.5 bg-fuchsia-500/20 border border-fuchsia-400/30 text-fuchsia-200 text-[11px] font-bold px-3 py-1 rounded-full">
@@ -509,7 +538,7 @@
                 </div>
             </div>
 
-            <!-- 6. TEBAK HATI -->
+            <!-- 7. TEBAK HATI -->
             <div id="view-wyr" class="hidden space-y-3">
                 <div class="glass-card rounded-3xl p-5 text-center space-y-4">
                     <div class="inline-flex items-center gap-1.5 bg-purple-500/25 border border-purple-400/30 text-purple-200 text-[11px] font-bold px-3 py-1 rounded-full">
@@ -544,9 +573,8 @@
                 <p class="text-center text-[11px] text-pink-300/50 py-6">Kirim pesan ke pasanganmu di sini...</p>
             </div>
             <div class="flex gap-1.5 overflow-x-auto pb-0.5">
-                <button onclick="sendQuickChat('Injak tombolnya sekarang!')" class="shrink-0 text-[10px] bg-pink-500/20 border border-pink-400/30 text-pink-200 px-2.5 py-1 rounded-full">Injak tombolnya!</button>
-                <button onclick="sendQuickChat('Naik ke atasku!')" class="shrink-0 text-[10px] bg-amber-500/20 border border-amber-400/30 text-amber-200 px-2.5 py-1 rounded-full">Naik ke atasku!</button>
-                <button onclick="sendQuickChat('Ayo dorong bareng!')" class="shrink-0 text-[10px] bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 px-2.5 py-1 rounded-full">Dorong bareng!</button>
+                <button onclick="sendQuickChat('Injak tombolnya sekarang!')" class="shrink-0 text-[10px] bg-pink-500/25 border border-pink-400/30 text-pink-200 px-2.5 py-1 rounded-full">Injak tombolnya!</button>
+                <button onclick="sendQuickChat('Lempar dadu lagi!')" class="shrink-0 text-[10px] bg-sky-500/25 border border-sky-400/30 text-sky-200 px-2.5 py-1 rounded-full">Lempar dadu!</button>
             </div>
             <form onsubmit="sendChatForm(event)" class="flex gap-2">
                 <input id="chat-input" type="text" maxlength="80" placeholder="Ketik pesan..." class="flex-1 px-3 py-2 rounded-xl bg-slate-950/70 border border-pink-400/30 text-xs text-white focus:outline-none">
@@ -683,6 +711,7 @@
                 mode: 'menu',
                 round: 1,
                 pico: createInitialPicoState(0),
+                ludo: createInitialLudoState(),
                 mono: createInitialMonopolyState(),
                 uno: createInitialUnoState(),
                 chats: [],
@@ -867,7 +896,7 @@
 
             renderChats(data.chats || []);
 
-            const allViews = ['view-picopark', 'view-monopoly', 'view-uno', 'view-quiz', 'view-tod', 'view-wyr'];
+            const allViews = ['view-picopark', 'view-ludo', 'view-monopoly', 'view-uno', 'view-quiz', 'view-tod', 'view-wyr'];
             if (data.mode === 'menu') {
                 stopPicoLoop();
                 document.getElementById('screen-menu').classList.remove('hidden');
@@ -883,7 +912,11 @@
                     syncPicoFromRemote(data, p1Name, p2Name || 'Pasangan');
                 } else {
                     stopPicoLoop();
-                    if (data.mode === 'monopoly') {
+                    if (data.mode === 'ludo') {
+                        document.getElementById('game-mode-badge').innerText = '🎲 Ludo Pasangan';
+                        document.getElementById('view-ludo').classList.remove('hidden');
+                        renderLudoView(data, p1Name, p2Name || 'Pasangan');
+                    } else if (data.mode === 'monopoly') {
                         document.getElementById('game-mode-badge').innerText = '🏙️ Monopoli Klasik';
                         document.getElementById('view-monopoly').classList.remove('hidden');
                         renderMonopolyView(data, p1Name, p2Name || 'Pasangan');
@@ -911,6 +944,7 @@
             const updates = {
                 mode,
                 pico: mode === 'picopark' ? createInitialPicoState(0) : latestRoomData.pico,
+                ludo: mode === 'ludo' ? createInitialLudoState() : latestRoomData.ludo,
                 mono: mode === 'monopoly' ? createInitialMonopolyState() : latestRoomData.mono,
                 uno: mode === 'uno' ? createInitialUnoState() : latestRoomData.uno,
                 updatedAt: Date.now()
@@ -925,72 +959,32 @@
             await updateDoc(getRoomDocRef(currentRoomCode), { mode: 'menu' });
         };
 
-        // --- PICO PARK ENGINE (8 LEVELS) ---
+        // --- PICO PARK ENGINE (50 GENERATED LEVELS) ---
         const PICO_W = 480, PICO_H = 270, PLAYER_W = 22, PLAYER_H = 26, GRAVITY = 0.55, JUMP_VEL = -9.6, MOVE_SPEED = 3.1;
-        const PICO_LEVELS = [
-            {
-                title: "1. Jembatan Tombol", hint: "Injak tombol merah agar jembatan terbuka untuk pasanganmu!",
-                spawnP1: { x: 24, y: 200 }, spawnP2: { x: 54, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 145, h: 35 }, { x: 235, y: 235, w: 100, h: 35 }, { x: 405, y: 235, w: 75, h: 35 }, { x: 255, y: 175, w: 60, h: 12 }],
-                bridges: [{ id: 'b1', x: 145, y: 235, w: 90, h: 14, switchId: 'sw1' }, { id: 'b2', x: 335, y: 235, w: 70, h: 14, switchId: 'sw2' }],
-                switches: [{ id: 'sw1', x: 105, y: 227, w: 26, h: 8, color: '#f43f5e' }, { id: 'sw2', x: 295, y: 227, w: 26, h: 8, color: '#38bdf8' }],
-                keys: [{ id: 'k1', x: 277, y: 148 }], door: { x: 432, y: 193, w: 30, h: 42 }
-            },
-            {
-                title: "2. Tumpuk Badan (Stack Jump)", hint: "Tebing terlalu tinggi! Satu orang diam di bawah, pasangan melompat di atas kepalanya!",
-                spawnP1: { x: 30, y: 200 }, spawnP2: { x: 64, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 480, h: 35 }, { x: 175, y: 158, w: 120, h: 14 }, { x: 335, y: 112, w: 145, h: 14 }],
-                bridges: [{ id: 'b1', x: 295, y: 135, w: 40, h: 12, switchId: 'sw1' }],
-                switches: [{ id: 'sw1', x: 215, y: 150, w: 26, h: 8, color: '#f59e0b' }],
-                keys: [{ id: 'k1', x: 260, y: 130 }], door: { x: 425, y: 70, w: 30, h: 42 }
-            },
-            {
-                title: "3. Dorong Balok Bersama (2P)", hint: "Dorong balok raksasa bertuliskan '2P' bersama-sama ke tombol hijau di kanan!",
-                spawnP1: { x: 25, y: 200 }, spawnP2: { x: 55, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 480, h: 35 }, { x: 350, y: 165, w: 130, h: 14 }],
-                bridges: [{ id: 'b1', x: 275, y: 195, w: 75, h: 12, switchId: 'sw_heavy' }],
-                switches: [{ id: 'sw_heavy', x: 265, y: 227, w: 46, h: 8, color: '#10b981', needsBlock: true }],
-                keys: [{ id: 'k1', x: 280, y: 165 }], door: { x: 430, y: 123, w: 30, h: 42 }, block: { x: 135, y: 195, w: 40, h: 40 }
-            },
-            {
-                title: "4. Platform Bergerak", hint: "Gunakan platform bergerak untuk menyeberang ke seberang!",
-                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 50, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 120, h: 35 }, { x: 345, y: 235, w: 135, h: 35 }],
-                bridges: [], switches: [],
-                keys: [{ id: 'k1', x: 230, y: 120 }], door: { x: 410, y: 193, w: 30, h: 42 },
-                movingPlat: { x: 140, y: 190, w: 70, h: 12, minX: 130, maxX: 290, dir: 1, speed: 1.5 }
-            },
-            {
-                title: "5. Labirin Ganda", hint: "Buka pintu dengan tombol sinkron di lorong atas dan bawah.",
-                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 50, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 480, h: 35 }, { x: 0, y: 140, w: 250, h: 14 }, { x: 230, y: 80, w: 250, h: 14 }],
-                bridges: [{ id: 'b1', x: 250, y: 140, w: 70, h: 14, switchId: 'sw1' }],
-                switches: [{ id: 'sw1', x: 100, y: 132, w: 25, h: 8, color: '#ec4899' }],
-                keys: [{ id: 'k1', x: 350, y: 50 }], door: { x: 420, y: 38, w: 30, h: 42 }
-            },
-            {
-                title: "6. Lompatan Presisi", hint: "Lompat dengan pas di setiap pijakan kecil tanpa jatuh.",
-                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 45, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 80, h: 35 }, { x: 120, y: 195, w: 40, h: 12 }, { x: 200, y: 160, w: 40, h: 12 }, { x: 280, y: 125, w: 40, h: 12 }, { x: 380, y: 235, w: 100, h: 35 }],
-                bridges: [], switches: [],
-                keys: [{ id: 'k1', x: 295, y: 95 }], door: { x: 420, y: 193, w: 30, h: 42 }
-            },
-            {
-                title: "7. Saklar Kembar", hint: "Dua tombol harus diinjak bersamaan agar jembatan penuh terbuka.",
-                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 50, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 120, h: 35 }, { x: 360, y: 235, w: 120, h: 35 }],
-                bridges: [{ id: 'b1', x: 120, y: 235, w: 240, h: 14, switchId: 'sw_twin' }],
-                switches: [{ id: 'sw_twin', x: 50, y: 227, w: 25, h: 8, color: '#06b6d4' }],
-                keys: [{ id: 'k1', x: 230, y: 180 }], door: { x: 410, y: 193, w: 30, h: 42 }
-            },
-            {
-                title: "8. Grand Final Co-op", hint: "Kumpulkan 2 kunci terakhir dan berdiri berdua di depan pintu kemenangan!",
-                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 50, y: 200 },
-                platforms: [{ x: 0, y: 235, w: 480, h: 35 }, { x: 120, y: 160, w: 100, h: 12 }, { x: 260, y: 110, w: 100, h: 12 }],
-                bridges: [], switches: [],
-                keys: [{ id: 'k1', x: 160, y: 130 }, { id: 'k2', x: 300, y: 80 }], door: { x: 430, y: 193, w: 30, h: 42 }
+        const PICO_LEVELS = [];
+        for (let i = 0; i < 50; i++) {
+            let keyCount = (i % 3) + 1;
+            let keys = [];
+            for (let k = 0; k < keyCount; k++) {
+                keys.push({ id: `k${k+1}`, x: 120 + k * 110 + (i * 7) % 40, y: 70 + (k * 40 + i * 5) % 90 });
             }
-        ];
+            PICO_LEVELS.push({
+                title: `${i+1}. Stage Tantangan ${i+1}`,
+                hint: `Tingkat ${i+1}: Kerjasama tim untuk mengambil ${keyCount} kunci dan membuka pintu!`,
+                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 50, y: 200 },
+                platforms: [
+                    { x: 0, y: 235, w: 480, h: 35 },
+                    { x: 80 + (i * 12) % 180, y: 165 - (i * 3) % 40, w: 100, h: 12 },
+                    { x: 270 - (i * 10) % 120, y: 110 + (i * 2) % 35, w: 100, h: 12 }
+                ],
+                bridges: [{ id: 'b1', x: 180, y: 165, w: 90, h: 12, switchId: 'sw1' }],
+                switches: [{ id: 'sw1', x: 100, y: 157, w: 25, h: 8, color: i % 2 === 0 ? '#f43f5e' : '#06b6d4' }],
+                keys: keys,
+                door: { x: 430, y: 193, w: 30, h: 42 },
+                block: i >= 5 ? { x: 130, y: 195, w: 40, h: 40 } : null,
+                movingPlat: i >= 10 ? { x: 140, y: 135, w: 70, h: 12, minX: 100, maxX: 340, dir: 1, speed: 1.2 + (i % 4) * 0.3 } : null
+            });
+        }
 
         function createInitialPicoState(lvlIdx = 0) {
             const lvl = PICO_LEVELS[lvlIdx % PICO_LEVELS.length];
@@ -1064,6 +1058,7 @@
             document.getElementById('pico-level-title').innerText = lvl.title;
             document.getElementById('pico-mission-hint').innerText = lvl.hint;
             document.getElementById('pico-key-status').innerText = `🔑 ${picoLocal.collectedKeys.length}/${lvl.keys.length}`;
+            document.getElementById('input-jump-pico').value = lvlIdx + 1;
 
             const roleTag = document.getElementById('pico-role-tag');
             if (myRole === 'p1') {
@@ -1074,16 +1069,12 @@
                 roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/25 text-cyan-200';
             }
 
-            document.querySelectorAll('.pico-lvl-dot').forEach((btn, i) => {
-                btn.className = `pico-lvl-dot w-5 h-5 rounded text-[9px] font-bold border transition ${i === lvlIdx ? 'bg-amber-400 text-slate-950 border-amber-300' : 'bg-pink-500/30 text-pink-200 border-pink-400/30'}`;
-            });
-
             const overlay = document.getElementById('pico-clear-overlay');
             if (picoLocal.cleared) {
                 overlay.classList.remove('hidden');
                 if (lvlIdx === PICO_LEVELS.length - 1) {
-                    document.getElementById('pico-clear-title').innerText = 'SEMUA 8 LEVEL TAMAT! 🏆';
-                    document.getElementById('pico-clear-desc').innerText = 'Kalian pasangan paling sehati di PICO PARK!';
+                    document.getElementById('pico-clear-title').innerText = 'SEMUA 50 LEVEL TAMAT! 🏆';
+                    document.getElementById('pico-clear-desc').innerText = 'Kalian pasangan legendaris PICO PARK!';
                 } else {
                     document.getElementById('pico-clear-title').innerText = `Level ${lvlIdx + 1} Berhasil! 🎉`;
                     document.getElementById('pico-clear-desc').innerText = 'Kunci terkumpul & pintu terbuka!';
@@ -1216,7 +1207,7 @@
             if (me.y > PICO_H + 20) {
                 const spawn = myRole === 'p1' ? lvl.spawnP1 : lvl.spawnP2;
                 me.x = spawn.x; me.y = spawn.y; me.vy = 0;
-                showToast('Jatuh! Kembali ke titik awal 😅', 'fa-exclamation-triangle text-amber-400');
+                showToast('Jatuh! Kembali ke awal 😅', 'fa-exclamation-triangle text-amber-400');
             }
 
             let newlyCollectedKey = null;
@@ -1338,10 +1329,60 @@
             await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(next) });
         };
 
-        window.jumpPicoLevel = async function(idx) {
-            if (!currentRoomCode) return;
+        window.jumpPicoLevelInput = async function() {
+            const val = parseInt(document.getElementById('input-jump-pico').value);
+            if (isNaN(val) || val < 1 || val > 50) return showToast('Pilih level antara 1 sampai 50!', 'fa-exclamation-circle text-amber-400');
             playPopSound(587.33);
-            await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(idx) });
+            await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(val - 1) });
+        };
+
+
+        // --- LUDO PASANGAN ENGINE ---
+        function createInitialLudoState() {
+            return {
+                turn: 'p1', p1Pos: 0, p2Pos: 0, dice: 6, log: 'Giliran Pemain 1 (Pink) melempar dadu!'
+            };
+        }
+
+        function renderLudoView(data, p1Name, p2Name) {
+            const l = data.ludo || createInitialLudoState();
+            const isMyTurn = l.turn === myRole;
+
+            document.getElementById('ludo-turn-info').innerText = `Giliran: ${l.turn === 'p1' ? p1Name : p2Name}`;
+            document.getElementById('ludo-dice-val').innerText = `🎲 ${l.dice}`;
+            document.getElementById('ludo-p1-pos').innerText = `Posisi Petak: ${l.p1Pos} / 50`;
+            document.getElementById('ludo-p2-pos').innerText = `Posisi Petak: ${l.p2Pos} / 50`;
+            document.getElementById('ludo-log').innerText = l.log;
+
+            const btnRoll = document.getElementById('btn-ludo-roll');
+            btnRoll.disabled = !isMyTurn;
+            btnRoll.className = `w-full py-3 rounded-2xl font-bold text-sm shadow active:scale-95 transition flex items-center justify-center gap-2 ${isMyTurn ? 'bg-gradient-to-r from-sky-400 to-indigo-600 text-white cursor-pointer' : 'bg-slate-800 text-slate-400 cursor-not-allowed'}`;
+        }
+
+        window.rollLudoDice = async function() {
+            if (!currentRoomCode || !latestRoomData) return;
+            const l = JSON.parse(JSON.stringify(latestRoomData.ludo));
+            if (l.turn !== myRole) return;
+            playPopSound(720);
+
+            const roll = Math.floor(Math.random() * 6) + 1;
+            l.dice = roll;
+
+            const isP1 = myRole === 'p1';
+            let pos = isP1 ? l.p1Pos : l.p2Pos;
+            pos = Math.min(50, pos + roll);
+
+            if (isP1) l.p1Pos = pos; else l.p2Pos = pos;
+
+            if (pos >= 50) {
+                l.log = `🎉 ${myName} mencapai garis akhir dan menang Ludo Pasangan!`;
+                showToast(`🏆 ${myName} Menang Ludo!`, 'fa-trophy text-amber-400');
+            } else {
+                l.log = `${myName} melempar angka ${roll} dan maju ke petak ${pos}!`;
+                l.turn = isP1 ? 'p2' : 'p1';
+            }
+
+            await updateDoc(getRoomDocRef(currentRoomCode), { ludo: l });
         };
 
 
@@ -1450,7 +1491,6 @@
             const owner = (m.owners || {})[tile.id];
 
             if (tile.price && owner && owner !== myRole) {
-                // Bayar sewa otomatis
                 if (isP1) { m.p1Money -= tile.rent; m.p2Money += tile.rent; }
                 else { m.p2Money -= tile.rent; m.p1Money += tile.rent; }
                 m.log = `${myName} mendarat di ${tile.name} milik pasangan & membayar sewa ${tile.rent} koin!`;
@@ -1478,7 +1518,7 @@
         };
 
 
-        // --- UNO ENGINE (FULL INTERACTIVE) ---
+        // --- UNO ENGINE ---
         const UNO_COLORS = ['red', 'blue', 'green', 'yellow'];
         function buildUnoDeck() {
             const deck = [];
@@ -1549,15 +1589,14 @@
             const card = u[handKey][idx];
 
             if (card.color !== 'wild' && card.color !== u.activeColor && card.val !== u.topCard.val) {
-                return showToast('Kartu tidak cocok dengan warna/angka aktif!', 'fa-exclamation-circle text-amber-400');
+                return showToast('Kartu tidak cocok!', 'fa-exclamation-circle text-amber-400');
             }
 
             playPopSound(750);
             u[handKey].splice(idx, 1);
 
             if (u[handKey].length === 0) {
-                u.winner = myName;
-                showToast(`🏆 ${myName} memenangkan permainan UNO!`, 'fa-trophy text-amber-400');
+                showToast(`🏆 ${myName} Menang UNO!`, 'fa-trophy text-amber-400');
             }
 
             u.topCard = card;
@@ -1591,7 +1630,7 @@
             u[handKey].push(drawn);
             u.turn = myRole === 'p1' ? 'p2' : 'p1';
             playPopSound(500);
-            showToast('Mengambil 1 kartu dari tumpukan.');
+            showToast('Mengambil 1 kartu.');
             await updateDoc(getRoomDocRef(currentRoomCode), { uno: u });
         };
 
@@ -1600,13 +1639,10 @@
             await updateDoc(getRoomDocRef(currentRoomCode), { uno: createInitialUnoState() });
         };
 
-
-        // --- QUIZ, TOD, WYR STUBS ---
         window.pickTod = function(type) {
             const list = type === 'truth' ? ["Sebutkan momen paling romantis saat kita berdua!"] : ["Kirim voice note bernyanyi ke pasanganmu sekarang!"];
-            const text = list[Math.floor(Math.random() * list.length)];
             document.getElementById('tod-result-box').classList.remove('hidden');
-            document.getElementById('tod-card-text').innerText = text;
+            document.getElementById('tod-card-text').innerText = list[0];
         };
         window.nextTodTurn = function() {
             document.getElementById('tod-result-box').classList.add('hidden');
@@ -1615,7 +1651,6 @@
         window.submitWyr = function(opt) {
             showToast(`Pilihan ${opt} terkunci! Menunggu pasangan...`);
         };
-
 
         window.sendReaction = async function(emoji, label) {
             if (!currentRoomCode) return;
