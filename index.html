@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>game buatan blek — Game Pasangan 2 HP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tone.js untuk efek suara sintesis -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top left, #2e1065 0%, #1e1b4b 45%, #3b0764 80%, #180928 100%);
+            color: #f8fafc;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-display { font-family: 'Fredoka', sans-serif; }
+
+        .glass-card {
+            background: rgba(30, 16, 53, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(244, 114, 182, 0.3);
+            box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        .glass-sub {
+            background: rgba(15, 10, 32, 0.6);
+            border: 1px solid rgba(232, 121, 249, 0.22);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5) rotate(-10deg); opacity: 0; }
+            15% { opacity: 1; transform: translateY(-40px) scale(1.2) rotate(8deg); }
+            85% { opacity: 1; }
+            100% { transform: translateY(-76vh) scale(1.4) rotate(-6deg); opacity: 0; }
+        }
+        .floating-emoji {
+            position: fixed;
+            bottom: 84px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: floatUp 2.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            filter: drop-shadow(0 8px 18px rgba(236, 72, 153, 0.45));
+        }
+
+        @keyframes pulseHeart {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.13); }
+        }
+        .heart-beat { animation: pulseHeart 1.8s infinite ease-in-out; }
+
+        @keyframes popIn {
+            0% { transform: scale(0.94); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        .dpad-btn {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .dpad-btn:active, .dpad-btn.active {
+            transform: scale(0.92);
+            background: rgba(236, 72, 153, 0.85);
+            border-color: #fbcfe8;
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(244, 114, 182, 0.35); border-radius: 99px; }
+
+        .monopoly-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            grid-template-rows: repeat(7, minmax(0, 1fr));
+            aspect-ratio: 1 / 1;
+            gap: 2px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-between">
+
+    <!-- CONTAINER UTAMA -->
+    <div id="app" class="w-full max-w-lg min-h-[100dvh] flex flex-col justify-between p-3.5 pb-24 relative">
+
+        <!-- HEADER / NAVBAR -->
+        <header class="flex items-center justify-between py-1.5 gap-2">
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-fuchsia-600 text-white flex items-center justify-center shadow-lg shadow-pink-500/30 heart-beat shrink-0">
+                    <i class="fas fa-gamepad text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-lg sm:text-xl font-bold bg-gradient-to-r from-pink-300 via-rose-200 to-fuchsia-300 bg-clip-text text-transparent leading-none tracking-tight">
+                        game buatan blek
+                    </h1>
+                    <p class="text-[11px] font-medium text-pink-300/80 mt-0.5">Multiplayer Pasangan • 2 HP Real-Time</p>
+                </div>
+            </div>
+
+            <!-- Badge Kode Room & Tombol Chat / Keluar -->
+            <div id="room-header-badge" class="hidden flex items-center gap-1.5">
+                <button onclick="toggleChatDrawer()" class="relative w-9 h-9 rounded-xl glass-card text-pink-200 hover:text-white flex items-center justify-center transition active:scale-95" title="Chat Berdua">
+                    <i class="fas fa-comment-dots text-sm"></i>
+                    <span id="chat-unread-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 rounded-full bg-pink-500 border-2 border-indigo-950"></span>
+                </button>
+                <button onclick="copyRoomCode()" class="glass-card px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 active:scale-95 transition">
+                    <span class="text-[10px] uppercase font-bold text-pink-300/70">Kode:</span>
+                    <span id="header-room-code" class="font-mono font-extrabold text-xs sm:text-sm text-pink-300 tracking-wider">-----</span>
+                    <i class="far fa-copy text-[11px] text-pink-400"></i>
+                </button>
+                <button onclick="leaveRoom()" title="Keluar Room" class="w-9 h-9 rounded-xl bg-rose-500/20 border border-rose-400/30 text-rose-300 hover:bg-rose-500/30 flex items-center justify-center transition">
+                    <i class="fas fa-sign-out-alt text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- TOAST NOTIFIKASI KUSTOM -->
+        <div id="toast-box" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] hidden pointer-events-none">
+            <div class="bg-slate-950/95 border border-pink-400/40 text-pink-100 text-xs font-semibold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 backdrop-blur-md">
+                <i id="toast-icon" class="fas fa-heart text-pink-400"></i>
+                <span id="toast-text">Notifikasi</span>
+            </div>
+        </div>
+
+        <!-- SCREEN 1: LOBBY -->
+        <main id="screen-lobby" class="my-auto py-3 space-y-4 pop-in">
+            <div class="glass-card rounded-3xl p-6 text-center space-y-4">
+                <div class="inline-flex items-center gap-1.5 bg-pink-500/20 border border-pink-400/30 text-pink-200 text-xs font-bold px-3.5 py-1 rounded-full">
+                    <i class="fas fa-sparkles text-pink-400"></i> game buatan blek • Co-op 2 HP
+                </div>
+                <h2 class="font-display text-2xl font-bold text-white leading-snug">
+                    Main Misi PICO PARK, UNO & Monopoli Berdua! 💕
+                </h2>
+                <p class="text-xs text-pink-200/75 leading-relaxed">
+                    Satu orang buat room di HP pertama, lalu bagikan kode 5 hurufnya ke HP pasanganmu untuk bermain bersama secara langsung!
+                </p>
+
+                <!-- Input Nama Panggilan -->
+                <div class="text-left pt-1">
+                    <label class="block text-xs font-bold text-pink-200 mb-1.5 ml-1">Nama Panggilanmu</label>
+                    <div class="relative">
+                        <i class="fas fa-heart absolute left-3.5 top-1/2 -translate-y-1/2 text-pink-400 text-sm"></i>
+                        <input type="text" id="input-nickname" maxlength="16" placeholder="Contoh: Ayang, Sayang, Blek..." 
+                            class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-950/60 border border-pink-400/30 focus:border-pink-400 focus:outline-none text-sm font-semibold text-white placeholder-pink-300/40 transition">
+                    </div>
+                </div>
+
+                <!-- Tab Switcher -->
+                <div class="grid grid-cols-2 gap-2 bg-slate-950/60 p-1.5 rounded-2xl border border-pink-400/20">
+                    <button id="tab-create" onclick="switchLobbyTab('create')" class="py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white shadow-md transition">
+                        Buat Room Baru
+                    </button>
+                    <button id="tab-join" onclick="switchLobbyTab('join')" class="py-2.5 rounded-xl text-xs font-bold text-pink-200/70 hover:text-white transition">
+                        Gabung Room
+                    </button>
+                </div>
+
+                <!-- Panel Buat Room -->
+                <div id="panel-create" class="pt-1 space-y-3">
+                    <button onclick="createRoom()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 via-rose-500 to-fuchsia-600 hover:brightness-110 text-white font-bold text-sm shadow-lg shadow-pink-600/30 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                        <i class="fas fa-plus-circle"></i> Buat Room & Dapatkan Kode
+                    </button>
+                </div>
+
+                <!-- Panel Gabung Room -->
+                <div id="panel-join" class="hidden pt-1 space-y-3">
+                    <div class="text-left">
+                        <label class="block text-xs font-bold text-pink-200 mb-1.5 ml-1">Kode Room Pasangan (5 Karakter)</label>
+                        <input type="text" id="input-room-code" maxlength="5" placeholder="AB12C" 
+                            class="w-full px-4 py-3 rounded-2xl bg-slate-950/60 border border-pink-400/30 focus:border-pink-400 focus:outline-none text-center font-mono text-lg font-extrabold uppercase tracking-[0.25em] text-pink-300 placeholder-pink-300/30 transition">
+                    </div>
+                    <button onclick="joinRoom()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:brightness-110 text-white font-bold text-sm shadow-lg shadow-purple-600/30 active:scale-[0.98] transition flex items-center justify-center gap-2">
+                        <i class="fas fa-door-open"></i> Masuk ke Room Pasangan
+                    </button>
+                </div>
+            </div>
+
+            <p id="auth-status-text" class="text-center text-[11px] text-pink-300/80 font-medium">
+                <i class="fas fa-circle-notch fa-spin mr-1"></i> Menghubungkan server real-time...
+            </p>
+        </main>
+
+        <!-- SCREEN 2: MENU UTAMA -->
+        <main id="screen-menu" class="hidden my-auto py-2 space-y-3.5 pop-in">
+            <div class="glass-card rounded-3xl p-4">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex-1 glass-sub rounded-2xl p-2.5 text-center">
+                        <div class="w-9 h-9 mx-auto rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 text-white flex items-center justify-center font-bold text-xs mb-1 shadow">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <p id="p1-name-display" class="font-bold text-xs text-white truncate">Pemain 1</p>
+                        <span class="inline-block text-[10px] font-semibold text-emerald-300 bg-emerald-500/20 px-2 py-0.5 rounded-full mt-0.5">Online • Pink</span>
+                    </div>
+
+                    <div class="flex flex-col items-center px-1">
+                        <i id="pair-heart-icon" class="fas fa-heart text-2xl text-pink-400/40 transition-colors"></i>
+                        <span id="pair-status-badge" class="text-[10px] font-bold text-pink-300/60 mt-1">Menunggu</span>
+                    </div>
+
+                    <div class="flex-1 glass-sub rounded-2xl p-2.5 text-center">
+                        <div id="p2-avatar" class="w-9 h-9 mx-auto rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-xs mb-1">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <p id="p2-name-display" class="font-bold text-xs text-pink-200/50 truncate">Menunggu...</p>
+                        <span id="p2-status-pill" class="inline-block text-[10px] font-semibold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full mt-0.5">Belum Gabung</span>
+                    </div>
+                </div>
+
+                <div id="invite-banner" class="mt-3 pt-2.5 border-t border-pink-400/20 flex items-center justify-between gap-2">
+                    <div>
+                        <p class="text-[11px] text-pink-200/75">Bagikan kode ke HP pasangan:</p>
+                        <p id="invite-code-big" class="font-mono text-xl font-extrabold text-pink-300 tracking-widest">-----</p>
+                    </div>
+                    <button onclick="copyRoomCode()" class="px-3.5 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold shadow active:scale-95 transition flex items-center gap-1.5">
+                        <i class="fas fa-copy"></i> Salin Kode
+                    </button>
+                </div>
+            </div>
+
+            <!-- Daftar Game -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="font-display text-sm font-bold text-pink-200">Pilih Permainan Berdua ✨</h3>
+                    <span class="text-[10px] text-pink-300/70">6 Mode Seru</span>
+                </div>
+
+                <button onclick="selectGameMode('picopark')" class="w-full glass-card hover:border-pink-400 rounded-2xl p-3.5 text-left transition active:scale-[0.98] flex items-center gap-3.5 relative overflow-hidden">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-pink-500 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-orange-500/30">
+                        <i class="fas fa-cat"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                            <h4 class="font-display font-bold text-white text-sm truncate">Misi PICO PARK Berdua</h4>
+                            <span class="text-[10px] font-extrabold bg-amber-400/25 text-amber-200 border border-amber-400/40 px-2 py-0.5 rounded-full shrink-0">CO-OP 2D</span>
+                        </div>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Platformer kerjasama 4 level! Injak tombol jembatan, tumpuk badan, dorong balok 2P & buka pintu kunci!</p>
+                    </div>
+                </button>
+
+                <button onclick="selectGameMode('monopoly')" class="w-full glass-card hover:border-emerald-400/60 rounded-2xl p-3.5 text-left transition active:scale-[0.98] flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-emerald-500/25">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                            <h4 class="font-display font-bold text-white text-sm truncate">Monopoli Klasik Pasangan</h4>
+                            <span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded-full shrink-0">24 Petak</span>
+                        </div>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Papan klasik 2 dadu, 8 grup warna, bangun rumah/hotel, Dana Umum, Penjara & gadai properti.</p>
+                    </div>
+                </button>
+
+                <button onclick="selectGameMode('uno')" class="w-full glass-card hover:border-rose-400/60 rounded-2xl p-3.5 text-left transition active:scale-[0.98] flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 via-rose-500 to-amber-500 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-rose-500/25">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                            <h4 class="font-display font-bold text-white text-sm truncate">Kartu UNO Pasangan</h4>
+                            <span class="text-[10px] font-bold bg-rose-500/20 text-rose-200 px-2 py-0.5 rounded-full shrink-0">2 Pemain</span>
+                        </div>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Adu habis kartu UNO lengkap dengan +2, +4, Skip, Reverse, Wild & tombol teriak UNO!</p>
+                    </div>
+                </button>
+
+                <div class="grid grid-cols-3 gap-2 pt-0.5">
+                    <button onclick="selectGameMode('quiz')" class="glass-card hover:border-pink-400/60 rounded-2xl p-3 text-center transition active:scale-95 flex flex-col items-center gap-1.5">
+                        <div class="w-9 h-9 rounded-xl bg-pink-500/25 text-pink-300 flex items-center justify-center text-base">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <span class="font-display font-bold text-white text-[11px] leading-tight">Seberapa Kenal?</span>
+                    </button>
+
+                    <button onclick="selectGameMode('tod')" class="glass-card hover:border-fuchsia-400/60 rounded-2xl p-3 text-center transition active:scale-95 flex flex-col items-center gap-1.5">
+                        <div class="w-9 h-9 rounded-xl bg-fuchsia-500/25 text-fuchsia-300 flex items-center justify-center text-base">
+                            <i class="fas fa-fire-alt"></i>
+                        </div>
+                        <span class="font-display font-bold text-white text-[11px] leading-tight">Truth or Dare</span>
+                    </button>
+
+                    <button onclick="selectGameMode('wyr')" class="glass-card hover:border-purple-400/60 rounded-2xl p-3 text-center transition active:scale-95 flex flex-col items-center gap-1.5">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/25 text-purple-300 flex items-center justify-center text-base">
+                            <i class="fas fa-balance-scale-right"></i>
+                        </div>
+                        <span class="font-display font-bold text-white text-[11px] leading-tight">Tebak Hati</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- SCREEN 3: AREA PERMAINAN -->
+        <main id="screen-game" class="hidden my-auto py-1 space-y-2.5 pop-in">
+            <div class="flex items-center justify-between gap-2">
+                <button onclick="backToMenu()" class="text-xs font-bold text-pink-200 glass-card hover:text-white px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition active:scale-95">
+                    <i class="fas fa-arrow-left text-pink-400"></i> Menu Game
+                </button>
+                <span id="game-mode-badge" class="text-xs font-bold text-pink-200 glass-card px-3 py-1.5 rounded-xl">Mode Aktif</span>
+            </div>
+
+            <!-- 1. PICO PARK -->
+            <div id="view-picopark" class="hidden space-y-2.5">
+                <div class="glass-card rounded-3xl p-3 space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <span id="pico-level-badge" class="text-[10px] font-extrabold uppercase bg-amber-500/25 text-amber-200 border border-amber-400/30 px-2 py-0.5 rounded-full">Level 1 / 4</span>
+                                <span id="pico-role-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/25 text-pink-200">Kamu: P1 Pink</span>
+                            </div>
+                            <h3 id="pico-level-title" class="font-display font-bold text-sm text-white mt-0.5">1. Jembatan Tombol</h3>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="pico-key-status" class="text-xs font-bold px-2.5 py-1 rounded-xl bg-slate-950/60 border border-pink-400/20 text-amber-300">
+                                🔑 0/1
+                            </span>
+                            <button onclick="resetPicoLevel()" title="Ulang Level" class="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-400/30 text-rose-200 hover:bg-rose-500/35 flex items-center justify-center text-xs active:scale-90 transition">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <p id="pico-mission-hint" class="text-[11px] text-pink-200/85 bg-slate-950/50 border border-pink-400/15 px-3 py-1.5 rounded-xl leading-snug">
+                        Injak tombol merah agar jembatan terbuka untuk pasanganmu!
+                    </p>
+
+                    <div id="pico-canvas-wrapper" class="relative w-full rounded-2xl overflow-hidden border-2 border-pink-400/30 bg-[#140c28] shadow-inner">
+                        <canvas id="pico-canvas" class="block w-full"></canvas>
+                        <div id="pico-clear-overlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center space-y-2.5">
+                            <div class="text-4xl animate-bounce">🎉🔑🚪</div>
+                            <h4 id="pico-clear-title" class="font-display text-lg font-bold text-amber-300">Misi Level Selesai!</h4>
+                            <p id="pico-clear-desc" class="text-xs text-pink-100">Kekompakan kalian luar biasa!</p>
+                            <button onclick="nextPicoLevel()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-pink-500 text-slate-950 font-extrabold text-xs shadow-lg active:scale-95 transition">
+                                Lanjut Level Berikutnya <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1 px-1 select-none">
+                        <div class="flex items-center gap-2.5">
+                            <button id="btn-pico-left" class="dpad-btn w-14 h-14 rounded-2xl bg-slate-900/90 border-2 border-pink-400/35 text-white flex items-center justify-center text-xl shadow-md">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <button id="btn-pico-right" class="dpad-btn w-14 h-14 rounded-2xl bg-slate-900/90 border-2 border-pink-400/35 text-white flex items-center justify-center text-xl shadow-md">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="text-[9px] uppercase tracking-wider text-pink-300/60 font-bold">Pilih Stage</span>
+                            <div class="flex gap-1">
+                                <button onclick="jumpPicoLevel(0)" class="pico-lvl-dot w-6 h-6 rounded-lg text-[10px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">1</button>
+                                <button onclick="jumpPicoLevel(1)" class="pico-lvl-dot w-6 h-6 rounded-lg text-[10px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">2</button>
+                                <button onclick="jumpPicoLevel(2)" class="pico-lvl-dot w-6 h-6 rounded-lg text-[10px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">3</button>
+                                <button onclick="jumpPicoLevel(3)" class="pico-lvl-dot w-6 h-6 rounded-lg text-[10px] font-bold bg-pink-500/30 text-pink-200 border border-pink-400/30">4</button>
+                            </div>
+                        </div>
+
+                        <button id="btn-pico-jump" class="dpad-btn w-16 h-14 rounded-2xl bg-gradient-to-tr from-pink-500 to-amber-500 border-2 border-pink-200/60 text-white font-display font-bold text-xs flex flex-col items-center justify-center shadow-lg shadow-pink-500/25">
+                            <i class="fas fa-arrow-up text-lg"></i>
+                            <span>LOMPAT</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. MONOPOLI -->
+            <div id="view-monopoly" class="hidden space-y-2.5">
+                <div class="glass-card rounded-3xl p-3 space-y-2.5">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div id="mono-p1-card" class="glass-sub rounded-2xl p-2.5 border-2 border-pink-500/60">
+                            <div class="flex items-center justify-between">
+                                <span id="mono-p1-name" class="text-[11px] font-bold text-pink-300 truncate">P1</span>
+                                <span class="text-xs">🩷</span>
+                            </div>
+                            <p id="mono-p1-money" class="font-display text-base font-bold text-white mt-0.5">1.500 Koin</p>
+                            <p id="mono-p1-props" class="text-[10px] text-pink-200/70">0 Properti</p>
+                        </div>
+                        <div id="mono-p2-card" class="glass-sub rounded-2xl p-2.5 border-2 border-transparent">
+                            <div class="flex items-center justify-between">
+                                <span id="mono-p2-name" class="text-[11px] font-bold text-cyan-300 truncate">P2</span>
+                                <span class="text-xs">🩵</span>
+                            </div>
+                            <p id="mono-p2-money" class="font-display text-base font-bold text-white mt-0.5">1.500 Koin</p>
+                            <p id="mono-p2-props" class="text-[10px] text-pink-200/70">0 Properti</p>
+                        </div>
+                    </div>
+
+                    <div id="mono-board" class="monopoly-grid w-full bg-slate-950/80 p-1.5 rounded-2xl border border-pink-400/25 relative"></div>
+
+                    <div class="glass-sub rounded-2xl p-2.5 space-y-2">
+                        <p id="mono-log" class="text-[11px] text-pink-100 font-medium text-center leading-snug">
+                            Selamat datang di Monopoli Klasik! Kocok 2 dadu untuk mulai.
+                        </p>
+                        <div id="mono-actions" class="flex flex-wrap items-center justify-center gap-2">
+                            <button id="btn-mono-roll" onclick="rollMonopolyDice()" class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-xs shadow active:scale-95 transition">
+                                🎲 Kocok 2 Dadu
+                            </button>
+                            <button id="btn-mono-buy" onclick="buyMonopolyTile()" class="hidden py-2.5 px-3 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-xs shadow active:scale-95 transition">
+                                Beli Properti
+                            </button>
+                            <button id="btn-mono-build" onclick="buildMonopolyHouse()" class="hidden py-2.5 px-3 rounded-xl bg-pink-500 text-white font-bold text-xs shadow active:scale-95 transition">
+                                🏠 Bangun Rumah
+                            </button>
+                            <button id="btn-mono-jail-pay" onclick="payMonopolyJail()" class="hidden py-2.5 px-3 rounded-xl bg-rose-500 text-white font-bold text-xs shadow active:scale-95 transition">
+                                Bayar Denda 50
+                            </button>
+                            <button onclick="openMonopolyManageModal()" class="py-2.5 px-3 rounded-xl bg-slate-800 border border-pink-400/30 text-pink-200 font-bold text-xs active:scale-95 transition">
+                                📜 Properti
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. UNO -->
+            <div id="view-uno" class="hidden space-y-2.5">
+                <div class="glass-card rounded-3xl p-4 space-y-3">
+                    <div class="flex items-center justify-between glass-sub px-3.5 py-2.5 rounded-2xl">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-pink-500/25 text-pink-300 flex items-center justify-center text-xs font-bold">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>
+                                <p id="uno-opp-name" class="text-xs font-bold text-white">Pasangan</p>
+                                <p id="uno-opp-cards-count" class="text-[11px] text-pink-300">7 Kartu di tangan</p>
+                            </div>
+                        </div>
+                        <button id="btn-uno-catch" onclick="catchUnoPenalty()" class="hidden px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-[11px] animate-bounce shadow">
+                            Tangkap Lupa UNO! (+2)
+                        </button>
+                    </div>
+
+                    <div class="py-3 flex flex-col items-center justify-center space-y-2.5">
+                        <div id="uno-turn-banner" class="text-xs font-bold px-3.5 py-1 rounded-full bg-pink-500/25 text-pink-200 border border-pink-400/30">
+                            Giliran...
+                        </div>
+
+                        <div class="flex items-center justify-center gap-5">
+                            <button onclick="drawUnoCard()" class="w-20 h-28 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 border-2 border-pink-400/40 shadow-xl flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+                                <span class="font-display font-extrabold text-sm text-pink-400 tracking-wider">UNO</span>
+                                <span class="text-[10px] text-pink-200/70">+ Ambil</span>
+                            </button>
+                            <div id="uno-discard-card" class="w-20 h-28 rounded-2xl border-2 border-white/80 shadow-2xl flex flex-col items-center justify-center text-white font-display font-extrabold text-2xl">
+                                7
+                            </div>
+                        </div>
+                        <p id="uno-active-color-label" class="text-[11px] font-bold text-pink-200">Warna Aktif: Merah</p>
+                    </div>
+
+                    <div id="uno-color-picker" class="hidden glass-sub p-3 rounded-2xl text-center space-y-2">
+                        <p class="text-xs font-bold text-white">Pilih Warna Kartu Wild:</p>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="chooseUnoWildColor('red')" class="py-2 rounded-xl bg-rose-500 text-white font-bold text-xs">Merah</button>
+                            <button onclick="chooseUnoWildColor('blue')" class="py-2 rounded-xl bg-sky-500 text-white font-bold text-xs">Biru</button>
+                            <button onclick="chooseUnoWildColor('green')" class="py-2 rounded-xl bg-emerald-500 text-white font-bold text-xs">Hijau</button>
+                            <button onclick="chooseUnoWildColor('yellow')" class="py-2 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs">Kuning</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between px-1">
+                            <span class="text-xs font-bold text-pink-200">Kartumu (<span id="uno-my-count">0</span>)</span>
+                            <button id="btn-say-uno" onclick="sayUnoCallout()" class="px-3 py-1 rounded-xl bg-gradient-to-r from-amber-400 to-rose-500 text-slate-950 font-extrabold text-xs shadow active:scale-95 transition">
+                                📣 Teriak UNO!
+                            </button>
+                        </div>
+                        <div id="uno-my-hand" class="flex gap-2 overflow-x-auto pb-2 pt-1 px-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. QUIZ -->
+            <div id="view-quiz" class="hidden space-y-3">
+                <div class="glass-card rounded-3xl p-5 text-center space-y-4">
+                    <div class="inline-flex items-center gap-1.5 bg-pink-500/20 border border-pink-400/30 text-pink-200 text-[11px] font-bold px-3 py-1 rounded-full">
+                        <i class="fas fa-brain text-pink-400"></i> Kecocokan: <span id="quiz-percent">0%</span> (<span id="quiz-score">0</span> Poin)
+                    </div>
+                    <h3 id="quiz-question" class="font-display text-lg font-bold text-white leading-snug">Memuat pertanyaan...</h3>
+                    <div id="quiz-options" class="space-y-2 text-left"></div>
+
+                    <div id="quiz-waiting" class="hidden py-3 px-4 rounded-2xl bg-amber-500/15 border border-amber-400/30 text-amber-200 text-xs font-semibold flex items-center justify-center gap-2">
+                        <i class="fas fa-hourglass-half fa-spin"></i>
+                        <span>Menunggu pasangan memilih jawaban...</span>
+                    </div>
+
+                    <div id="quiz-result" class="hidden pt-2 space-y-3">
+                        <div id="quiz-match-banner" class="p-3 rounded-2xl font-display font-bold text-sm"></div>
+                        <div class="grid grid-cols-2 gap-2.5 text-left">
+                            <div class="glass-sub p-3 rounded-2xl">
+                                <p id="quiz-res-p1-name" class="text-[10px] font-bold text-pink-400 uppercase">Pemain 1</p>
+                                <p id="quiz-res-p1-ans" class="text-xs font-bold text-white mt-1">-</p>
+                            </div>
+                            <div class="glass-sub p-3 rounded-2xl">
+                                <p id="quiz-res-p2-name" class="text-[10px] font-bold text-cyan-400 uppercase">Pemain 2</p>
+                                <p id="quiz-res-p2-ans" class="text-xs font-bold text-white mt-1">-</p>
+                            </div>
+                        </div>
+                        <button onclick="nextRound()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white font-bold text-sm shadow-md active:scale-95 transition">
+                            Pertanyaan Berikutnya <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. TRUTH OR DARE -->
+            <div id="view-tod" class="hidden space-y-3">
+                <div class="glass-card rounded-3xl p-5 text-center space-y-4">
+                    <div class="inline-flex items-center gap-1.5 bg-fuchsia-500/20 border border-fuchsia-400/30 text-fuchsia-200 text-[11px] font-bold px-3 py-1 rounded-full">
+                        <i class="fas fa-fire-alt text-fuchsia-400"></i> Truth or Dare Pasangan
+                    </div>
+                    <div class="p-3 rounded-2xl bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white shadow">
+                        <p class="text-[11px] opacity-90">Giliran Saat Ini:</p>
+                        <p id="tod-turn-name" class="font-display text-lg font-bold">Nama Pemain</p>
+                    </div>
+                    <div id="tod-choice-box" class="space-y-3 py-1">
+                        <p id="tod-instruction" class="text-xs text-pink-200/80 font-medium">Pilih kartu jujur atau tantangan!</p>
+                        <div id="tod-buttons" class="grid grid-cols-2 gap-3">
+                            <button onclick="pickTodType('truth')" class="py-5 px-3 rounded-2xl bg-sky-500/15 hover:bg-sky-500/25 border-2 border-sky-400/40 text-sky-200 flex flex-col items-center gap-1.5 transition active:scale-95">
+                                <i class="fas fa-comment-dots text-2xl text-sky-400"></i>
+                                <span class="font-display font-bold text-base">TRUTH</span>
+                                <span class="text-[10px] text-sky-300">Jawab Jujur</span>
+                            </button>
+                            <button onclick="pickTodType('dare')" class="py-5 px-3 rounded-2xl bg-rose-500/15 hover:bg-rose-500/25 border-2 border-rose-400/40 text-rose-200 flex flex-col items-center gap-1.5 transition active:scale-95">
+                                <i class="fas fa-bolt text-2xl text-rose-400"></i>
+                                <span class="font-display font-bold text-base">DARE</span>
+                                <span class="text-[10px] text-rose-300">Tantangan Manis</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="tod-card-box" class="hidden space-y-4">
+                        <div id="tod-card-style" class="p-5 rounded-2xl border-2 text-center space-y-2">
+                            <span id="tod-card-badge" class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">TRUTH</span>
+                            <p id="tod-card-text" class="font-display text-base font-bold text-white leading-relaxed pt-1">Isi kartu...</p>
+                        </div>
+                        <button onclick="nextTodTurn()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-sm shadow-md active:scale-95 transition">
+                            Selesai & Ganti Giliran <i class="fas fa-sync-alt ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. TEBAK HATI -->
+            <div id="view-wyr" class="hidden space-y-3">
+                <div class="glass-card rounded-3xl p-5 text-center space-y-4">
+                    <div class="inline-flex items-center gap-1.5 bg-purple-500/25 border border-purple-400/30 text-purple-200 text-[11px] font-bold px-3 py-1 rounded-full">
+                        <i class="fas fa-heart text-pink-400"></i> Tebak Hati • Sehati: <span id="wyr-sync-count">0</span>x
+                    </div>
+                    <h3 class="font-display text-lg font-bold text-white">Kalian Lebih Pilih Mana? 🤔</h3>
+                    <div class="space-y-2.5">
+                        <button id="wyr-btn-a" onclick="submitWyrChoice('A')" class="w-full p-4 rounded-2xl glass-sub border-2 border-pink-400/30 text-left transition active:scale-[0.98] flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-pink-500 text-white font-display font-bold flex items-center justify-center shrink-0">A</span>
+                            <span id="wyr-text-a" class="text-xs font-bold text-white leading-snug">Opsi A</span>
+                        </button>
+                        <div class="text-[11px] font-extrabold text-pink-300/60">ATAU</div>
+                        <button id="wyr-btn-b" onclick="submitWyrChoice('B')" class="w-full p-4 rounded-2xl glass-sub border-2 border-indigo-400/30 text-left transition active:scale-[0.98] flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-indigo-500 text-white font-display font-bold flex items-center justify-center shrink-0">B</span>
+                            <span id="wyr-text-b" class="text-xs font-bold text-white leading-snug">Opsi B</span>
+                        </button>
+                    </div>
+                    <div id="wyr-waiting" class="hidden py-3 px-4 rounded-2xl bg-purple-500/20 border border-purple-400/30 text-purple-200 text-xs font-semibold flex items-center justify-center gap-2">
+                        <i class="fas fa-heart fa-beat text-pink-400"></i>
+                        <span>Pilihanmu terkunci! Menunggu pasangan...</span>
+                    </div>
+                    <div id="wyr-result" class="hidden pt-2 space-y-3">
+                        <div id="wyr-match-banner" class="p-3 rounded-2xl font-display font-bold text-sm"></div>
+                        <div class="grid grid-cols-2 gap-2.5 text-left">
+                            <div class="glass-sub p-3 rounded-2xl">
+                                <p id="wyr-res-p1-name" class="text-[10px] font-bold text-pink-400 uppercase">Pemain 1</p>
+                                <p id="wyr-res-p1-ans" class="text-xs font-bold text-white mt-1">-</p>
+                            </div>
+                            <div class="glass-sub p-3 rounded-2xl">
+                                <p id="wyr-res-p2-name" class="text-[10px] font-bold text-cyan-400 uppercase">Pemain 2</p>
+                                <p id="wyr-res-p2-ans" class="text-xs font-bold text-white mt-1">-</p>
+                            </div>
+                        </div>
+                        <button onclick="nextRound()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-sm shadow-md active:scale-95 transition">
+                            Skenario Berikutnya <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="h-2"></div>
+    </div>
+
+    <!-- MODAL MONOPOLI -->
+    <div id="modal-mono-manage" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl w-full max-w-sm p-5 space-y-3 max-h-[80vh] flex flex-col">
+            <div class="flex items-center justify-between">
+                <h3 class="font-display font-bold text-base text-white">Kelola Properti Monopoli</h3>
+                <button onclick="closeMonopolyManageModal()" class="w-8 h-8 rounded-xl bg-white/10 text-pink-200 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="mono-manage-list" class="flex-1 overflow-y-auto space-y-2 pr-1 text-xs"></div>
+            <button onclick="declareMonopolyBankrupt()" class="w-full py-2.5 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white font-bold text-xs">
+                🏳️ Menyerah / Bangkrut
+            </button>
+        </div>
+    </div>
+
+    <!-- CHAT DRAWER -->
+    <div id="chat-drawer" class="hidden fixed inset-x-0 bottom-20 z-50 mx-auto w-[92%] max-w-md pop-in">
+        <div class="glass-card rounded-3xl p-3.5 shadow-2xl border border-pink-400/40 space-y-2.5">
+            <div class="flex items-center justify-between border-b border-pink-400/20 pb-2">
+                <span class="font-display font-bold text-xs text-pink-200"><i class="fas fa-comments text-pink-400 mr-1.5"></i>Obrolan Cepat Berdua</span>
+                <button onclick="toggleChatDrawer()" class="text-pink-300 hover:text-white text-xs px-2"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="chat-messages" class="h-36 overflow-y-auto space-y-1.5 pr-1 text-xs">
+                <p class="text-center text-[11px] text-pink-300/50 py-6">Kirim kode strategi ke pasanganmu di sini...</p>
+            </div>
+            <div class="flex gap-1.5 overflow-x-auto pb-0.5">
+                <button onclick="sendQuickChat('Injak tombolnya sekarang!')" class="shrink-0 text-[10px] bg-pink-500/20 border border-pink-400/30 text-pink-200 px-2.5 py-1 rounded-full">Injak tombolnya!</button>
+                <button onclick="sendQuickChat('Naik ke atasku!')" class="shrink-0 text-[10px] bg-amber-500/20 border border-amber-400/30 text-amber-200 px-2.5 py-1 rounded-full">Naik ke atasku!</button>
+                <button onclick="sendQuickChat('Ayo dorong bareng!')" class="shrink-0 text-[10px] bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 px-2.5 py-1 rounded-full">Dorong bareng!</button>
+                <button onclick="sendQuickChat('Tunggu di pintu!')" class="shrink-0 text-[10px] bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 px-2.5 py-1 rounded-full">Ke pintu!</button>
+            </div>
+            <form onsubmit="sendChatForm(event)" class="flex gap-2">
+                <input id="chat-input" type="text" maxlength="80" placeholder="Ketik pesan..." class="flex-1 px-3 py-2 rounded-xl bg-slate-950/70 border border-pink-400/30 text-xs text-white focus:outline-none">
+                <button type="submit" class="px-3.5 py-2 rounded-xl bg-pink-500 text-white text-xs font-bold"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- REACTION BAR -->
+    <div id="reaction-bar" class="hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md">
+        <div class="glass-card rounded-full px-3 py-1.5 flex items-center justify-between shadow-xl border border-pink-400/35">
+            <span class="text-[10px] font-bold text-pink-300/80 pl-2 hidden sm:inline">Reaksi:</span>
+            <div class="flex items-center justify-around flex-1 gap-1">
+                <button onclick="sendReaction('🤗', 'Peluk Hangat')" class="w-10 h-10 rounded-full hover:bg-pink-500/20 active:scale-125 transition flex items-center justify-center text-xl">🤗</button>
+                <button onclick="sendReaction('😘', 'Cium Sayang')" class="w-10 h-10 rounded-full hover:bg-pink-500/20 active:scale-125 transition flex items-center justify-center text-xl">😘</button>
+                <button onclick="sendReaction('🥺', 'Kangen Banget')" class="w-10 h-10 rounded-full hover:bg-pink-500/20 active:scale-125 transition flex items-center justify-center text-xl">🥺</button>
+                <button onclick="sendReaction('😂', 'Ngakak')" class="w-10 h-10 rounded-full hover:bg-pink-500/20 active:scale-125 transition flex items-center justify-center text-xl">😂</button>
+                <button onclick="sendReaction('❤️', 'Love You')" class="w-10 h-10 rounded-full hover:bg-pink-500/20 active:scale-125 transition flex items-center justify-center text-xl">❤️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT UTAMA FIREBASE & GAME LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+        // Konfigurasi Firebase Anda yang baru
+        const appId = 'game-syahrul';
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7u5_f22i4OSIi3-PZjtggaOpkcdnMf1Y",
+            authDomain: "game-syahrul.firebaseapp.com",
+            projectId: "game-syahrul",
+            storageBucket: "game-syahrul.firebasestorage.app",
+            messagingSenderId: "232515776702",
+            appId: "1:232515776702:web:766c8bc9ef3f6526436eef",
+            measurementId: "G-RW3QETBE0H"
+        };
+
+        let app, auth, db, analytics;
+        let currentUser = null;
+        let currentRoomCode = null;
+        let myRole = null; 
+        let myName = '';
+        let roomUnsubscribe = null;
+        let lastReactionId = null;
+        let latestRoomData = null;
+        let chatOpen = false;
+        let lastChatCount = 0;
+
+        function playPopSound(freq = 523.25) {
+            try {
+                if (typeof Tone !== 'undefined') {
+                    if (Tone.context.state !== 'running') Tone.start();
+                    const synth = new Tone.Synth({
+                        oscillator: { type: 'sine' },
+                        envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.08 }
+                    }).toDestination();
+                    synth.volume.value = -14;
+                    synth.triggerAttackRelease(freq, "16n");
+                }
+            } catch (e) {}
+        }
+
+        window.showToast = function(msg, iconClass = 'fa-heart text-pink-400') {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-text').innerText = msg;
+            document.getElementById('toast-icon').className = `fas ${iconClass}`;
+            box.classList.remove('hidden');
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => box.classList.add('hidden'), 2600);
+        };
+
+        async function initFirebase() {
+            const statusEl = document.getElementById('auth-status-text');
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                try { analytics = getAnalytics(app); } catch(e){}
+
+                await signInAnonymously(auth);
+                currentUser = auth.currentUser;
+                statusEl.innerHTML = '<i class="fas fa-check-circle text-emerald-400 mr-1"></i> Terhubung & siap main 2 HP!';
+            } catch (err) {
+                console.error(err);
+                statusEl.innerHTML = '<i class="fas fa-times-circle text-rose-400 mr-1"></i> Gagal terhubung ke server (Cek Auth/Firestore).';
+            }
+        }
+
+        window.switchLobbyTab = function(tab) {
+            playPopSound(440);
+            const tC = document.getElementById('tab-create');
+            const tJ = document.getElementById('tab-join');
+            const pC = document.getElementById('panel-create');
+            const pJ = document.getElementById('panel-join');
+            if (tab === 'create') {
+                tC.className = "py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white shadow-md transition";
+                tJ.className = "py-2.5 rounded-xl text-xs font-bold text-pink-200/70 hover:text-white transition";
+                pC.classList.remove('hidden'); pJ.classList.add('hidden');
+            } else {
+                tJ.className = "py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white shadow-md transition";
+                tC.className = "py-2.5 rounded-xl text-xs font-bold text-pink-200/70 hover:text-white transition";
+                pJ.classList.remove('hidden'); pC.classList.add('hidden');
+            }
+        };
+
+        function generateRoomCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = '';
+            for (let i = 0; i < 5; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+            return code;
+        }
+
+        function getRoomDocRef(code) {
+            return doc(db, 'artifacts', appId, 'public', 'data', 'couple_rooms', code);
+        }
+
+        window.createRoom = async function() {
+            if (!currentUser) return showToast('Menghubungkan server...', 'fa-spinner fa-spin');
+            const nameInput = document.getElementById('input-nickname').value.trim();
+            if (!nameInput) return showToast('Isi nama panggilanmu dulu!', 'fa-exclamation-circle text-amber-400');
+
+            playPopSound(659.25);
+            myName = nameInput;
+            myRole = 'p1';
+            const code = generateRoomCode();
+
+            const initialState = {
+                roomCode: code,
+                p1: { uid: currentUser.uid, name: myName },
+                p2: null,
+                mode: 'menu',
+                round: 1,
+                qIndex: 0,
+                quizScore: 0,
+                quizTotal: 0,
+                wyrSyncCount: 0,
+                p1Choice: '',
+                p2Choice: '',
+                todTurn: 'p1',
+                todType: '',
+                todCardIndex: 0,
+                pico: createInitialPicoState(0),
+                mono: createInitialMonopolyState(),
+                uno: createInitialUnoState(),
+                chats: [],
+                reaction: null,
+                updatedAt: Date.now()
+            };
+
+            try {
+                await setDoc(getRoomDocRef(code), initialState);
+                enterRoom(code);
+                showToast(`Room ${code} berhasil dibuat!`);
+            } catch (e) {
+                console.error(e);
+                showToast('Gagal membuat room.', 'fa-times-circle text-rose-400');
+            }
+        };
+
+        window.joinRoom = async function() {
+            if (!currentUser) return showToast('Menghubungkan server...', 'fa-spinner fa-spin');
+            const nameInput = document.getElementById('input-nickname').value.trim();
+            const codeInput = document.getElementById('input-room-code').value.trim().toUpperCase();
+            if (!nameInput) return showToast('Isi nama panggilanmu dulu!', 'fa-exclamation-circle text-amber-400');
+            if (codeInput.length !== 5) return showToast('Kode room harus 5 karakter!', 'fa-exclamation-circle text-amber-400');
+
+            try {
+                const roomRef = getRoomDocRef(codeInput);
+                const snap = await getDoc(roomRef);
+                if (!snap.exists()) return showToast('Kode room tidak ditemukan!', 'fa-times-circle text-rose-400');
+
+                const data = snap.data();
+                myName = nameInput;
+                if (data.p1 && data.p1.uid === currentUser.uid) {
+                    myRole = 'p1';
+                    await updateDoc(roomRef, { 'p1.name': myName });
+                } else if (!data.p2 || data.p2.uid === currentUser.uid) {
+                    myRole = 'p2';
+                    await updateDoc(roomRef, { p2: { uid: currentUser.uid, name: myName }, updatedAt: Date.now() });
+                } else {
+                    return showToast('Room ini sudah penuh (2 pemain)!', 'fa-lock text-amber-400');
+                }
+
+                playPopSound(659.25);
+                enterRoom(codeInput);
+                showToast(`Berhasil gabung room ${codeInput}!`);
+            } catch (e) {
+                console.error(e);
+                showToast('Gagal bergabung ke room.', 'fa-times-circle text-rose-400');
+            }
+        };
+
+        function enterRoom(code) {
+            currentRoomCode = code;
+            document.getElementById('header-room-code').innerText = code;
+            document.getElementById('invite-code-big').innerText = code;
+            document.getElementById('room-header-badge').classList.remove('hidden');
+            document.getElementById('reaction-bar').classList.remove('hidden');
+            document.getElementById('screen-lobby').classList.add('hidden');
+
+            if (roomUnsubscribe) roomUnsubscribe();
+            roomUnsubscribe = onSnapshot(getRoomDocRef(code), (docSnap) => {
+                if (!docSnap.exists()) {
+                    showToast('Room ditutup.');
+                    leaveRoom();
+                    return;
+                }
+                latestRoomData = docSnap.data();
+                renderRoomState(latestRoomData);
+            }, (err) => console.error("Snapshot error:", err));
+        }
+
+        window.leaveRoom = function() {
+            if (roomUnsubscribe) roomUnsubscribe();
+            stopPicoLoop();
+            roomUnsubscribe = null;
+            currentRoomCode = null;
+            myRole = null;
+            latestRoomData = null;
+
+            document.getElementById('room-header-badge').classList.add('hidden');
+            document.getElementById('reaction-bar').classList.add('hidden');
+            document.getElementById('chat-drawer').classList.add('hidden');
+            document.getElementById('screen-menu').classList.add('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-lobby').classList.remove('hidden');
+        };
+
+        window.copyRoomCode = function() {
+            if (!currentRoomCode) return;
+            const tmp = document.createElement('input');
+            tmp.value = currentRoomCode;
+            document.body.appendChild(tmp);
+            tmp.select();
+            document.execCommand('copy');
+            document.body.removeChild(tmp);
+            playPopSound(783.99);
+            showToast(`Kode ${currentRoomCode} disalin! Kirim ke pasanganmu 💕`);
+        };
+
+        window.toggleChatDrawer = function() {
+            chatOpen = !chatOpen;
+            const drawer = document.getElementById('chat-drawer');
+            if (chatOpen) {
+                drawer.classList.remove('hidden');
+                document.getElementById('chat-unread-dot').classList.add('hidden');
+            } else {
+                drawer.classList.add('hidden');
+            }
+        };
+
+        window.sendQuickChat = async function(text) {
+            if (!currentRoomCode) return;
+            await pushChatMessage(text);
+        };
+
+        window.sendChatForm = async function(e) {
+            e.preventDefault();
+            const inp = document.getElementById('chat-input');
+            const text = inp.value.trim();
+            if (!text || !currentRoomCode) return;
+            inp.value = '';
+            await pushChatMessage(text);
+        };
+
+        async function pushChatMessage(text) {
+            const existing = (latestRoomData && latestRoomData.chats) ? [...latestRoomData.chats] : [];
+            existing.push({ sender: myName, role: myRole, text, ts: Date.now() });
+            if (existing.length > 25) existing.shift();
+            await updateDoc(getRoomDocRef(currentRoomCode), { chats: existing });
+        }
+
+        function renderChats(chats) {
+            if (!chats) return;
+            if (chats.length > lastChatCount && !chatOpen && lastChatCount > 0) {
+                document.getElementById('chat-unread-dot').classList.remove('hidden');
+            }
+            lastChatCount = chats.length;
+            const box = document.getElementById('chat-messages');
+            if (chats.length === 0) return;
+            box.innerHTML = chats.map(c => {
+                const isMe = c.role === myRole;
+                return `<div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                    <span class="text-[9px] text-pink-300/70 px-1">${c.sender}</span>
+                    <div class="px-3 py-1.5 rounded-2xl max-w-[85%] ${isMe ? 'bg-pink-500 text-white' : 'bg-slate-900 border border-pink-400/25 text-pink-100'}">${c.text}</div>
+                </div>`;
+            }).join('');
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function renderRoomState(data) {
+            const p1Name = data.p1 ? data.p1.name : 'Pemain 1';
+            const p2Name = data.p2 ? data.p2.name : null;
+
+            document.getElementById('p1-name-display').innerText = p1Name + (myRole === 'p1' ? ' (Kamu)' : '');
+            if (p2Name) {
+                document.getElementById('p2-name-display').innerText = p2Name + (myRole === 'p2' ? ' (Kamu)' : '');
+                document.getElementById('p2-name-display').className = 'font-bold text-xs text-white truncate';
+                document.getElementById('p2-avatar').className = 'w-9 h-9 mx-auto rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500 text-white flex items-center justify-center font-bold text-xs mb-1 shadow';
+                document.getElementById('p2-avatar').innerHTML = '<i class="fas fa-heart"></i>';
+                document.getElementById('p2-status-pill').innerText = 'Online • Cyan';
+                document.getElementById('p2-status-pill').className = 'inline-block text-[10px] font-semibold text-cyan-300 bg-cyan-500/20 px-2 py-0.5 rounded-full mt-0.5';
+                document.getElementById('pair-heart-icon').className = 'fas fa-heart text-2xl text-pink-400 heart-beat';
+                document.getElementById('pair-status-badge').innerText = 'Terhubung!';
+                document.getElementById('pair-status-badge').className = 'text-[10px] font-bold text-pink-300 mt-1';
+                document.getElementById('invite-banner').classList.add('hidden');
+            } else {
+                document.getElementById('p2-name-display').innerText = 'Menunggu...';
+                document.getElementById('p2-name-display').className = 'font-bold text-xs text-pink-200/50 truncate';
+                document.getElementById('p2-avatar').className = 'w-9 h-9 mx-auto rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-xs mb-1';
+                document.getElementById('p2-avatar').innerHTML = '<i class="fas fa-user-plus"></i>';
+                document.getElementById('p2-status-pill').innerText = 'Belum Gabung';
+                document.getElementById('p2-status-pill').className = 'inline-block text-[10px] font-semibold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full mt-0.5';
+                document.getElementById('pair-heart-icon').className = 'fas fa-heart text-2xl text-pink-400/40';
+                document.getElementById('pair-status-badge').innerText = 'Menunggu';
+                document.getElementById('pair-status-badge').className = 'text-[10px] font-bold text-pink-300/60 mt-1';
+                document.getElementById('invite-banner').classList.remove('hidden');
+            }
+
+            if (data.reaction && data.reaction.id !== lastReactionId) {
+                lastReactionId = data.reaction.id;
+                spawnFloatingEmojis(data.reaction.emoji, data.reaction.sender, data.reaction.label);
+            }
+
+            renderChats(data.chats || []);
+
+            const allViews = ['view-picopark', 'view-monopoly', 'view-uno', 'view-quiz', 'view-tod', 'view-wyr'];
+            if (data.mode === 'menu') {
+                stopPicoLoop();
+                document.getElementById('screen-menu').classList.remove('hidden');
+                document.getElementById('screen-game').classList.add('hidden');
+            } else {
+                document.getElementById('screen-menu').classList.add('hidden');
+                document.getElementById('screen-game').classList.remove('hidden');
+                allViews.forEach(v => document.getElementById(v).classList.add('hidden'));
+
+                if (data.mode === 'picopark') {
+                    document.getElementById('game-mode-badge').innerText = '🐱 Misi PICO PARK';
+                    document.getElementById('view-picopark').classList.remove('hidden');
+                    syncPicoFromRemote(data, p1Name, p2Name || 'Pasangan');
+                } else {
+                    stopPicoLoop();
+                    if (data.mode === 'monopoly') {
+                        document.getElementById('game-mode-badge').innerText = '🏙️ Monopoli Klasik';
+                        document.getElementById('view-monopoly').classList.remove('hidden');
+                        renderMonopolyView(data, p1Name, p2Name || 'Pasangan');
+                    } else if (data.mode === 'uno') {
+                        document.getElementById('game-mode-badge').innerText = '🃏 Kartu UNO';
+                        document.getElementById('view-uno').classList.remove('hidden');
+                        renderUnoView(data, p1Name, p2Name || 'Pasangan');
+                    } else if (data.mode === 'quiz') {
+                        document.getElementById('game-mode-badge').innerText = `Ronde ${data.round || 1}`;
+                        document.getElementById('view-quiz').classList.remove('hidden');
+                        renderQuizView(data, p1Name, p2Name || 'Pasangan');
+                    } else if (data.mode === 'tod') {
+                        document.getElementById('game-mode-badge').innerText = `Ronde ${data.round || 1}`;
+                        document.getElementById('view-tod').classList.remove('hidden');
+                        renderTodView(data, p1Name, p2Name || 'Pasangan');
+                    } else if (data.mode === 'wyr') {
+                        document.getElementById('game-mode-badge').innerText = `Ronde ${data.round || 1}`;
+                        document.getElementById('view-wyr').classList.remove('hidden');
+                        renderWyrView(data, p1Name, p2Name || 'Pasangan');
+                    }
+                }
+            }
+        }
+
+        window.selectGameMode = async function(mode) {
+            if (!currentRoomCode) return;
+            playPopSound(587.33);
+            const randomIndex = Math.floor(Math.random() * 100);
+            const updates = {
+                mode,
+                round: 1,
+                qIndex: randomIndex,
+                p1Choice: '',
+                p2Choice: '',
+                todTurn: 'p1',
+                todType: '',
+                todCardIndex: randomIndex,
+                updatedAt: Date.now()
+            };
+            if (mode === 'picopark') updates.pico = createInitialPicoState(0);
+            else if (mode === 'monopoly') updates.mono = createInitialMonopolyState();
+            else if (mode === 'uno') updates.uno = createInitialUnoState();
+            await updateDoc(getRoomDocRef(currentRoomCode), updates);
+        };
+
+        window.backToMenu = async function() {
+            if (!currentRoomCode) return;
+            playPopSound(440);
+            stopPicoLoop();
+            await updateDoc(getRoomDocRef(currentRoomCode), { mode: 'menu' });
+        };
+
+        // PICO PARK ENGINE
+        const PICO_W = 480, PICO_H = 270, PLAYER_W = 22, PLAYER_H = 26, GRAVITY = 0.55, JUMP_VEL = -9.6, MOVE_SPEED = 3.1;
+        const PICO_LEVELS = [
+            {
+                title: "1. Jembatan Tombol",
+                hint: "P1/P2 injak tombol merah di kiri agar jembatan terbuka untuk mengambil Kunci Emas, lalu buka jembatan kanan!",
+                spawnP1: { x: 24, y: 200 }, spawnP2: { x: 54, y: 200 },
+                platforms: [{ x: 0, y: 235, w: 145, h: 35 }, { x: 235, y: 235, w: 100, h: 35 }, { x: 405, y: 235, w: 75, h: 35 }, { x: 255, y: 175, w: 60, h: 12 }],
+                bridges: [{ id: 'b1', x: 145, y: 235, w: 90, h: 14, switchId: 'sw1' }, { id: 'b2', x: 335, y: 235, w: 70, h: 14, switchId: 'sw2' }],
+                switches: [{ id: 'sw1', x: 105, y: 227, w: 26, h: 8, color: '#f43f5e' }, { id: 'sw2', x: 295, y: 227, w: 26, h: 8, color: '#38bdf8' }],
+                keys: [{ id: 'k1', x: 277, y: 148 }],
+                door: { x: 432, y: 193, w: 30, h: 42 }, block: null, movingPlat: null
+            },
+            {
+                title: "2. Tumpuk Badan (Stack Jump)",
+                hint: "Tebing terlalu tinggi untuk 1 lompatan! Satu orang diam di bawah, pasangan melompat naik ke atas kepalanya!",
+                spawnP1: { x: 30, y: 200 }, spawnP2: { x: 64, y: 200 },
+                platforms: [{ x: 0, y: 235, w: 480, h: 35 }, { x: 175, y: 158, w: 120, h: 14 }, { x: 335, y: 112, w: 145, h: 14 }],
+                bridges: [{ id: 'b1', x: 295, y: 135, w: 40, h: 12, switchId: 'sw1' }],
+                switches: [{ id: 'sw1', x: 215, y: 150, w: 26, h: 8, color: '#f59e0b' }],
+                keys: [{ id: 'k1', x: 260, y: 130 }],
+                door: { x: 425, y: 70, w: 30, h: 42 }, block: null, movingPlat: null
+            },
+            {
+                title: "3. Dorong Balok Bersama (2P)",
+                hint: "Balok raksasa bertuliskan '2P' terlalu berat sendirian! Dorong bersama-sama ke tombol hijau di kanan!",
+                spawnP1: { x: 25, y: 200 }, spawnP2: { x: 55, y: 200 },
+                platforms: [{ x: 0, y: 235, w: 480, h: 35 }, { x: 350, y: 165, w: 130, h: 14 }],
+                bridges: [{ id: 'b1', x: 275, y: 195, w: 75, h: 12, switchId: 'sw_heavy' }],
+                switches: [{ id: 'sw_heavy', x: 265, y: 227, w: 46, h: 8, color: '#10b981', needsBlock: true }],
+                keys: [{ id: 'k1', x: 280, y: 165 }],
+                door: { x: 430, y: 123, w: 30, h: 42 }, block: { x: 135, y: 195, w: 40, h: 40 }, movingPlat: null
+            },
+            {
+                title: "4. Lompatan Sinkron & Kunci Ganda",
+                hint: "Kumpulkan 2 Kunci Emas lewat platform bergerak, lalu berdiri BERDUA di depan pintu selama 2 detik!",
+                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 50, y: 200 },
+                platforms: [{ x: 0, y: 235, w: 120, h: 35 }, { x: 345, y: 235, w: 135, h: 35 }, { x: 30, y: 135, w: 85, h: 12 }],
+                bridges: [{ id: 'b1', x: 115, y: 135, w: 65, h: 12, switchId: 'sw1' }],
+                switches: [{ id: 'sw1', x: 360, y: 227, w: 26, h: 8, color: '#ec4899' }],
+                keys: [{ id: 'k1', x: 145, y: 105 }, { id: 'k2', x: 395, y: 160 }],
+                door: { x: 432, y: 193, w: 30, h: 42 }, block: null,
+                movingPlat: { x: 155, y: 210, w: 65, h: 12, minX: 135, maxX: 265, dir: 1, speed: 1.4 }
+            }
+        ];
+
+        function createInitialPicoState(lvlIdx = 0) {
+            const lvl = PICO_LEVELS[lvlIdx % PICO_LEVELS.length];
+            return {
+                levelIndex: lvlIdx % PICO_LEVELS.length,
+                p1: { x: lvl.spawnP1.x, y: lvl.spawnP1.y, vx: 0, vy: 0, facing: 1 },
+                p2: { x: lvl.spawnP2.x, y: lvl.spawnP2.y, vx: 0, vy: 0, facing: 1 },
+                collectedKeys: [], blockX: lvl.block ? lvl.block.x : null, doorHoldTicks: 0, cleared: false
+            };
+        }
+
+        let picoAnimId = null;
+        let picoLocal = { levelIndex: 0, me: { x: 24, y: 200, vx: 0, vy: 0, facing: 1, grounded: false }, partner: { x: 54, y: 200, vx: 0, vy: 0, facing: 1, targetX: 54, targetY: 200 }, collectedKeys: [], blockX: null, movingX: 155, movingDir: 1, doorHoldTicks: 0, cleared: false, lastSyncTime: 0 };
+        const picoInput = { left: false, right: false, jump: false };
+
+        function setupPicoControls() {
+            const bindBtn = (id, key) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const onStart = (e) => { e.preventDefault(); picoInput[key] = true; el.classList.add('active'); if (key === 'jump') playPopSound(620); };
+                const onEnd = (e) => { e.preventDefault(); picoInput[key] = false; el.classList.remove('active'); };
+                el.addEventListener('touchstart', onStart, { passive: false });
+                el.addEventListener('touchend', onEnd, { passive: false });
+                el.addEventListener('touchcancel', onEnd, { passive: false });
+                el.addEventListener('mousedown', onStart);
+                el.addEventListener('mouseup', onEnd);
+                el.addEventListener('mouseleave', onEnd);
+            };
+            bindBtn('btn-pico-left', 'left');
+            bindBtn('btn-pico-right', 'right');
+            bindBtn('btn-pico-jump', 'jump');
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') picoInput.left = true;
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') picoInput.right = true;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') picoInput.jump = true;
+            });
+            window.addEventListener('keyup', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') picoInput.left = false;
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') picoInput.right = false;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') picoInput.jump = false;
+            });
+        }
+
+        function syncPicoFromRemote(data, p1Name, p2Name) {
+            const pState = data.pico || createInitialPicoState(0);
+            const lvlIdx = pState.levelIndex || 0;
+            const lvl = PICO_LEVELS[lvlIdx];
+
+            if (picoLocal.levelIndex !== lvlIdx || (pState.cleared === false && picoLocal.cleared === true)) {
+                picoLocal.levelIndex = lvlIdx;
+                const spawn = myRole === 'p1' ? lvl.spawnP1 : lvl.spawnP2;
+                const pSpawn = myRole === 'p1' ? lvl.spawnP2 : lvl.spawnP1;
+                picoLocal.me = { x: spawn.x, y: spawn.y, vx: 0, vy: 0, facing: 1, grounded: false };
+                picoLocal.partner = { x: pSpawn.x, y: pSpawn.y, vx: 0, vy: 0, facing: 1, targetX: pSpawn.x, targetY: pSpawn.y };
+                picoLocal.blockX = lvl.block ? lvl.block.x : null;
+                picoLocal.movingX = lvl.movingPlat ? lvl.movingPlat.x : 0;
+                picoLocal.doorHoldTicks = 0;
+            }
+
+            picoLocal.collectedKeys = pState.collectedKeys || [];
+            picoLocal.cleared = !!pState.cleared;
+            picoLocal.doorHoldTicks = pState.doorHoldTicks || 0;
+            if (lvl.block && typeof pState.blockX === 'number') picoLocal.blockX = pState.blockX;
+
+            const remotePartner = myRole === 'p1' ? pState.p2 : pState.p1;
+            if (remotePartner) {
+                picoLocal.partner.targetX = remotePartner.x;
+                picoLocal.partner.targetY = remotePartner.y;
+                picoLocal.partner.facing = remotePartner.facing || 1;
+            }
+
+            document.getElementById('pico-level-badge').innerText = `Level ${lvlIdx + 1} / ${PICO_LEVELS.length}`;
+            document.getElementById('pico-level-title').innerText = lvl.title;
+            document.getElementById('pico-mission-hint').innerText = lvl.hint;
+            document.getElementById('pico-key-status').innerText = `🔑 ${picoLocal.collectedKeys.length}/${lvl.keys.length}`;
+
+            const roleTag = document.getElementById('pico-role-tag');
+            if (myRole === 'p1') {
+                roleTag.innerText = `Kamu: ${p1Name} (Pink)`;
+                roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/25 text-pink-200';
+            } else {
+                roleTag.innerText = `Kamu: ${p2Name} (Cyan)`;
+                roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/25 text-cyan-200';
+            }
+
+            document.querySelectorAll('.pico-lvl-dot').forEach((btn, i) => {
+                btn.className = `pico-lvl-dot w-6 h-6 rounded-lg text-[10px] font-bold border transition ${i === lvlIdx ? 'bg-amber-400 text-slate-950 border-amber-300' : 'bg-pink-500/20 text-pink-200 border-pink-400/30'}`;
+            });
+
+            const overlay = document.getElementById('pico-clear-overlay');
+            if (picoLocal.cleared) {
+                overlay.classList.remove('hidden');
+                if (lvlIdx === PICO_LEVELS.length - 1) {
+                    document.getElementById('pico-clear-title').innerText = 'SEMUA 4 LEVEL TAMAT! 🏆';
+                    document.getElementById('pico-clear-desc').innerText = 'Kalian pasangan paling kompak di PICO PARK!';
+                } else {
+                    document.getElementById('pico-clear-title').innerText = `Level ${lvlIdx + 1} Berhasil! 🎉`;
+                    document.getElementById('pico-clear-desc').innerText = 'Kunci terbuka & kalian masuk pintu bersama!';
+                }
+            } else {
+                overlay.classList.add('hidden');
+            }
+
+            startPicoLoop(p1Name, p2Name);
+        }
+
+        function startPicoLoop(p1Name, p2Name) {
+            if (picoAnimId) return;
+            const canvas = document.getElementById('pico-canvas');
+            const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                canvas.width = rect.width * dpr;
+                canvas.height = (rect.width * (PICO_H / PICO_W)) * dpr;
+                ctx.setTransform(canvas.width / PICO_W, 0, 0, canvas.height / PICO_H, 0, 0);
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            let lastTime = performance.now();
+            function loop(now) {
+                if (!latestRoomData || latestRoomData.mode !== 'picopark') { picoAnimId = null; return; }
+                const dt = Math.min((now - lastTime) / 16.67, 2);
+                lastTime = now;
+                updatePicoPhysics(dt);
+                drawPicoScene(ctx, p1Name, p2Name);
+                picoAnimId = requestAnimationFrame(loop);
+            }
+            picoAnimId = requestAnimationFrame(loop);
+        }
+
+        function stopPicoLoop() {
+            if (picoAnimId) { cancelAnimationFrame(picoAnimId); picoAnimId = null; }
+        }
+
+        function rectsOverlap(a, b) {
+            return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+        }
+
+        function updatePicoPhysics(dt) {
+            const lvl = PICO_LEVELS[picoLocal.levelIndex];
+            if (!lvl) return;
+
+            picoLocal.partner.x += (picoLocal.partner.targetX - picoLocal.partner.x) * 0.32;
+            picoLocal.partner.y += (picoLocal.partner.targetY - picoLocal.partner.y) * 0.32;
+
+            if (lvl.movingPlat) {
+                picoLocal.movingX += lvl.movingPlat.speed * picoLocal.movingDir * dt;
+                if (picoLocal.movingX <= lvl.movingPlat.minX) { picoLocal.movingX = lvl.movingPlat.minX; picoLocal.movingDir = 1; }
+                if (picoLocal.movingX >= lvl.movingPlat.maxX) { picoLocal.movingX = lvl.movingPlat.maxX; picoLocal.movingDir = -1; }
+            }
+
+            if (picoLocal.cleared) return;
+
+            const me = picoLocal.me;
+            const partnerBox = { x: picoLocal.partner.x, y: picoLocal.partner.y, w: PLAYER_W, h: PLAYER_H };
+            const myBoxNow = { x: me.x, y: me.y, w: PLAYER_W, h: PLAYER_H };
+
+            const activeSwitches = {};
+            lvl.switches.forEach(sw => {
+                const p1On = rectsOverlap(myBoxNow, sw) || rectsOverlap(partnerBox, sw);
+                let blockOn = false;
+                if (sw.needsBlock && lvl.block && picoLocal.blockX !== null) {
+                    blockOn = rectsOverlap({ x: picoLocal.blockX, y: lvl.block.y, w: lvl.block.w, h: lvl.block.h }, sw);
+                }
+                activeSwitches[sw.id] = sw.needsBlock ? blockOn : p1On;
+            });
+
+            const solids = [...lvl.platforms];
+            lvl.bridges.forEach(br => { if (activeSwitches[br.switchId]) solids.push(br); });
+            if (lvl.movingPlat) solids.push({ x: picoLocal.movingX, y: lvl.movingPlat.y, w: lvl.movingPlat.w, h: lvl.movingPlat.h });
+
+            me.vx = 0;
+            if (picoInput.left) { me.vx = -MOVE_SPEED; me.facing = -1; }
+            if (picoInput.right) { me.vx = MOVE_SPEED; me.facing = 1; }
+            if (picoInput.jump && me.grounded) { me.vy = JUMP_VEL; me.grounded = false; }
+
+            me.x += me.vx * dt;
+            if (me.x < 0) me.x = 0;
+            if (me.x > PICO_W - PLAYER_W) me.x = PICO_W - PLAYER_W;
+
+            let myBox = { x: me.x, y: me.y, w: PLAYER_W, h: PLAYER_H };
+            for (const s of solids) {
+                if (rectsOverlap(myBox, s)) {
+                    if (me.vx > 0) me.x = s.x - PLAYER_W;
+                    else if (me.vx < 0) me.x = s.x + s.w;
+                    myBox.x = me.x;
+                }
+            }
+
+            let blockMoved = false;
+            if (lvl.block && picoLocal.blockX !== null) {
+                const blk = { x: picoLocal.blockX, y: lvl.block.y, w: lvl.block.w, h: lvl.block.h };
+                if (rectsOverlap(myBox, blk)) {
+                    const partnerPushingRight = (partnerBox.x + partnerBox.w >= blk.x - 6) && (partnerBox.x < blk.x);
+                    const partnerPushingLeft = (partnerBox.x <= blk.x + blk.w + 6) && (partnerBox.x > blk.x);
+                    if (me.vx > 0 && partnerPushingRight) {
+                        picoLocal.blockX = Math.min(PICO_W - blk.w - 10, picoLocal.blockX + 1.5 * dt);
+                        me.x = picoLocal.blockX - PLAYER_W; blockMoved = true;
+                    } else if (me.vx < 0 && partnerPushingLeft) {
+                        picoLocal.blockX = Math.max(10, picoLocal.blockX - 1.5 * dt);
+                        me.x = picoLocal.blockX + blk.w; blockMoved = true;
+                    } else {
+                        if (me.vx > 0) me.x = blk.x - PLAYER_W; else if (me.vx < 0) me.x = blk.x + blk.w;
+                    }
+                    myBox.x = me.x;
+                }
+            }
+
+            me.vy += GRAVITY * dt;
+            me.y += me.vy * dt;
+            me.grounded = false;
+            myBox.y = me.y;
+
+            for (const s of solids) {
+                if (rectsOverlap(myBox, s)) {
+                    if (me.vy > 0) { me.y = s.y - PLAYER_H; me.vy = 0; me.grounded = true; }
+                    else if (me.vy < 0) { me.y = s.y + s.h; me.vy = 0; }
+                    myBox.y = me.y;
+                }
+            }
+
+            if (me.vy >= 0 && rectsOverlap(myBox, partnerBox)) {
+                const prevBottom = (me.y - me.vy * dt) + PLAYER_H;
+                if (prevBottom <= partnerBox.y + 8) { me.y = partnerBox.y - PLAYER_H; me.vy = 0; me.grounded = true; myBox.y = me.y; }
+            }
+
+            if (me.y > PICO_H + 20) {
+                const spawn = myRole === 'p1' ? lvl.spawnP1 : lvl.spawnP2;
+                me.x = spawn.x; me.y = spawn.y; me.vy = 0;
+                showToast('Awas jatuh! Kembali ke titik awal 😅', 'fa-exclamation-triangle text-amber-400');
+            }
+
+            let newlyCollectedKey = null;
+            lvl.keys.forEach(k => {
+                if (!picoLocal.collectedKeys.includes(k.id)) {
+                    if (rectsOverlap(myBox, { x: k.x - 8, y: k.y - 8, w: 18, h: 18 })) {
+                        newlyCollectedKey = k.id; picoLocal.collectedKeys.push(k.id);
+                        playPopSound(880); showToast('Kunci Emas didapat! 🔑', 'fa-key text-amber-400');
+                    }
+                }
+            });
+
+            const allKeysGot = picoLocal.collectedKeys.length >= lvl.keys.length;
+            if (allKeysGot && rectsOverlap(myBox, lvl.door) && rectsOverlap(partnerBox, lvl.door)) {
+                picoLocal.doorHoldTicks += dt;
+                if (picoLocal.doorHoldTicks >= 45 && !picoLocal.cleared) {
+                    picoLocal.cleared = true; playPopSound(1046.5);
+                }
+            } else { picoLocal.doorHoldTicks = 0; }
+
+            const nowMs = Date.now();
+            if (nowMs - picoLocal.lastSyncTime > 90 || newlyCollectedKey || picoLocal.cleared || blockMoved) {
+                picoLocal.lastSyncTime = nowMs;
+                const playerField = myRole === 'p1' ? 'pico.p1' : 'pico.p2';
+                const updates = { [playerField]: { x: Math.round(me.x * 10) / 10, y: Math.round(me.y * 10) / 10, facing: me.facing } };
+                if (newlyCollectedKey) updates['pico.collectedKeys'] = picoLocal.collectedKeys;
+                if (blockMoved) updates['pico.blockX'] = Math.round(picoLocal.blockX * 10) / 10;
+                if (picoLocal.cleared) updates['pico.cleared'] = true;
+                updateDoc(getRoomDocRef(currentRoomCode), updates).catch(() => {});
+            }
+        }
+
+        function drawPicoScene(ctx, p1Name, p2Name) {
+            const lvl = PICO_LEVELS[picoLocal.levelIndex];
+            if (!lvl) return;
+
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, PICO_H);
+            bgGrad.addColorStop(0, '#1e1035'); bgGrad.addColorStop(1, '#3b0764');
+            ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, PICO_W, PICO_H);
+
+            const p1Pos = myRole === 'p1' ? picoLocal.me : picoLocal.partner;
+            const p2Pos = myRole === 'p2' ? picoLocal.me : picoLocal.partner;
+            const p1Box = { x: p1Pos.x, y: p1Pos.y, w: PLAYER_W, h: PLAYER_H };
+            const p2Box = { x: p2Pos.x, y: p2Pos.y, w: PLAYER_W, h: PLAYER_H };
+
+            const activeSwitches = {};
+            lvl.switches.forEach(sw => {
+                const pressedByPlayer = rectsOverlap(p1Box, sw) || rectsOverlap(p2Box, sw);
+                let pressedByBlock = false;
+                if (sw.needsBlock && lvl.block && picoLocal.blockX !== null) {
+                    pressedByBlock = rectsOverlap({ x: picoLocal.blockX, y: lvl.block.y, w: lvl.block.w, h: lvl.block.h }, sw);
+                }
+                activeSwitches[sw.id] = sw.needsBlock ? pressedByBlock : pressedByPlayer;
+            });
+
+            lvl.platforms.forEach(p => {
+                ctx.fillStyle = '#4c1d95'; ctx.fillRect(p.x, p.y, p.w, p.h);
+                ctx.fillStyle = '#f472b6'; ctx.fillRect(p.x, p.y, p.w, 4);
+            });
+
+            if (lvl.movingPlat) {
+                ctx.fillStyle = '#0ea5e9'; ctx.fillRect(picoLocal.movingX, lvl.movingPlat.y, lvl.movingPlat.w, lvl.movingPlat.h);
+            }
+
+            lvl.bridges.forEach(br => {
+                if (activeSwitches[br.switchId]) {
+                    ctx.fillStyle = '#fbbf24'; ctx.fillRect(br.x, br.y, br.w, br.h);
+                } else {
+                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.35)'; ctx.setLineDash([4, 4]);
+                    ctx.strokeRect(br.x, br.y, br.w, br.h); ctx.setLineDash([]);
+                }
+            });
+
+            lvl.switches.forEach(sw => {
+                ctx.fillStyle = sw.color;
+                const h = activeSwitches[sw.id] ? 3 : sw.h;
+                ctx.fillRect(sw.x, sw.y + (sw.h - h), sw.w, h);
+            });
+
+            if (lvl.block && picoLocal.blockX !== null) {
+                ctx.fillStyle = '#f59e0b'; ctx.fillRect(picoLocal.blockX, lvl.block.y, lvl.block.w, lvl.block.h);
+                ctx.fillStyle = '#1e1b4b'; ctx.font = 'bold 12px Fredoka, sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText('2P', picoLocal.blockX + lvl.block.w / 2, lvl.block.y + 24);
+            }
+
+            const allKeysGot = picoLocal.collectedKeys.length >= lvl.keys.length;
+            const d = lvl.door;
+            ctx.fillStyle = allKeysGot ? '#10b981' : '#334155';
+            ctx.beginPath(); ctx.roundRect(d.x, d.y, d.w, d.h, [10, 10, 0, 0]); ctx.fill();
+            ctx.fillStyle = '#ffffff'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+            ctx.fillText(allKeysGot ? 'OPEN' : '🔒', d.x + d.w / 2, d.y + 24);
+
+            if (picoLocal.doorHoldTicks > 0 && !picoLocal.cleared) {
+                ctx.fillStyle = '#fde047'; ctx.fillRect(d.x, d.y - 8, d.w * Math.min(picoLocal.doorHoldTicks / 45, 1), 4);
+            }
+
+            lvl.keys.forEach(k => {
+                if (!picoLocal.collectedKeys.includes(k.id)) {
+                    ctx.font = '16px sans-serif'; ctx.textAlign = 'center';
+                    ctx.fillText('🔑', k.x, k.y + Math.sin(performance.now() / 220) * 3);
+                }
+            });
+
+            const drawCat = (pos, color, name) => {
+                ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(pos.x, pos.y + 4, PLAYER_W, PLAYER_H - 4, 7); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(name.slice(0, 10), pos.x + PLAYER_W / 2, pos.y - 8);
+            };
+            drawCat(p1Pos, '#ec4899', p1Name);
+            drawCat(p2Pos, '#06b6d4', p2Name);
+        }
+
+        window.resetPicoLevel = async function() {
+            if (!currentRoomCode || !latestRoomData) return;
+            playPopSound(440);
+            await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(latestRoomData.pico.levelIndex || 0) });
+        };
+
+        window.nextPicoLevel = async function() {
+            if (!currentRoomCode || !latestRoomData) return;
+            playPopSound(783.99);
+            const next = ((latestRoomData.pico.levelIndex || 0) + 1) % PICO_LEVELS.length;
+            await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(next) });
+        };
+
+        window.jumpPicoLevel = async function(idx) {
+            if (!currentRoomCode) return;
+            playPopSound(587.33);
+            await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(idx) });
+        };
+
+        // MONOPOLI ENGINE
+        const MONO_TILES = [
+            { id: 0, name: 'START', type: 'start', color: '#10b981' },
+            { id: 1, name: 'Jl. Kenangan', type: 'prop', group: 'brown', color: '#92400e', price: 60, rent: 10 },
+            { id: 2, name: 'Dana Umum', type: 'chest', color: '#38bdf8' },
+            { id: 3, name: 'Jl. Senja', type: 'prop', group: 'brown', color: '#92400e', price: 60, rent: 12 },
+            { id: 4, name: 'Stasiun Cinta', type: 'rail', group: 'rail', color: '#64748b', price: 150, rent: 25 },
+            { id: 5, name: 'Jl. Melati', type: 'prop', group: 'lblue', color: '#0ea5e9', price: 100, rent: 16 },
+            { id: 6, name: 'PENJARA', type: 'jail', color: '#f97316' },
+            { id: 7, name: 'Jl. Cendana', type: 'prop', group: 'lblue', color: '#0ea5e9', price: 120, rent: 18 },
+            { id: 8, name: 'PLN Cahaya', type: 'util', group: 'util', color: '#eab308', price: 120, rent: 20 },
+            { id: 9, name: 'Jl. Asmara', type: 'prop', group: 'pink', color: '#ec4899', price: 140, rent: 22 },
+            { id: 10, name: 'Kesempatan', type: 'chance', color: '#f59e0b' },
+            { id: 11, name: 'Jl. Sakura', type: 'prop', group: 'pink', color: '#ec4899', price: 160, rent: 26 },
+            { id: 12, name: 'PARKIR BEBAS', type: 'parking', color: '#a855f7' },
+            { id: 13, name: 'Jl. Sudirman', type: 'prop', group: 'orange', color: '#f97316', price: 180, rent: 30 },
+            { id: 14, name: 'Dana Umum', type: 'chest', color: '#38bdf8' },
+            { id: 15, name: 'Jl. Thamrin', type: 'prop', group: 'orange', color: '#f97316', price: 200, rent: 34 },
+            { id: 16, name: 'Bandara Impian', type: 'rail', group: 'rail', color: '#64748b', price: 150, rent: 25 },
+            { id: 17, name: 'Jl. Menteng', type: 'prop', group: 'red', color: '#ef4444', price: 220, rent: 38 },
+            { id: 18, name: 'MASUK PENJARA', type: 'gotojail', color: '#e11d48' },
+            { id: 19, name: 'Jl. Kemang', type: 'prop', group: 'red', color: '#ef4444', price: 240, rent: 42 },
+            { id: 20, name: 'PDAM Tirta', type: 'util', group: 'util', color: '#eab308', price: 120, rent: 20 },
+            { id: 21, name: 'Pajak Cinta', type: 'tax', color: '#f43f5e', amount: 100 },
+            { id: 22, name: 'Kesempatan', type: 'chance', color: '#f59e0b' },
+            { id: 23, name: 'Istana Blek', type: 'prop', group: 'blue', color: '#2563eb', price: 350, rent: 65 }
+        ];
+        const GRID_COORDS = [[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,6],[1,5],[1,4],[1,3],[1,2],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1]];
+
+        function createInitialMonopolyState() {
+            return {
+                turn: 'p1', p1Pos: 0, p2Pos: 0, p1Money: 1500, p2Money: 1500, p1Jail: 0, p2Jail: 0,
+                doublesCount: 0, canRoll: true, dice: [1, 1], freeParkingPot: 100, owners: {}, houses: {}, mortgaged: {},
+                log: 'Giliran Pemain 1! Kocok 2 dadu untuk mulai berkeliling.'
+            };
+        }
+
+        function renderMonopolyView(data, p1Name, p2Name) {
+            const m = data.mono || createInitialMonopolyState();
+            const isMyTurn = m.turn === myRole;
+
+            document.getElementById('mono-p1-name').innerText = p1Name;
+            document.getElementById('mono-p2-name').innerText = p2Name;
+            document.getElementById('mono-p1-money').innerText = `${m.p1Money} Koin`;
+            document.getElementById('mono-p2-money').innerText = `${m.p2Money} Koin`;
+            document.getElementById('mono-log').innerText = m.log;
+
+            const board = document.getElementById('mono-board');
+            board.innerHTML = '';
+            MONO_TILES.forEach((tile, idx) => {
+                const [r, c] = GRID_COORDS[idx];
+                const owner = (m.owners || {})[tile.id];
+                const cell = document.createElement('div');
+                cell.style.gridRow = r; cell.style.gridColumn = c;
+                cell.className = `rounded-md bg-slate-900/95 border flex flex-col justify-between overflow-hidden p-0.5 text-center relative ${owner === 'p1' ? 'border-pink-500' : owner === 'p2' ? 'border-cyan-400' : 'border-white/10'}`;
+                cell.innerHTML = `
+                    <div class="h-1.5 w-full rounded-t-sm" style="background:${tile.color}"></div>
+                    <div class="text-[7px] font-bold text-white leading-tight line-clamp-2 px-0.5">${tile.name}</div>
+                    <div class="flex justify-center gap-0.5 text-[10px] leading-none">${m.p1Pos === idx ? '<span>🩷</span>' : ''}${m.p2Pos === idx ? '<span>🩵</span>' : ''}</div>
+                `;
+                board.appendChild(cell);
+            });
+
+            const center = document.createElement('div');
+            center.style.gridRow = '2 / 7'; center.style.gridColumn = '2 / 7';
+            center.className = 'rounded-2xl bg-slate-950/90 border border-pink-400/20 flex flex-col items-center justify-center p-2 text-center space-y-1';
+            center.innerHTML = `
+                <span class="text-[10px] font-bold text-pink-300">Giliran: ${m.turn === 'p1' ? p1Name : p2Name}</span>
+                <div class="flex items-center gap-2 text-xl"><span class="px-2 py-1 bg-white text-black font-bold rounded">${m.dice[0]}</span><span class="px-2 py-1 bg-white text-black font-bold rounded">${m.dice[1]}</span></div>
+            `;
+            board.appendChild(center);
+
+            const myPos = myRole === 'p1' ? m.p1Pos : m.p2Pos;
+            const currTile = MONO_TILES[myPos];
+            const tileOwner = (m.owners || {})[currTile.id];
+            const myMoney = myRole === 'p1' ? m.p1Money : m.p2Money;
+
+            const btnRoll = document.getElementById('btn-mono-roll');
+            const btnBuy = document.getElementById('btn-mono-buy');
+            const btnJail = document.getElementById('btn-mono-jail-pay');
+
+            btnRoll.disabled = !isMyTurn;
+            if (isMyTurn && ['prop', 'rail', 'util'].includes(currTile.type) && !tileOwner && myMoney >= currTile.price) {
+                btnBuy.classList.remove('hidden'); btnBuy.innerText = `Beli (${currTile.price})`;
+            } else { btnBuy.classList.add('hidden'); }
+
+            if (isMyTurn && (myRole === 'p1' ? m.p1Jail : m.p2Jail) > 0 && myMoney >= 50) {
+                btnJail.classList.remove('hidden');
+            } else { btnJail.classList.add('hidden'); }
+        }
+
+        window.rollMonopolyDice = async function() {
+            if (!currentRoomCode || !latestRoomData) return;
+            const m = JSON.parse(JSON.stringify(latestRoomData.mono));
+            if (m.turn !== myRole) return;
+            playPopSound(660);
+            const d1 = Math.floor(Math.random() * 6) + 1, d2 = Math.floor(Math.random() * 6) + 1;
+            m.dice = [d1, d2];
+            const isP1 = myRole === 'p1';
+            let pos = isP1 ? m.p1Pos : m.p2Pos, money = isP1 ? m.p1Money : m.p2Money;
+            pos = (pos + d1 + d2) % MONO_TILES.length;
+            if (isP1) { m.p1Pos = pos; m.p1Money = money; } else { m.p2Pos = pos; m.p2Money = money; }
+            m.turn = isP1 ? 'p2' : 'p1';
+            m.log = `${myName} melangkah ke ${MONO_TILES[pos].name}`;
+            await updateDoc(getRoomDocRef(currentRoomCode), { mono: m });
+        };
+
+        window.buyMonopolyTile = async function() {
+            if (!currentRoomCode || !latestRoomData) return;
+            const m = JSON.parse(JSON.stringify(latestRoomData.mono));
+            const isP1 = myRole === 'p1';
+            const pos = isP1 ? m.p1Pos : m.p2Pos;
+            const tile = MONO_TILES[pos];
+            if (isP1) m.p1Money -= tile.price; else m.p2Money -= tile.price;
+            m.owners = m.owners || {}; m.owners[tile.id] = myRole;
+            m.log = `${myName} membeli ${tile.name}!`;
+            await updateDoc(getRoomDocRef(currentRoomCode), { mono: m });
+        };
+
+        window.openMonopolyManageModal = function() { document.getElementById('modal-mono-manage').classList.remove('hidden'); };
+        window.closeMonopolyManageModal = function() { document.getElementById('modal-mono-manage').classList.add('hidden'); };
+        window.declareMonopolyBankrupt = async function() { closeMonopolyManageModal(); await updateDoc(getRoomDocRef(currentRoomCode), { mono: createInitialMonopolyState() }); };
+        window.buildMonopolyHouse = async function() {};
+        window.payMonopolyJail = async function() {};
+
+        // UNO ENGINE
+        const UNO_COLORS = ['red', 'blue', 'green', 'yellow'];
+        function buildUnoDeck() {
+            const deck = [];
+            UNO_COLORS.forEach(c => {
+                deck.push({ color: c, val: '0' });
+                for (let n = 1; n <= 9; n++) { deck.push({ color: c, val: String(n) }); deck.push({ color: c, val: String(n) }); }
+                ['Skip', 'Rev', '+2'].forEach(act => { deck.push({ color: c, val: act }); deck.push({ color: c, val: act }); });
+            });
+            for (let i = 0; i < 4; i++) { deck.push({ color: 'wild', val: 'Wild' }); deck.push({ color: 'wild', val: '+4' }); }
+            return deck.sort(() => Math.random() - 0.5);
+        }
+
+        function createInitialUnoState() {
+            const deck = buildUnoDeck();
+            const p1Hand = deck.splice(0, 7), p2Hand = deck.splice(0, 7);
+            let first = deck.pop();
+            while (first.color === 'wild') { deck.unshift(first); first = deck.pop(); }
+            return { deck, topCard: first, activeColor: first.color, turn: 'p1', p1Hand, p2Hand, p1SaidUno: false, p2SaidUno: false, waitingWild: false, winner: '' };
+        }
+
+        function renderUnoView(data, p1Name, p2Name) {
+            const u = data.uno || createInitialUnoState();
+            const myHand = myRole === 'p1' ? u.p1Hand : u.p2Hand;
+            const oppName = myRole === 'p1' ? p2Name : p1Name;
+            document.getElementById('uno-opp-name').innerText = oppName;
+            document.getElementById('uno-my-count').innerText = myHand.length;
+
+            const disc = document.getElementById('uno-discard-card');
+            disc.innerText = u.topCard.val;
+            
+            const handBox = document.getElementById('uno-my-hand');
+            handBox.innerHTML = '';
+            myHand.forEach((card, idx) => {
+                const btn = document.createElement('button');
+                btn.onclick = () => playUnoCard(idx);
+                btn.className = `shrink-0 w-16 h-24 rounded-2xl border-2 border-white flex flex-col items-center justify-center font-bold text-white bg-pink-600`;
+                btn.innerHTML = `<span>${card.val}</span>`;
+                handBox.appendChild(btn);
+            });
+        }
+
+        window.playUnoCard = async function(idx) {
+            if (!currentRoomCode || !latestRoomData) return;
+            const u = JSON.parse(JSON.stringify(latestRoomData.uno));
+            const handKey = myRole === 'p1' ? 'p1Hand' : 'p2Hand';
+            const card = u[handKey].splice(idx, 1)[0];
+            u.topCard = card;
+            u.turn = myRole === 'p1' ? 'p2' : 'p1';
+            await updateDoc(getRoomDocRef(currentRoomCode), { uno: u });
+        };
+        window.drawUnoCard = async function() {};
+        window.sayUnoCallout = async function() {};
+        window.catchUnoPenalty = async function() {};
+        window.chooseUnoWildColor = async function() {};
+
+        // QUIZ, TOD, WYR
+        const QUIZ_BANK = [
+            { q: "Kalau lagi ngambek, apa cara paling ampuh buat bikin luluh?", opts: ["Dibelikan makanan favorit", "Dipeluk & didengerin", "Diajak jalan-jalan keliling", "Dikasih waktu sendiri sebentar"] }
+        ];
+        const TOD_BANK = { truth: ["Sebutkan 1 hal pertama kali yang bikin kamu tertarik!"], dare: ["Tatap mata pasanganmu 15 detik!"] };
+        const WYR_BANK = [{ a: "Bisa baca pikiran", b: "Bisa teleportasi" }];
+
+        function renderQuizView(data, p1Name, p2Name) {
+            document.getElementById('view-quiz').classList.remove('hidden');
+            document.getElementById('quiz-question').innerText = QUIZ_BANK[0].q;
+            const opts = document.getElementById('quiz-options');
+            opts.innerHTML = QUIZ_BANK[0].opts.map(o => `<button onclick="submitQuizAnswer('${o}')" class="w-full p-2 glass-sub rounded text-xs text-white">${o}</button>`).join('');
+        }
+        window.submitQuizAnswer = async function(ans) {
+            await updateDoc(getRoomDocRef(currentRoomCode), { [myRole === 'p1' ? 'p1Choice' : 'p2Choice']: ans });
+        };
+
+        function renderTodView(data, p1Name, p2Name) { document.getElementById('view-tod').classList.remove('hidden'); }
+        window.pickTodType = async function(t) { await updateDoc(getRoomDocRef(currentRoomCode), { todType: t }); };
+        window.nextTodTurn = async function() {};
+
+        function renderWyrView(data, p1Name, p2Name) { document.getElementById('view-wyr').classList.remove('hidden'); }
+        window.submitWyrChoice = async function(c) { await updateDoc(getRoomDocRef(currentRoomCode), { [myRole === 'p1' ? 'p1Choice' : 'p2Choice']: c }); };
+        window.nextRound = async function() {};
+
+        window.sendReaction = async function(emoji, label) {
+            if (!currentRoomCode) return;
+            await updateDoc(getRoomDocRef(currentRoomCode), { reaction: { id: Date.now(), emoji, label, sender: myName } });
+        };
+
+        function spawnFloatingEmojis(emoji, senderName, label) {
+            showToast(`${senderName} mengirim ${label} ${emoji}`);
+            for (let i = 0; i < 4; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'floating-emoji text-3xl'; el.innerText = emoji;
+                    el.style.left = (20 + Math.random() * 60) + 'vw';
+                    document.body.appendChild(el);
+                    setTimeout(() => el.remove(), 2500);
+                }, i * 120);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initFirebase();
+            setupPicoControls();
+        });
+    </script>
+</body>
+</html>
