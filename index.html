@@ -302,7 +302,7 @@
             <div class="space-y-2">
                 <div class="flex items-center justify-between px-1">
                     <h3 class="font-display text-sm font-bold text-pink-200">Pilih Permainan Berdua</h3>
-                    <span class="text-[10px] text-pink-300/70">7 Mode Seru</span>
+                    <span class="text-[10px] text-pink-300/70">5 Mode Seru</span>
                 </div>
 
                 <button onclick="selectGameMode('ludo')" class="w-full glass-card hover:border-red-400/60 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
@@ -357,28 +357,18 @@
                     </div>
                 </button>
 
-                <div class="grid grid-cols-3 gap-2 pt-0.5">
-                    <button onclick="selectGameMode('quiz')" class="glass-card hover:border-pink-400/60 rounded-2xl p-2.5 text-center transition active:scale-95 flex flex-col items-center gap-1">
-                        <div class="w-8 h-8 rounded-xl bg-pink-500/25 text-pink-300 flex items-center justify-center text-sm">
-                            <i class="fas fa-brain"></i>
+                <button onclick="selectGameMode('tod')" class="w-full glass-card hover:border-fuchsia-400/60 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-fuchsia-500/25">
+                        <i class="fas fa-fire-alt"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                            <h4 class="font-display font-bold text-white text-sm truncate">Truth or Dare Pasangan</h4>
+                            <span class="text-[10px] font-bold bg-fuchsia-500/20 text-fuchsia-200 px-2 py-0.5 rounded-full shrink-0">100 T & D</span>
                         </div>
-                        <span class="font-display font-bold text-white text-[10px] leading-tight">Seberapa Kenal?</span>
-                    </button>
-
-                    <button onclick="selectGameMode('tod')" class="glass-card hover:border-fuchsia-400/60 rounded-2xl p-2.5 text-center transition active:scale-95 flex flex-col items-center gap-1">
-                        <div class="w-8 h-8 rounded-xl bg-fuchsia-500/25 text-fuchsia-300 flex items-center justify-center text-sm">
-                            <i class="fas fa-fire-alt"></i>
-                        </div>
-                        <span class="font-display font-bold text-white text-[10px] leading-tight">Truth or Dare</span>
-                    </button>
-
-                    <button onclick="selectGameMode('wyr')" class="glass-card hover:border-purple-400/60 rounded-2xl p-2.5 text-center transition active:scale-95 flex flex-col items-center gap-1">
-                        <div class="w-8 h-8 rounded-xl bg-purple-500/25 text-purple-300 flex items-center justify-center text-sm">
-                            <i class="fas fa-balance-scale-right"></i>
-                        </div>
-                        <span class="font-display font-bold text-white text-[10px] leading-tight">Tebak Hati</span>
-                    </button>
-                </div>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Acak giliran Truth atau Dare anti-ulang hingga seluruh nomor habis.</p>
+                    </div>
+                </button>
             </div>
         </main>
 
@@ -602,22 +592,7 @@
                 </div>
             </div>
 
-            <!-- 5. QUIZ -->
-            <div id="view-quiz" class="hidden space-y-3">
-                <div class="glass-card rounded-3xl p-5 text-center space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="inline-flex items-center gap-1.5 bg-pink-500/20 border border-pink-400/30 text-pink-200 text-[11px] font-bold px-3 py-1 rounded-full">
-                            <i class="fas fa-brain text-pink-400"></i> Seberapa Kenal?
-                        </span>
-                        <span id="quiz-score-badge" class="text-[11px] font-bold text-amber-300">Skor Cocok: 0</span>
-                    </div>
-                    <h3 id="quiz-question" class="font-display text-lg font-bold text-white leading-snug">Memuat pertanyaan...</h3>
-                    <div id="quiz-options" class="space-y-2 text-left"></div>
-                    <p id="quiz-status-text" class="text-[11px] text-pink-200/80"></p>
-                </div>
-            </div>
-
-            <!-- 6. TRUTH OR DARE (100 TRUTH & 100 DARE • ACAK 1X / GILIRAN • ANTI-ULANG) -->
+            <!-- 5. TRUTH OR DARE (100 TRUTH & 100 DARE • ACAK 1X / GILIRAN • ANTI-ULANG) -->
             <div id="view-tod" class="hidden space-y-3">
                 <div class="glass-card rounded-3xl p-5 text-center space-y-4">
                     <div class="flex items-center justify-between gap-2">
@@ -648,28 +623,6 @@
                             Selesai / Ganti Giliran
                         </button>
                     </div>
-                </div>
-            </div>
-
-            <!-- 7. TEBAK HATI -->
-            <div id="view-wyr" class="hidden space-y-3">
-                <div class="glass-card rounded-3xl p-5 text-center space-y-4">
-                    <div class="inline-flex items-center gap-1.5 bg-purple-500/25 border border-purple-400/30 text-purple-200 text-[11px] font-bold px-3 py-1 rounded-full">
-                        <i class="fas fa-heart text-pink-400"></i> Tebak Hati Berdua
-                    </div>
-                    <h3 id="wyr-prompt" class="font-display text-lg font-bold text-white">Kalian Lebih Pilih Mana?</h3>
-                    <div class="space-y-2.5">
-                        <button onclick="submitWyr('A')" class="w-full p-4 rounded-2xl glass-sub border-2 border-pink-400/30 hover:border-pink-400 text-left flex items-center gap-3 transition active:scale-[0.99]">
-                            <span class="w-8 h-8 rounded-xl bg-pink-500 text-white font-display font-bold flex items-center justify-center shrink-0">A</span>
-                            <span id="wyr-a" class="text-xs font-bold text-white">Pilihan A</span>
-                        </button>
-                        <button onclick="submitWyr('B')" class="w-full p-4 rounded-2xl glass-sub border-2 border-indigo-400/30 hover:border-indigo-400 text-left flex items-center gap-3 transition active:scale-[0.99]">
-                            <span class="w-8 h-8 rounded-xl bg-indigo-500 text-white font-display font-bold flex items-center justify-center shrink-0">B</span>
-                            <span id="wyr-b" class="text-xs font-bold text-white">Pilihan B</span>
-                        </button>
-                    </div>
-                    <p id="wyr-status-text" class="text-[11px] text-pink-200/80"></p>
-                    <button onclick="nextWyrRound()" class="px-4 py-2 rounded-xl bg-purple-500/30 border border-purple-400/40 text-purple-100 text-xs font-bold">Pertanyaan Berikutnya</button>
                 </div>
             </div>
         </main>
@@ -865,9 +818,7 @@
                 pico: createInitialPicoState(0),
                 mono: createInitialMonopolyState(),
                 uno: createInitialUnoState(),
-                quiz: createInitialQuizState(),
                 tod: createInitialTodState(),
-                wyr: createInitialWyrState(),
                 chats: [],
                 reaction: null,
                 updatedAt: Date.now()
@@ -1050,8 +1001,9 @@
 
             renderChats(data.chats || []);
 
-            const allViews = ['view-ludo', 'view-picopark', 'view-monopoly', 'view-uno', 'view-quiz', 'view-tod', 'view-wyr'];
-            if (data.mode === 'menu') {
+            const allViews = ['view-ludo', 'view-picopark', 'view-monopoly', 'view-uno', 'view-tod'];
+            const currentMode = (data.mode === 'quiz' || data.mode === 'wyr') ? 'menu' : data.mode;
+            if (currentMode === 'menu') {
                 stopPicoLoop();
                 document.getElementById('screen-menu').classList.remove('hidden');
                 document.getElementById('screen-game').classList.add('hidden');
@@ -1060,37 +1012,29 @@
                 document.getElementById('screen-game').classList.remove('hidden');
                 allViews.forEach(v => document.getElementById(v).classList.add('hidden'));
 
-                if (data.mode === 'ludo') {
+                if (currentMode === 'ludo') {
                     stopPicoLoop();
                     document.getElementById('game-mode-badge').innerText = '🎲 Ludo Klasik Asli';
                     document.getElementById('view-ludo').classList.remove('hidden');
                     renderLudoBoardView(data, p1Name, p2Name || 'Pasangan');
-                } else if (data.mode === 'picopark') {
+                } else if (currentMode === 'picopark') {
                     document.getElementById('game-mode-badge').innerText = '🐱 Misi PICO PARK';
                     document.getElementById('view-picopark').classList.remove('hidden');
                     syncPicoFromRemote(data, p1Name, p2Name || 'Pasangan');
                 } else {
                     stopPicoLoop();
-                    if (data.mode === 'monopoly') {
+                    if (currentMode === 'monopoly') {
                         document.getElementById('game-mode-badge').innerText = '🏙️ Monopoli Klasik';
                         document.getElementById('view-monopoly').classList.remove('hidden');
                         renderMonopolyView(data, p1Name, p2Name || 'Pasangan');
-                    } else if (data.mode === 'uno') {
+                    } else if (currentMode === 'uno') {
                         document.getElementById('game-mode-badge').innerText = '🃏 Kartu UNO';
                         document.getElementById('view-uno').classList.remove('hidden');
                         renderUnoView(data, p1Name, p2Name || 'Pasangan');
-                    } else if (data.mode === 'quiz') {
-                        document.getElementById('game-mode-badge').innerText = '🧠 Seberapa Kenal?';
-                        document.getElementById('view-quiz').classList.remove('hidden');
-                        renderQuizView(data, p1Name, p2Name || 'Pasangan');
-                    } else if (data.mode === 'tod') {
+                    } else if (currentMode === 'tod') {
                         document.getElementById('game-mode-badge').innerText = '🔥 Truth or Dare';
                         document.getElementById('view-tod').classList.remove('hidden');
                         renderTodView(data, p1Name, p2Name || 'Pasangan');
-                    } else if (data.mode === 'wyr') {
-                        document.getElementById('game-mode-badge').innerText = '💜 Tebak Hati';
-                        document.getElementById('view-wyr').classList.remove('hidden');
-                        renderWyrView(data, p1Name, p2Name || 'Pasangan');
                     }
                 }
             }
@@ -1098,6 +1042,7 @@
 
         window.selectGameMode = async function(mode) {
             if (!currentRoomCode) return;
+            if (mode === 'quiz' || mode === 'wyr') return;
             playPopSound(587.33);
             const cur = latestRoomData || {};
             const updates = {
@@ -1106,9 +1051,7 @@
                 pico: mode === 'picopark' ? createInitialPicoState(0) : (cur.pico || createInitialPicoState(0)),
                 mono: mode === 'monopoly' ? createInitialMonopolyState() : (cur.mono || createInitialMonopolyState()),
                 uno: mode === 'uno' ? createInitialUnoState() : (cur.uno || createInitialUnoState()),
-                quiz: mode === 'quiz' ? createInitialQuizState() : (cur.quiz || createInitialQuizState()),
                 tod: mode === 'tod' ? (cur.tod || createInitialTodState()) : (cur.tod || createInitialTodState()),
-                wyr: mode === 'wyr' ? createInitialWyrState() : (cur.wyr || createInitialWyrState()),
                 updatedAt: Date.now()
             };
             await updateDoc(getRoomDocRef(currentRoomCode), updates);
@@ -2360,75 +2303,9 @@
         };
 
         // ============================================================
-        // 5, 6, 7. QUIZ, TRUTH OR DARE (100 TRUTH & 100 DARE) & TEBAK HATI
+        // 5. TRUTH OR DARE (100 TRUTH & 100 DARE • ACAK 1X / GILIRAN • ANTI-ULANG)
         // ============================================================
-        const QUIZ_BANK = [
-            { q: 'Kencan paling berkesan buat kalian biasanya di mana?', opts: ['Kedai kopi / cafe santai', 'Jalan malam keliling kota', 'Nonton film berdua', 'Kulineran kaki lima'] },
-            { q: 'Siapa yang lebih sering memulai chat duluan?', opts: ['Pemain 1', 'Pemain 2', 'Sama-sama sering', 'Tergantung mood'] },
-            { q: 'Kalau lagi ngambek, cara paling ampuh bikin baikan?', opts: ['Dikasih makanan favorit', 'Diajak ngobrol pelan', 'Dipeluk / diperhatikan', 'Dikasih waktu sebentar'] }
-        ];
-
-        function createInitialQuizState() {
-            return { idx: 0, p1Ans: null, p2Ans: null, matched: 0 };
-        }
-
-        function renderQuizView(data, p1Name, p2Name) {
-            const qState = data.quiz || createInitialQuizState();
-            const item = QUIZ_BANK[qState.idx % QUIZ_BANK.length];
-            document.getElementById('quiz-score-badge').innerText = `Skor Cocok: ${qState.matched || 0}`;
-            document.getElementById('quiz-question').innerText = item.q;
-
-            const myAns = myRole === 'p1' ? qState.p1Ans : qState.p2Ans;
-            const oppAns = myRole === 'p1' ? qState.p2Ans : qState.p1Ans;
-            const oppName = myRole === 'p1' ? p2Name : p1Name;
-
-            const box = document.getElementById('quiz-options');
-            box.innerHTML = item.opts.map((opt, i) => {
-                const picked = myAns === i;
-                return `<button onclick="answerQuiz(${i})" class="w-full p-3 rounded-2xl glass-sub border-2 ${picked ? 'border-pink-400 bg-pink-500/20' : 'border-white/10'} text-xs font-bold text-white flex items-center justify-between transition active:scale-[0.99]">
-                    <span>${opt}</span>
-                    ${picked ? '<i class="fas fa-check-circle text-pink-400"></i>' : ''}
-                </button>`;
-            }).join('');
-
-            const statusEl = document.getElementById('quiz-status-text');
-            if (myAns !== null && oppAns !== null) {
-                statusEl.innerText = myAns === oppAns
-                    ? '🎉 Jawaban kalian COCOK! Lanjut soal berikutnya...'
-                    : `Jawaban berbeda (${oppName} memilih opsi ${oppAns + 1}). Lanjut soal berikutnya...`;
-            } else if (myAns !== null) {
-                statusEl.innerText = `Menunggu jawaban ${oppName}...`;
-            } else {
-                statusEl.innerText = 'Pilih jawabanmu untuk melihat kecocokan.';
-            }
-        }
-
-        window.answerQuiz = async function(optIdx) {
-            if (!currentRoomCode || !latestRoomData) return;
-            const qState = JSON.parse(JSON.stringify(latestRoomData.quiz || createInitialQuizState()));
-            if (myRole === 'p1') qState.p1Ans = optIdx; else qState.p2Ans = optIdx;
-            playPopSound(650);
-
-            if (qState.p1Ans !== null && qState.p2Ans !== null) {
-                if (qState.p1Ans === qState.p2Ans) qState.matched = (qState.matched || 0) + 1;
-                await updateDoc(getRoomDocRef(currentRoomCode), { quiz: qState });
-                setTimeout(async () => {
-                    if (!currentRoomCode) return;
-                    const nextQ = {
-                        idx: (qState.idx + 1) % QUIZ_BANK.length,
-                        p1Ans: null,
-                        p2Ans: null,
-                        matched: qState.matched
-                    };
-                    await updateDoc(getRoomDocRef(currentRoomCode), { quiz: nextQ });
-                }, 1400);
-            } else {
-                await updateDoc(getRoomDocRef(currentRoomCode), { quiz: qState });
-            }
-        };
-
         const TOD_TRUTH = [
-            // Babak 1 – Perasaan dan cinta (1-20)
             '[Babak 1: Perasaan & Cinta] Apa hal pertama yang membuatmu tertarik kepadaku?',
             '[Babak 1: Perasaan & Cinta] Kapan kamu mulai benar-benar mencintaiku?',
             '[Babak 1: Perasaan & Cinta] Apa hal yang paling kamu sukai dari diriku?',
@@ -2449,7 +2326,6 @@
             '[Babak 1: Perasaan & Cinta] Apakah kamu merasa aku sudah memahami dirimu?',
             '[Babak 1: Perasaan & Cinta] Apa satu hal yang ingin kamu dengar dariku?',
             '[Babak 1: Perasaan & Cinta] Seberapa besar arti hubungan ini bagimu?',
-            // Babak 2 – Rahasia dan kejujuran (21-40)
             '[Babak 2: Rahasia & Kejujuran] Apa kebohongan kecil yang pernah kamu lakukan kepadaku?',
             '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu menyembunyikan rasa cemburu?',
             '[Babak 2: Rahasia & Kejujuran] Apa rahasia yang belum pernah kamu ceritakan?',
@@ -2470,7 +2346,6 @@
             '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu menyimpan masalah sendiri agar aku tidak khawatir?',
             '[Babak 2: Rahasia & Kejujuran] Apa hal yang paling membuatmu malu?',
             '[Babak 2: Rahasia & Kejujuran] Apa kejujuran yang menurutmu penting untuk aku ketahui?',
-            // Babak 3 – Tentang pasangan (41-60)
             '[Babak 3: Tentang Pasangan] Apa kebiasaan kecilku yang paling kamu ingat?',
             '[Babak 3: Tentang Pasangan] Menurutmu, siapa yang lebih manja?',
             '[Babak 3: Tentang Pasangan] Siapa yang lebih mudah ngambek?',
@@ -2491,7 +2366,6 @@
             '[Babak 3: Tentang Pasangan] Kapan biasanya aku paling sensitif?',
             '[Babak 3: Tentang Pasangan] Apa yang biasanya aku lakukan ketika sedang bosan?',
             '[Babak 3: Tentang Pasangan] Apa hal kecil yang sering aku lupakan?',
-            // Babak 4 – Kenangan dan hubungan (61-80)
             '[Babak 4: Kenangan & Hubungan] Apa kenangan pertama kita yang paling berkesan?',
             '[Babak 4: Kenangan & Hubungan] Apa momen yang ingin kamu ulangi?',
             '[Babak 4: Kenangan & Hubungan] Apa hadiah dariku yang paling kamu sukai?',
@@ -2512,7 +2386,6 @@
             '[Babak 4: Kenangan & Hubungan] Apa tempat yang ingin kamu kunjungi lagi bersamaku?',
             '[Babak 4: Kenangan & Hubungan] Apa kenangan yang membuatmu tersenyum ketika mengingatnya?',
             '[Babak 4: Kenangan & Hubungan] Jika bisa mengulang satu hari bersama, hari apa yang kamu pilih?',
-            // Babak 5 – Masa depan dan keseriusan (81-100)
             '[Babak 5: Masa Depan & Keseriusan] Apakah kamu pernah membayangkan menikah denganku?',
             '[Babak 5: Masa Depan & Keseriusan] Seperti apa rumah impian kita?',
             '[Babak 5: Masa Depan & Keseriusan] Berapa anak yang ingin kamu miliki?',
@@ -2536,7 +2409,6 @@
         ];
 
         const TOD_DARE = [
-            // Babak 1 – Romantis dan bikin salting (1-20)
             '[Babak 1: Romantis & Bikin Salting] Tatap mataku selama 1 menit tanpa tertawa.',
             '[Babak 1: Romantis & Bikin Salting] Ucapkan 10 alasan mengapa kamu mencintaiku.',
             '[Babak 1: Romantis & Bikin Salting] Peluk aku selama 1 menit.',
@@ -2557,7 +2429,6 @@
             '[Babak 1: Romantis & Bikin Salting] Sebutkan 5 hal yang membuatku istimewa.',
             '[Babak 1: Romantis & Bikin Salting] Buat kalimat romantis tanpa menggunakan kata cinta.',
             '[Babak 1: Romantis & Bikin Salting] Katakan harapan terbesarmu untuk hubungan kita.',
-            // Babak 2 – Lucu dan menghibur (21-40)
             '[Babak 2: Lucu & Menghibur] Tirukan gaya aku ketika sedang marah.',
             '[Babak 2: Lucu & Menghibur] Joget selama 30 detik tanpa musik.',
             '[Babak 2: Lucu & Menghibur] Bicara menggunakan suara bayi selama 2 menit.',
@@ -2578,7 +2449,6 @@
             '[Babak 2: Lucu & Menghibur] Berikan pidato cinta selama 1 menit.',
             '[Babak 2: Lucu & Menghibur] Nyanyikan lagu anak-anak dengan gaya penyanyi profesional.',
             '[Babak 2: Lucu & Menghibur] Buat tarian khusus untukku.',
-            // Babak 3 – Menguji seberapa kenal (41-60)
             '[Babak 3: Menguji Seberapa Kenal] Sebutkan 10 hal yang kamu ketahui tentang aku.',
             '[Babak 3: Menguji Seberapa Kenal] Sebutkan 5 makanan favoritku.',
             '[Babak 3: Menguji Seberapa Kenal] Sebutkan 3 kebiasaan burukku.',
@@ -2599,7 +2469,6 @@
             '[Babak 3: Menguji Seberapa Kenal] Sebutkan 5 sifat yang aku miliki.',
             '[Babak 3: Menguji Seberapa Kenal] Tebak apa yang paling aku inginkan saat ini.',
             '[Babak 3: Menguji Seberapa Kenal] Sebutkan 3 hal yang membuatku merasa nyaman.',
-            // Babak 4 – Tantangan keberanian (61-80)
             '[Babak 4: Tantangan Keberanian] Kirim voice note romantis selama 30 detik.',
             '[Babak 4: Tantangan Keberanian] Buat surat cinta dalam waktu 2 menit.',
             '[Babak 4: Tantangan Keberanian] Tatap mataku dan katakan bahwa kamu bangga memiliki aku.',
@@ -2620,7 +2489,6 @@
             '[Babak 4: Tantangan Keberanian] Buat janji sederhana yang bisa kamu tepati besok.',
             '[Babak 4: Tantangan Keberanian] Ceritakan hal yang paling kamu syukuri dari hubungan kita.',
             '[Babak 4: Tantangan Keberanian] Tunjukkan foto kita yang paling kamu sukai.',
-            // Babak 5 – Tantangan terdalam (81-100)
             '[Babak 5: Tantangan Terdalam] Katakan satu permintaan maaf yang tulus kepadaku.',
             '[Babak 5: Tantangan Terdalam] Buat satu janji yang ingin kamu tepati.',
             '[Babak 5: Tantangan Terdalam] Ceritakan rencana masa depan kita selama 1 menit.',
@@ -2796,50 +2664,6 @@
                 }
             });
             showToast('Giliran berganti!');
-        };
-
-        const WYR_BANK = [
-            { a: 'Liburan ke pantai berdua', b: 'Staycation santai di villa / hotel' },
-            { a: 'Sarapan bareng tiap pagi', b: 'Jalan malam sebelum tidur' },
-            { a: 'Kejutan kecil tanpa alasan', b: 'Rencana liburan matang jauh hari' }
-        ];
-
-        function createInitialWyrState() {
-            return { idx: 0, p1Pick: null, p2Pick: null };
-        }
-
-        function renderWyrView(data, p1Name, p2Name) {
-            const w = data.wyr || createInitialWyrState();
-            const item = WYR_BANK[w.idx % WYR_BANK.length];
-            document.getElementById('wyr-a').innerText = item.a;
-            document.getElementById('wyr-b').innerText = item.b;
-
-            const statusEl = document.getElementById('wyr-status-text');
-            if (w.p1Pick && w.p2Pick) {
-                statusEl.innerText = w.p1Pick === w.p2Pick
-                    ? `💖 Sama-sama pilih ${w.p1Pick}! Hati kalian searah.`
-                    : `Pilihan berbeda: ${p1Name} pilih ${w.p1Pick}, ${p2Name} pilih ${w.p2Pick}.`;
-            } else if ((myRole === 'p1' && w.p1Pick) || (myRole === 'p2' && w.p2Pick)) {
-                statusEl.innerText = 'Pilihanmu sudah terkunci. Menunggu pasangan...';
-            } else {
-                statusEl.innerText = 'Pilih A atau B.';
-            }
-        }
-
-        window.submitWyr = async function(opt) {
-            if (!currentRoomCode || !latestRoomData) return;
-            const w = JSON.parse(JSON.stringify(latestRoomData.wyr || createInitialWyrState()));
-            if (myRole === 'p1') w.p1Pick = opt; else w.p2Pick = opt;
-            playPopSound(680);
-            await updateDoc(getRoomDocRef(currentRoomCode), { wyr: w });
-        };
-
-        window.nextWyrRound = async function() {
-            if (!currentRoomCode || !latestRoomData) return;
-            const curIdx = latestRoomData.wyr?.idx || 0;
-            await updateDoc(getRoomDocRef(currentRoomCode), {
-                wyr: { idx: (curIdx + 1) % WYR_BANK.length, p1Pick: null, p2Pick: null }
-            });
         };
 
         // ============================================================
