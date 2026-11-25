@@ -617,35 +617,36 @@
                 </div>
             </div>
 
-            <!-- 6. TRUTH OR DARE -->
+            <!-- 6. TRUTH OR DARE (100 TRUTH & 100 DARE • ACAK 1X / GILIRAN • ANTI-ULANG) -->
             <div id="view-tod" class="hidden space-y-3">
                 <div class="glass-card rounded-3xl p-5 text-center space-y-4">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between gap-2">
                         <span class="inline-flex items-center gap-1.5 bg-fuchsia-500/20 border border-fuchsia-400/30 text-fuchsia-200 text-[11px] font-bold px-3 py-1 rounded-full">
-                            <i class="fas fa-fire-alt text-fuchsia-400"></i> Truth or Dare Pasangan
+                            <i class="fas fa-random text-fuchsia-400"></i> Acak Truth or Dare
                         </span>
-                        <span class="text-[10px] font-bold text-pink-300/80">50 Truth • 50 Dare</span>
+                        <span id="tod-rem-badge" class="text-[10px] font-bold text-pink-200/90 bg-slate-950/60 border border-pink-400/20 px-2.5 py-1 rounded-full">Sisa T:100 • D:100</span>
                     </div>
                     <div class="p-3 rounded-2xl bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white shadow">
                         <p class="text-[11px] opacity-90">Giliran Saat Ini:</p>
                         <p id="tod-turn-name" class="font-display text-lg font-bold">Nama Pemain</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <button onclick="pickTod('truth')" class="py-4 px-3 rounded-2xl bg-sky-500/15 border-2 border-sky-400/40 text-sky-200 flex flex-col items-center gap-1.5 active:scale-95 transition">
-                            <i class="fas fa-comment-dots text-2xl text-sky-400"></i>
-                            <span class="font-display font-bold text-base">❤️ TRUTH</span>
-                            <span class="text-[10px] text-sky-300/75">Jujur (50 Soal)</span>
+
+                    <div class="pt-1">
+                        <button id="btn-tod-roll" onclick="rollTodRandom()" class="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-amber-400 via-pink-500 to-fuchsia-600 text-slate-950 font-display font-extrabold text-sm shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+                            <i class="fas fa-random text-base"></i>
+                            <span id="btn-tod-roll-label">ACAK TRUTH OR DARE</span>
                         </button>
-                        <button onclick="pickTod('dare')" class="py-4 px-3 rounded-2xl bg-rose-500/15 border-2 border-rose-400/40 text-rose-200 flex flex-col items-center gap-1.5 active:scale-95 transition">
-                            <i class="fas fa-bolt text-2xl text-rose-400"></i>
-                            <span class="font-display font-bold text-base">🔥 DARE</span>
-                            <span class="text-[10px] text-rose-300/75">Tantangan (50 Aksi)</span>
-                        </button>
+                        <p id="tod-lock-hint" class="text-[11px] text-pink-200/75 mt-2">
+                            Tekan Acak untuk mendapatkan Truth atau Dare secara otomatis.
+                        </p>
                     </div>
+
                     <div id="tod-result-box" class="hidden p-4 rounded-2xl glass-sub border border-pink-400/30 text-center space-y-2.5">
                         <span id="tod-type-badge" class="inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-pink-500/25 text-pink-200">TRUTH #1</span>
                         <p id="tod-card-text" class="font-display font-bold text-white text-sm leading-relaxed"></p>
-                        <button onclick="nextTodTurn()" class="px-4 py-2 rounded-xl bg-pink-500 text-white text-xs font-bold active:scale-95 transition">Selesai / Ganti Giliran</button>
+                        <button id="btn-tod-next" onclick="nextTodTurn()" class="px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold active:scale-95 transition">
+                            Selesai / Ganti Giliran
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1106,7 +1107,7 @@
                 mono: mode === 'monopoly' ? createInitialMonopolyState() : (cur.mono || createInitialMonopolyState()),
                 uno: mode === 'uno' ? createInitialUnoState() : (cur.uno || createInitialUnoState()),
                 quiz: mode === 'quiz' ? createInitialQuizState() : (cur.quiz || createInitialQuizState()),
-                tod: mode === 'tod' ? createInitialTodState() : (cur.tod || createInitialTodState()),
+                tod: mode === 'tod' ? (cur.tod || createInitialTodState()) : (cur.tod || createInitialTodState()),
                 wyr: mode === 'wyr' ? createInitialWyrState() : (cur.wyr || createInitialWyrState()),
                 updatedAt: Date.now()
             };
@@ -2359,7 +2360,7 @@
         };
 
         // ============================================================
-        // 5, 6, 7. QUIZ, TRUTH OR DARE (50 TRUTH & 50 DARE) & TEBAK HATI
+        // 5, 6, 7. QUIZ, TRUTH OR DARE (100 TRUTH & 100 DARE) & TEBAK HATI
         // ============================================================
         const QUIZ_BANK = [
             { q: 'Kencan paling berkesan buat kalian biasanya di mana?', opts: ['Kedai kopi / cafe santai', 'Jalan malam keliling kota', 'Nonton film berdua', 'Kulineran kaki lima'] },
@@ -2427,151 +2428,374 @@
         };
 
         const TOD_TRUTH = [
-            'Apa hal pertama yang membuat kamu jatuh cinta kepadaku?',
-            'Pernahkah kamu menyembunyikan sesuatu dariku?',
-            'Apa sifatku yang paling membuatmu nyaman?',
-            'Apa sifatku yang paling membuatmu kesal?',
-            'Pernahkah kamu cemburu tetapi tidak mengakuinya?',
-            'Apa ketakutan terbesarmu dalam hubungan kita?',
-            'Apakah kamu pernah meragukan hubungan kita?',
-            'Apa hal yang belum pernah berani kamu katakan kepadaku?',
-            'Pernahkah kamu menangis karena sikapku?',
-            'Apa momen paling membahagiakan selama bersama aku?',
-            'Apakah kamu pernah membandingkanku dengan mantan?',
-            'Apa hal yang paling kamu rindukan ketika kita berjauhan?',
-            'Siapa yang lebih romantis di antara kita?',
-            'Apa kebohongan kecil yang pernah kamu lakukan kepadaku?',
-            'Apa hal yang membuatmu merasa tidak dicintai?',
-            'Pernahkah kamu berpura-pura baik-baik saja padahal sedang kecewa kepadaku?',
-            'Apa bagian dari diriku yang paling kamu sukai?',
-            'Apa kebiasaan anehku yang paling kamu ingat?',
-            'Kalau kita bertengkar, siapa yang biasanya lebih egois?',
-            'Apa hal yang paling kamu takutkan jika kehilangan aku?',
-            'Pernahkah kamu merasa bosan denganku?',
-            'Apa kenangan kita yang tidak akan pernah kamu lupakan?',
-            'Apa hadiah dariku yang paling berkesan?',
-            'Apa hal paling romantis yang ingin kamu lakukan bersamaku?',
-            'Apakah kamu pernah diam-diam memeriksa media sosial seseorang?',
-            'Apa yang membuatmu jatuh cinta lagi kepadaku setiap hari?',
-            'Pernahkah kamu merasa kurang diperhatikan olehku?',
-            'Apa hal yang paling membuatmu insecure dalam hubungan?',
-            'Apa yang ingin kamu ubah dari hubungan kita?',
-            'Apakah kamu percaya aku adalah orang yang tepat untuk masa depanmu?',
-            'Apa hal paling memalukan yang pernah kamu lakukan demi aku?',
-            'Pernahkah kamu ingin marah tetapi memilih diam?',
-            'Apa yang paling kamu sukai ketika kita sedang berdua?',
-            'Kalau aku tiba-tiba menghilang sehari, apa yang akan kamu lakukan?',
-            'Apa satu hal yang tidak bisa kamu toleransi dalam hubungan?',
-            'Pernahkah kamu merasa takut untuk jujur kepadaku?',
-            'Apa impian terbesarmu yang ingin diwujudkan bersama aku?',
-            'Siapa yang lebih sering meminta maaf setelah bertengkar?',
-            'Apa hal yang membuatmu yakin untuk mempertahankan hubungan ini?',
-            'Apakah kamu pernah berpikir untuk mengakhiri hubungan kita?',
-            'Apa panggilan sayang favoritmu dariku?',
-            'Apa hal kecil dariku yang selalu membuatmu tersenyum?',
-            'Apa rahasia masa lalumu yang belum pernah kamu ceritakan?',
-            'Kalau bisa mengulang satu momen bersama aku, momen apa yang kamu pilih?',
-            'Apa yang paling kamu harapkan dariku sebagai pasangan?',
-            'Apakah kamu sudah membayangkan pernikahan bersama aku?',
-            'Apa yang akan kamu lakukan jika keluarga tidak menyetujui hubungan kita?',
-            'Menurutmu, apa kekurangan terbesar kita sebagai pasangan?',
-            'Seberapa besar rasa cintamu kepadaku dari skala 1–100?',
-            'Jika harus memilih sekali lagi, apakah kamu tetap akan memilih aku? Mengapa?'
+            // Babak 1 – Perasaan dan cinta (1-20)
+            '[Babak 1: Perasaan & Cinta] Apa hal pertama yang membuatmu tertarik kepadaku?',
+            '[Babak 1: Perasaan & Cinta] Kapan kamu mulai benar-benar mencintaiku?',
+            '[Babak 1: Perasaan & Cinta] Apa hal yang paling kamu sukai dari diriku?',
+            '[Babak 1: Perasaan & Cinta] Apa hal yang paling membuatmu nyaman denganku?',
+            '[Babak 1: Perasaan & Cinta] Pernahkah kamu takut kehilangan aku?',
+            '[Babak 1: Perasaan & Cinta] Apa yang membuatmu merasa dicintai?',
+            '[Babak 1: Perasaan & Cinta] Apa hal sederhana dariku yang membuatmu bahagia?',
+            '[Babak 1: Perasaan & Cinta] Kapan terakhir kali kamu merindukanku?',
+            '[Babak 1: Perasaan & Cinta] Apa yang paling kamu harapkan dariku?',
+            '[Babak 1: Perasaan & Cinta] Apakah kamu merasa menjadi dirimu sendiri ketika bersamaku?',
+            '[Babak 1: Perasaan & Cinta] Apa hal yang membuatmu jatuh cinta lagi kepadaku?',
+            '[Babak 1: Perasaan & Cinta] Apakah kamu pernah merasa kurang diperhatikan?',
+            '[Babak 1: Perasaan & Cinta] Apa yang paling kamu rindukan ketika kita berjauhan?',
+            '[Babak 1: Perasaan & Cinta] Apa arti kehadiranku dalam hidupmu?',
+            '[Babak 1: Perasaan & Cinta] Apa yang membuatmu yakin memilih aku?',
+            '[Babak 1: Perasaan & Cinta] Pernahkah kamu menangis karena memikirkan hubungan kita?',
+            '[Babak 1: Perasaan & Cinta] Apa hal yang paling membuatmu bangga memiliki aku?',
+            '[Babak 1: Perasaan & Cinta] Apakah kamu merasa aku sudah memahami dirimu?',
+            '[Babak 1: Perasaan & Cinta] Apa satu hal yang ingin kamu dengar dariku?',
+            '[Babak 1: Perasaan & Cinta] Seberapa besar arti hubungan ini bagimu?',
+            // Babak 2 – Rahasia dan kejujuran (21-40)
+            '[Babak 2: Rahasia & Kejujuran] Apa kebohongan kecil yang pernah kamu lakukan kepadaku?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu menyembunyikan rasa cemburu?',
+            '[Babak 2: Rahasia & Kejujuran] Apa rahasia yang belum pernah kamu ceritakan?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu merasa bosan dalam hubungan ini?',
+            '[Babak 2: Rahasia & Kejujuran] Apa hal yang paling membuatmu insecure?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu membandingkanku dengan orang lain?',
+            '[Babak 2: Rahasia & Kejujuran] Apa kesalahan terbesar yang pernah kamu lakukan kepadaku?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu berpura-pura bahagia di depanku?',
+            '[Babak 2: Rahasia & Kejujuran] Apa hal yang membuatmu sulit terbuka kepadaku?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu kecewa tetapi memilih diam?',
+            '[Babak 2: Rahasia & Kejujuran] Apa kebiasaan burukmu yang belum aku ketahui?',
+            '[Babak 2: Rahasia & Kejujuran] Apakah kamu pernah meragukan keseriusanku?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu ingin marah tetapi menahannya?',
+            '[Babak 2: Rahasia & Kejujuran] Apa hal yang paling sulit kamu maafkan?',
+            '[Babak 2: Rahasia & Kejujuran] Apa satu hal tentang dirimu yang ingin kamu ubah?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu merasa tidak dihargai?',
+            '[Babak 2: Rahasia & Kejujuran] Apa ketakutan yang belum pernah kamu ceritakan?',
+            '[Babak 2: Rahasia & Kejujuran] Pernahkah kamu menyimpan masalah sendiri agar aku tidak khawatir?',
+            '[Babak 2: Rahasia & Kejujuran] Apa hal yang paling membuatmu malu?',
+            '[Babak 2: Rahasia & Kejujuran] Apa kejujuran yang menurutmu penting untuk aku ketahui?',
+            // Babak 3 – Tentang pasangan (41-60)
+            '[Babak 3: Tentang Pasangan] Apa kebiasaan kecilku yang paling kamu ingat?',
+            '[Babak 3: Tentang Pasangan] Menurutmu, siapa yang lebih manja?',
+            '[Babak 3: Tentang Pasangan] Siapa yang lebih mudah ngambek?',
+            '[Babak 3: Tentang Pasangan] Siapa yang lebih romantis?',
+            '[Babak 3: Tentang Pasangan] Siapa yang lebih sering meminta maaf?',
+            '[Babak 3: Tentang Pasangan] Apa ekspresi wajahku yang paling kamu sukai?',
+            '[Babak 3: Tentang Pasangan] Apa hal paling lucu yang pernah aku lakukan?',
+            '[Babak 3: Tentang Pasangan] Apa makanan favoritku?',
+            '[Babak 3: Tentang Pasangan] Apa yang biasanya membuatku marah?',
+            '[Babak 3: Tentang Pasangan] Kalau aku sedih, apa yang sebenarnya aku butuhkan?',
+            '[Babak 3: Tentang Pasangan] Apa warna favoritku?',
+            '[Babak 3: Tentang Pasangan] Apa hal yang paling sering aku keluhkan?',
+            '[Babak 3: Tentang Pasangan] Apa kebiasaan unikku ketika sedang bahagia?',
+            '[Babak 3: Tentang Pasangan] Apa yang paling aku takutkan?',
+            '[Babak 3: Tentang Pasangan] Menurutmu, apa sifat terbaikku?',
+            '[Babak 3: Tentang Pasangan] Apa sifatku yang paling sulit kamu hadapi?',
+            '[Babak 3: Tentang Pasangan] Apa hal yang membuatku mudah tersenyum?',
+            '[Babak 3: Tentang Pasangan] Kapan biasanya aku paling sensitif?',
+            '[Babak 3: Tentang Pasangan] Apa yang biasanya aku lakukan ketika sedang bosan?',
+            '[Babak 3: Tentang Pasangan] Apa hal kecil yang sering aku lupakan?',
+            // Babak 4 – Kenangan dan hubungan (61-80)
+            '[Babak 4: Kenangan & Hubungan] Apa kenangan pertama kita yang paling berkesan?',
+            '[Babak 4: Kenangan & Hubungan] Apa momen yang ingin kamu ulangi?',
+            '[Babak 4: Kenangan & Hubungan] Apa hadiah dariku yang paling kamu sukai?',
+            '[Babak 4: Kenangan & Hubungan] Apa kencan terbaik yang pernah kita jalani?',
+            '[Babak 4: Kenangan & Hubungan] Kapan kamu merasa paling bahagia bersamaku?',
+            '[Babak 4: Kenangan & Hubungan] Apa hal paling romantis yang pernah aku lakukan?',
+            '[Babak 4: Kenangan & Hubungan] Apa tempat pertama kali kita bertemu?',
+            '[Babak 4: Kenangan & Hubungan] Apa lagu yang mengingatkanmu kepadaku?',
+            '[Babak 4: Kenangan & Hubungan] Apa percakapan kita yang paling kamu ingat?',
+            '[Babak 4: Kenangan & Hubungan] Apa kejadian paling lucu selama hubungan kita?',
+            '[Babak 4: Kenangan & Hubungan] Apa momen ketika kamu merasa sangat diperhatikan?',
+            '[Babak 4: Kenangan & Hubungan] Apa pengalaman pertama bersamaku yang tidak terlupakan?',
+            '[Babak 4: Kenangan & Hubungan] Apa foto kita yang paling kamu sukai?',
+            '[Babak 4: Kenangan & Hubungan] Apa hal paling sederhana yang ingin kamu ulangi?',
+            '[Babak 4: Kenangan & Hubungan] Pernahkah kamu merasa sangat beruntung bertemu denganku?',
+            '[Babak 4: Kenangan & Hubungan] Apa kejutan dariku yang paling berkesan?',
+            '[Babak 4: Kenangan & Hubungan] Apa momen yang membuatmu semakin yakin kepadaku?',
+            '[Babak 4: Kenangan & Hubungan] Apa tempat yang ingin kamu kunjungi lagi bersamaku?',
+            '[Babak 4: Kenangan & Hubungan] Apa kenangan yang membuatmu tersenyum ketika mengingatnya?',
+            '[Babak 4: Kenangan & Hubungan] Jika bisa mengulang satu hari bersama, hari apa yang kamu pilih?',
+            // Babak 5 – Masa depan dan keseriusan (81-100)
+            '[Babak 5: Masa Depan & Keseriusan] Apakah kamu pernah membayangkan menikah denganku?',
+            '[Babak 5: Masa Depan & Keseriusan] Seperti apa rumah impian kita?',
+            '[Babak 5: Masa Depan & Keseriusan] Berapa anak yang ingin kamu miliki?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa tujuan terbesar yang ingin kita capai bersama?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa ketakutan terbesarmu tentang masa depan hubungan kita?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa yang akan kamu lakukan jika kita mengalami masalah besar?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa arti kesetiaan menurutmu?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa janji yang ingin kamu berikan kepadaku?',
+            '[Babak 5: Masa Depan & Keseriusan] Apakah kamu merasa sudah menjadi pasangan yang baik?',
+            '[Babak 5: Masa Depan & Keseriusan] Apakah kamu tetap memilih aku jika diberi kesempatan mengulang semuanya?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa yang ingin kamu capai sebelum menikah?',
+            '[Babak 5: Masa Depan & Keseriusan] Bagaimana kamu membayangkan kehidupan kita lima tahun lagi?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa yang akan kamu lakukan jika hubungan kita mendapat ujian berat?',
+            '[Babak 5: Masa Depan & Keseriusan] Apakah kamu ingin kita saling mendukung dalam karier?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa hal yang paling penting dalam membangun keluarga?',
+            '[Babak 5: Masa Depan & Keseriusan] Bagaimana cara kamu menjaga hubungan agar tidak membosankan?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa kebiasaan yang ingin kita bangun bersama?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa yang ingin kamu ubah agar hubungan kita semakin sehat?',
+            '[Babak 5: Masa Depan & Keseriusan] Apa satu harapan terbesarmu untuk hubungan ini?',
+            '[Babak 5: Masa Depan & Keseriusan] Jika suatu hari kita sudah tua, kenangan apa yang ingin kamu ceritakan tentang kita?'
         ];
 
         const TOD_DARE = [
-            'Tatap mataku selama 1 menit tanpa tertawa.',
-            'Sebutkan 10 alasan kamu mencintaiku.',
-            'Nyanyikan lagu romantis untukku.',
-            'Peluk aku selama 1 menit.',
-            'Buat gombalan paling romantis dalam 30 detik.',
-            'Tirukan ekspresi wajahku ketika sedang marah.',
-            'Ucapkan "Aku sayang kamu" dengan 5 gaya berbeda.',
-            'Ceritakan pertama kali kamu merasa jatuh cinta kepadaku.',
-            'Berikan pujian tentang penampilanku sebanyak 5 kali.',
-            'Pegang tanganku sambil mengatakan sesuatu yang romantis.',
-            'Kirim voice note berisi ungkapan cinta.',
-            'Buat puisi cinta spontan untukku.',
-            'Sebutkan 5 hal yang paling kamu ingat tentang aku.',
-            'Tirukan cara aku berbicara ketika sedang manja.',
-            'Berikan kecupan di kening jika sama-sama nyaman.',
-            'Buat janji romantis yang akan kamu tepati.',
-            'Biarkan aku memilih foto profilmu selama 1 hari.',
-            'Joget mengikuti lagu yang aku pilih selama 30 detik.',
-            'Ceritakan bagaimana kamu akan melamarku.',
-            'Ucapkan 3 hal yang ingin kamu lakukan bersamaku.',
-            'Panggil aku dengan nama paling romantis selama 10 menit.',
-            'Berikan pijatan ringan di bahuku selama 1 menit.',
-            'Buat caption romantis tentang hubungan kita.',
-            'Tatap mataku dan jangan mengalihkan pandangan selama 30 detik.',
-            'Ceritakan 1 kenangan yang membuatmu hampir menangis karena bahagia.',
-            'Biarkan aku memilih satu pertanyaan tambahan yang harus kamu jawab.',
-            'Tirukan gaya saat pertama kali kamu mendekatiku.',
-            'Berikan pelukan dari belakang jika sama-sama nyaman.',
-            'Sebutkan 5 kelebihan yang aku miliki.',
-            'Buat rayuan paling absurd sampai aku tertawa.',
-            'Ceritakan 3 hal yang ingin kamu perbaiki dari dirimu.',
-            'Ucapkan kalimat romantis tanpa menggunakan kata cinta atau sayang.',
-            'Buat video singkat menyatakan perasaanmu kepadaku.',
-            'Biarkan aku memilih lagu yang harus kamu nyanyikan.',
-            'Ceritakan rencana kencan impianmu bersama aku.',
-            'Berikan aku nama panggilan baru yang unik.',
-            'Tunjukkan ekspresi wajahmu ketika sedang cemburu.',
-            'Katakan sesuatu yang selama ini malu kamu ungkapkan.',
-            'Pegang kedua tanganku dan ucapkan terima kasih atas kehadiranku.',
-            'Buat surat cinta singkat dalam waktu 2 menit.',
-            'Ceritakan 5 alasan mengapa hubungan kita harus dipertahankan.',
-            'Tirukan gaya kita ketika sedang bertengkar.',
-            'Berikan aku pujian tanpa berhenti selama 30 detik.',
-            'Buat simulasi adegan saat kita pertama kali bertemu.',
-            'Sebutkan 3 hal yang ingin kamu capai bersamaku dalam 5 tahun.',
-            'Tunjukkan foto kita yang paling kamu sukai dan jelaskan alasannya.',
-            'Bisikkan kalimat romantis di telingaku jika sama-sama nyaman.',
-            'Minta maaf atas satu kesalahan yang pernah kamu lakukan.',
-            'Katakan satu hal yang membuatmu takut kehilangan aku.',
-            'Peluk aku dan katakan apa harapan terbesarmu untuk hubungan ini.'
+            // Babak 1 – Romantis dan bikin salting (1-20)
+            '[Babak 1: Romantis & Bikin Salting] Tatap mataku selama 1 menit tanpa tertawa.',
+            '[Babak 1: Romantis & Bikin Salting] Ucapkan 10 alasan mengapa kamu mencintaiku.',
+            '[Babak 1: Romantis & Bikin Salting] Peluk aku selama 1 menit.',
+            '[Babak 1: Romantis & Bikin Salting] Nyanyikan lagu romantis untukku.',
+            '[Babak 1: Romantis & Bikin Salting] Bisikkan kalimat romantis di telingaku.',
+            '[Babak 1: Romantis & Bikin Salting] Berikan 10 pujian tentang diriku.',
+            '[Babak 1: Romantis & Bikin Salting] Pegang tanganku selama 2 menit.',
+            '[Babak 1: Romantis & Bikin Salting] Buat gombalan paling romantis dalam 30 detik.',
+            '[Babak 1: Romantis & Bikin Salting] Panggil aku dengan panggilan paling manis selama 10 menit.',
+            '[Babak 1: Romantis & Bikin Salting] Katakan satu hal yang belum pernah kamu ungkapkan.',
+            '[Babak 1: Romantis & Bikin Salting] Berikan kecupan di kening jika sama-sama nyaman.',
+            '[Babak 1: Romantis & Bikin Salting] Ceritakan alasan kamu memilih aku.',
+            '[Babak 1: Romantis & Bikin Salting] Buat puisi cinta secara spontan.',
+            '[Babak 1: Romantis & Bikin Salting] Ucapkan aku sayang kamu dengan 5 gaya berbeda.',
+            '[Babak 1: Romantis & Bikin Salting] Tatap mataku dan tersenyum selama 30 detik.',
+            '[Babak 1: Romantis & Bikin Salting] Berikan pelukan dari belakang jika sama-sama nyaman.',
+            '[Babak 1: Romantis & Bikin Salting] Ceritakan bagaimana kamu akan melamarku.',
+            '[Babak 1: Romantis & Bikin Salting] Sebutkan 5 hal yang membuatku istimewa.',
+            '[Babak 1: Romantis & Bikin Salting] Buat kalimat romantis tanpa menggunakan kata cinta.',
+            '[Babak 1: Romantis & Bikin Salting] Katakan harapan terbesarmu untuk hubungan kita.',
+            // Babak 2 – Lucu dan menghibur (21-40)
+            '[Babak 2: Lucu & Menghibur] Tirukan gaya aku ketika sedang marah.',
+            '[Babak 2: Lucu & Menghibur] Joget selama 30 detik tanpa musik.',
+            '[Babak 2: Lucu & Menghibur] Bicara menggunakan suara bayi selama 2 menit.',
+            '[Babak 2: Lucu & Menghibur] Buat ekspresi wajah paling lucu.',
+            '[Babak 2: Lucu & Menghibur] Tirukan cara aku tertawa.',
+            '[Babak 2: Lucu & Menghibur] Nyanyikan lagu dengan suara paling aneh.',
+            '[Babak 2: Lucu & Menghibur] Gombali aku seperti sedang mengikuti audisi.',
+            '[Babak 2: Lucu & Menghibur] Berjalan seperti model selama 30 detik.',
+            '[Babak 2: Lucu & Menghibur] Tertawa tanpa alasan selama 20 detik.',
+            '[Babak 2: Lucu & Menghibur] Buat pantun romantis secara spontan.',
+            '[Babak 2: Lucu & Menghibur] Tirukan gaya aku ketika sedang manja.',
+            '[Babak 2: Lucu & Menghibur] Bicara seperti pembawa berita selama 1 menit.',
+            '[Babak 2: Lucu & Menghibur] Sebutkan alfabet dengan cepat tanpa salah.',
+            '[Babak 2: Lucu & Menghibur] Buat suara hewan yang aku pilih.',
+            '[Babak 2: Lucu & Menghibur] Ceritakan lelucon sampai aku tertawa.',
+            '[Babak 2: Lucu & Menghibur] Berakting seperti sedang syuting sinetron.',
+            '[Babak 2: Lucu & Menghibur] Tirukan ekspresi wajahku ketika cemburu.',
+            '[Babak 2: Lucu & Menghibur] Berikan pidato cinta selama 1 menit.',
+            '[Babak 2: Lucu & Menghibur] Nyanyikan lagu anak-anak dengan gaya penyanyi profesional.',
+            '[Babak 2: Lucu & Menghibur] Buat tarian khusus untukku.',
+            // Babak 3 – Menguji seberapa kenal (41-60)
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 10 hal yang kamu ketahui tentang aku.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 5 makanan favoritku.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 3 kebiasaan burukku.',
+            '[Babak 3: Menguji Seberapa Kenal] Tebak apa yang sedang aku pikirkan.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 5 hal yang membuatku bahagia.',
+            '[Babak 3: Menguji Seberapa Kenal] Ceritakan bagaimana pertama kali kita bertemu.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 3 hal yang paling aku takuti.',
+            '[Babak 3: Menguji Seberapa Kenal] Tebak lagu favoritku.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 5 hal yang membuatku marah.',
+            '[Babak 3: Menguji Seberapa Kenal] Ceritakan kebiasaan unikku.',
+            '[Babak 3: Menguji Seberapa Kenal] Tebak minuman favoritku.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan warna yang paling sering aku pakai.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan nama panggilan yang paling aku sukai.',
+            '[Babak 3: Menguji Seberapa Kenal] Tebak apa yang ingin aku makan sekarang.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 3 hal yang selalu aku bawa ketika pergi.',
+            '[Babak 3: Menguji Seberapa Kenal] Ceritakan apa yang biasanya aku lakukan saat bangun tidur.',
+            '[Babak 3: Menguji Seberapa Kenal] Tebak tempat liburan impianku.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 5 sifat yang aku miliki.',
+            '[Babak 3: Menguji Seberapa Kenal] Tebak apa yang paling aku inginkan saat ini.',
+            '[Babak 3: Menguji Seberapa Kenal] Sebutkan 3 hal yang membuatku merasa nyaman.',
+            // Babak 4 – Tantangan keberanian (61-80)
+            '[Babak 4: Tantangan Keberanian] Kirim voice note romantis selama 30 detik.',
+            '[Babak 4: Tantangan Keberanian] Buat surat cinta dalam waktu 2 menit.',
+            '[Babak 4: Tantangan Keberanian] Tatap mataku dan katakan bahwa kamu bangga memiliki aku.',
+            '[Babak 4: Tantangan Keberanian] Ceritakan bagaimana kamu akan melamarku.',
+            '[Babak 4: Tantangan Keberanian] Berikan pijatan ringan di bahuku selama 1 menit.',
+            '[Babak 4: Tantangan Keberanian] Buat video singkat menyatakan rasa sayang.',
+            '[Babak 4: Tantangan Keberanian] Biarkan aku memilih lagu yang harus kamu nyanyikan.',
+            '[Babak 4: Tantangan Keberanian] Ceritakan 3 hal yang ingin kamu lakukan bersamaku.',
+            '[Babak 4: Tantangan Keberanian] Ucapkan terima kasih atas 5 hal yang pernah aku lakukan.',
+            '[Babak 4: Tantangan Keberanian] Ceritakan satu pengalaman paling memalukanmu.',
+            '[Babak 4: Tantangan Keberanian] Buat caption romantis untuk foto kita.',
+            '[Babak 4: Tantangan Keberanian] Sebutkan 5 kelebihan diriku tanpa berhenti.',
+            '[Babak 4: Tantangan Keberanian] Bacakan pesan romantis dengan ekspresi serius.',
+            '[Babak 4: Tantangan Keberanian] Buat simulasi adegan ketika pertama kali menyatakan cinta.',
+            '[Babak 4: Tantangan Keberanian] Ceritakan kencan impianmu selama 1 menit.',
+            '[Babak 4: Tantangan Keberanian] Berikan aku nama panggilan baru.',
+            '[Babak 4: Tantangan Keberanian] Ucapkan kalimat romantis dengan mata tertutup.',
+            '[Babak 4: Tantangan Keberanian] Buat janji sederhana yang bisa kamu tepati besok.',
+            '[Babak 4: Tantangan Keberanian] Ceritakan hal yang paling kamu syukuri dari hubungan kita.',
+            '[Babak 4: Tantangan Keberanian] Tunjukkan foto kita yang paling kamu sukai.',
+            // Babak 5 – Tantangan terdalam (81-100)
+            '[Babak 5: Tantangan Terdalam] Katakan satu permintaan maaf yang tulus kepadaku.',
+            '[Babak 5: Tantangan Terdalam] Buat satu janji yang ingin kamu tepati.',
+            '[Babak 5: Tantangan Terdalam] Ceritakan rencana masa depan kita selama 1 menit.',
+            '[Babak 5: Tantangan Terdalam] Sebutkan 5 alasan mengapa hubungan ini layak dipertahankan.',
+            '[Babak 5: Tantangan Terdalam] Katakan hal yang paling kamu takutkan jika kehilangan aku.',
+            '[Babak 5: Tantangan Terdalam] Tatap mataku dan ungkapkan perasaanmu selama 1 menit.',
+            '[Babak 5: Tantangan Terdalam] Sebutkan satu kebiasaan buruk yang ingin kamu ubah.',
+            '[Babak 5: Tantangan Terdalam] Ceritakan satu momen ketika kamu merasa beruntung memilikiku.',
+            '[Babak 5: Tantangan Terdalam] Buat satu kalimat yang menggambarkan hubungan kita.',
+            '[Babak 5: Tantangan Terdalam] Peluk aku dan katakan harapan terbesarmu.',
+            '[Babak 5: Tantangan Terdalam] Ceritakan 3 hal yang ingin kamu perbaiki dari hubungan kita.',
+            '[Babak 5: Tantangan Terdalam] Katakan satu hal yang membuatmu bangga kepadaku.',
+            '[Babak 5: Tantangan Terdalam] Berikan motivasi untuk impianku.',
+            '[Babak 5: Tantangan Terdalam] Sebutkan 3 hal yang ingin kamu lakukan sebelum menikah.',
+            '[Babak 5: Tantangan Terdalam] Buat rencana kencan sederhana untuk minggu depan.',
+            '[Babak 5: Tantangan Terdalam] Ceritakan bagaimana kamu akan mendukungku ketika aku gagal.',
+            '[Babak 5: Tantangan Terdalam] Ucapkan terima kasih atas kehadiranku dalam hidupmu.',
+            '[Babak 5: Tantangan Terdalam] Katakan satu hal yang ingin kamu pertahankan selamanya dari hubungan kita.',
+            '[Babak 5: Tantangan Terdalam] Buat pesan untuk diri kita 10 tahun mendatang.',
+            '[Babak 5: Tantangan Terdalam] Tatap aku, genggam tanganku, lalu katakan mengapa kamu ingin terus bersamaku.'
         ];
 
         function createInitialTodState() {
-            return { turn: 'p1', type: null, num: null, text: '' };
+            return {
+                turn: 'p1',
+                spun: false,
+                type: null,
+                num: null,
+                text: '',
+                usedTruth: [],
+                usedDare: []
+            };
         }
 
         function renderTodView(data, p1Name, p2Name) {
-            const t = data.tod || createInitialTodState();
-            document.getElementById('tod-turn-name').innerText = t.turn === 'p1' ? p1Name : p2Name;
+            const rawTod = data.tod || createInitialTodState();
+            const t = {
+                turn: rawTod.turn || 'p1',
+                spun: !!rawTod.spun,
+                type: rawTod.type || null,
+                num: rawTod.num || null,
+                text: rawTod.text || '',
+                usedTruth: Array.isArray(rawTod.usedTruth) ? rawTod.usedTruth : [],
+                usedDare: Array.isArray(rawTod.usedDare) ? rawTod.usedDare : []
+            };
+
+            const remTruth = Math.max(0, TOD_TRUTH.length - t.usedTruth.length);
+            const remDare = Math.max(0, TOD_DARE.length - t.usedDare.length);
+            document.getElementById('tod-rem-badge').innerText = `Sisa T:${remTruth} • D:${remDare}`;
+
+            const turnPlayerName = t.turn === 'p1' ? p1Name : p2Name;
+            const isMyTurn = t.turn === myRole;
+            const hasSpun = !!t.spun;
+
+            document.getElementById('tod-turn-name').innerText = turnPlayerName + (isMyTurn ? ' (Kamu)' : '');
+
+            const btnRoll = document.getElementById('btn-tod-roll');
+            const btnRollLabel = document.getElementById('btn-tod-roll-label');
+            const lockHint = document.getElementById('tod-lock-hint');
+
+            const canRoll = isMyTurn && !hasSpun;
+            btnRoll.disabled = !canRoll;
+
+            if (!isMyTurn) {
+                btnRollLabel.innerText = `MENUNGGU GILIRAN ${turnPlayerName.toUpperCase()}`;
+                btnRoll.className = 'w-full py-4 px-4 rounded-2xl bg-slate-800 text-slate-400 font-display font-extrabold text-sm cursor-not-allowed flex items-center justify-center gap-2';
+                lockHint.innerText = `Sekarang giliran ${turnPlayerName} menekan Acak.`;
+            } else if (hasSpun) {
+                btnRollLabel.innerText = 'SUDAH DIACAK • GANTI GILIRAN DULU';
+                btnRoll.className = 'w-full py-4 px-4 rounded-2xl bg-slate-800 text-amber-300/80 border border-amber-400/30 font-display font-extrabold text-sm cursor-not-allowed flex items-center justify-center gap-2';
+                lockHint.innerText = 'Tidak bisa mengacak dua kali. Tekan "Selesai / Ganti Giliran" untuk lanjut.';
+            } else {
+                btnRollLabel.innerText = 'ACAK TRUTH OR DARE';
+                btnRoll.className = 'w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-amber-400 via-pink-500 to-fuchsia-600 text-slate-950 font-display font-extrabold text-sm shadow-lg active:scale-95 cursor-pointer transition flex items-center justify-center gap-2';
+                lockHint.innerText = 'Giliranmu! Nomor yang sudah keluar tidak akan muncul lagi sampai semua habis.';
+            }
+
             const resBox = document.getElementById('tod-result-box');
-            if (t.text) {
+            if (hasSpun && t.text) {
                 resBox.classList.remove('hidden');
                 const label = (t.type || 'TRUTH').toUpperCase();
-                document.getElementById('tod-type-badge').innerText = t.num ? `${label} #${t.num}` : label;
+                const emoji = t.type === 'dare' ? '🔥' : '❤️';
+                document.getElementById('tod-type-badge').innerText = t.num ? `${emoji} ${label} #${t.num}` : `${emoji} ${label}`;
                 document.getElementById('tod-card-text').innerText = t.text;
+
+                const btnNext = document.getElementById('btn-tod-next');
+                btnNext.disabled = !isMyTurn;
+                btnNext.className = isMyTurn
+                    ? 'px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white text-xs font-bold active:scale-95 cursor-pointer transition'
+                    : 'px-4 py-2 rounded-xl bg-slate-800 text-slate-400 text-xs font-bold cursor-not-allowed';
             } else {
                 resBox.classList.add('hidden');
             }
         }
 
-        window.pickTod = async function(type) {
+        window.rollTodRandom = async function() {
             if (!currentRoomCode || !latestRoomData) return;
-            const t = JSON.parse(JSON.stringify(latestRoomData.tod || createInitialTodState()));
-            const pool = type === 'truth' ? TOD_TRUTH : TOD_DARE;
-            let idx = Math.floor(Math.random() * pool.length);
-            if (pool.length > 1 && t.type === type && t.num === idx + 1) {
-                idx = (idx + 1) % pool.length;
+            const rawTod = latestRoomData.tod || createInitialTodState();
+            const t = {
+                turn: rawTod.turn || 'p1',
+                spun: !!rawTod.spun,
+                type: rawTod.type || null,
+                num: rawTod.num || null,
+                text: rawTod.text || '',
+                usedTruth: Array.isArray(rawTod.usedTruth) ? [...rawTod.usedTruth] : [],
+                usedDare: Array.isArray(rawTod.usedDare) ? [...rawTod.usedDare] : []
+            };
+
+            if (t.turn !== myRole || t.spun) {
+                return showToast('Sudah diacak! Ganti giliran terlebih dahulu.', 'fa-lock text-amber-400');
             }
+
+            let availTruth = [];
+            for (let i = 1; i <= TOD_TRUTH.length; i++) {
+                if (!t.usedTruth.includes(i)) availTruth.push(i);
+            }
+            let availDare = [];
+            for (let i = 1; i <= TOD_DARE.length; i++) {
+                if (!t.usedDare.includes(i)) availDare.push(i);
+            }
+
+            let type;
+            if (availTruth.length === 0 && availDare.length === 0) {
+                t.usedTruth = [];
+                t.usedDare = [];
+                availTruth = Array.from({ length: TOD_TRUTH.length }, (_, idx) => idx + 1);
+                availDare = Array.from({ length: TOD_DARE.length }, (_, idx) => idx + 1);
+                type = Math.random() < 0.5 ? 'truth' : 'dare';
+                showToast('Semua nomor T & D habis! Daftar direset ulang.');
+            } else if (availTruth.length === 0) {
+                type = 'dare';
+                showToast('Semua 100 Truth sudah keluar, otomatis ke Dare!');
+            } else if (availDare.length === 0) {
+                type = 'truth';
+                showToast('Semua 100 Dare sudah keluar, otomatis ke Truth!');
+            } else {
+                type = Math.random() < 0.5 ? 'truth' : 'dare';
+            }
+
+            const pool = type === 'truth' ? TOD_TRUTH : TOD_DARE;
+            const availNums = type === 'truth' ? availTruth : availDare;
+            const pickedNum = availNums[Math.floor(Math.random() * availNums.length)];
+
+            if (type === 'truth') {
+                t.usedTruth.push(pickedNum);
+            } else {
+                t.usedDare.push(pickedNum);
+            }
+
+            t.spun = true;
             t.type = type;
-            t.num = idx + 1;
-            t.text = pool[idx];
-            playPopSound(700);
+            t.num = pickedNum;
+            t.text = pool[pickedNum - 1];
+
+            playPopSound(type === 'truth' ? 660 : 784);
             await updateDoc(getRoomDocRef(currentRoomCode), { tod: t });
         };
 
         window.nextTodTurn = async function() {
             if (!currentRoomCode || !latestRoomData) return;
-            const curTurn = latestRoomData.tod?.turn || 'p1';
+            const rawTod = latestRoomData.tod || createInitialTodState();
+            if ((rawTod.turn || 'p1') !== myRole) return;
+            playPopSound(523.25);
             await updateDoc(getRoomDocRef(currentRoomCode), {
-                tod: { turn: curTurn === 'p1' ? 'p2' : 'p1', type: null, num: null, text: '' }
+                tod: {
+                    turn: rawTod.turn === 'p1' ? 'p2' : 'p1',
+                    spun: false,
+                    type: null,
+                    num: null,
+                    text: '',
+                    usedTruth: Array.isArray(rawTod.usedTruth) ? rawTod.usedTruth : [],
+                    usedDare: Array.isArray(rawTod.usedDare) ? rawTod.usedDare : []
+                }
             });
-            showToast('Giliran berikutnya!');
+            showToast('Giliran berganti!');
         };
 
         const WYR_BANK = [
