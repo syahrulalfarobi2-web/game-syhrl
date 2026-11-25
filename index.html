@@ -85,16 +85,21 @@
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-thumb { background: rgba(244, 114, 182, 0.35); border-radius: 99px; }
 
+        .ludo-board-frame {
+            aspect-ratio: 1 / 1;
+            background: #ffffff;
+            border: 3px solid #1e293b;
+            border-radius: 0.9rem;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        }
+
         .ludo-grid {
             display: grid;
             grid-template-columns: repeat(15, minmax(0, 1fr));
             grid-template-rows: repeat(15, minmax(0, 1fr));
-            aspect-ratio: 1 / 1;
-            gap: 1px;
-            background: rgba(15, 10, 32, 0.92);
-            border: 2px solid rgba(244, 114, 182, 0.45);
-            border-radius: 1rem;
-            overflow: hidden;
+            width: 100%;
+            height: 100%;
         }
 
         .monopoly-grid {
@@ -207,11 +212,11 @@
             <div class="glass-card rounded-3xl p-4">
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex-1 glass-sub rounded-2xl p-2.5 text-center">
-                        <div class="w-9 h-9 mx-auto rounded-full bg-gradient-to-tr from-pink-500 to-rose-500 text-white flex items-center justify-center font-bold text-xs mb-1 shadow">
+                        <div class="w-9 h-9 mx-auto rounded-full bg-gradient-to-tr from-red-500 to-rose-600 text-white flex items-center justify-center font-bold text-xs mb-1 shadow">
                             <i class="fas fa-crown"></i>
                         </div>
                         <p id="p1-name-display" class="font-bold text-xs text-white truncate">Pemain 1</p>
-                        <span class="inline-block text-[10px] font-semibold text-pink-300 bg-pink-500/20 px-2 py-0.5 rounded-full mt-0.5">Online • Pink</span>
+                        <span class="inline-block text-[10px] font-semibold text-rose-300 bg-rose-500/20 px-2 py-0.5 rounded-full mt-0.5">Online • Merah</span>
                     </div>
 
                     <div class="flex flex-col items-center px-1">
@@ -245,16 +250,16 @@
                     <span class="text-[10px] text-pink-300/70">7 Mode Seru</span>
                 </div>
 
-                <button onclick="selectGameMode('ludo')" class="w-full glass-card hover:border-sky-400/60 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
-                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-600 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-sky-500/25">
+                <button onclick="selectGameMode('ludo')" class="w-full glass-card hover:border-red-400/60 rounded-2xl p-3 text-left transition active:scale-[0.98] flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-amber-500 text-white flex items-center justify-center text-xl shrink-0 shadow-lg shadow-red-500/25">
                         <i class="fas fa-dice"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-1">
                             <h4 class="font-display font-bold text-white text-sm truncate">Ludo Klasik Asli Berdua</h4>
-                            <span class="text-[10px] font-extrabold bg-sky-400/25 text-sky-200 border border-sky-400/40 px-2 py-0.5 rounded-full shrink-0">KLASIK</span>
+                            <span class="text-[10px] font-extrabold bg-red-400/25 text-red-200 border border-red-400/40 px-2 py-0.5 rounded-full shrink-0">KLASIK</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Papan Ludo 15x15 dua pemain dengan zona aman, pukul bidak lawan, dan jalur finish.</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Papan Ludo 15x15 klasik dua pemain dengan zona bintang, pukul bidak lawan, dan jalur finish.</p>
                     </div>
                 </button>
 
@@ -337,21 +342,23 @@
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2 flex-wrap">
                             <span id="ludo-turn-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-pink-500/25 text-pink-200 border border-pink-400/30">Giliran...</span>
-                            <span id="ludo-role-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/25 text-pink-200">Kamu: Pink</span>
+                            <span id="ludo-role-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/25 text-red-200">Kamu: Merah</span>
                         </div>
                         <span id="ludo-dice-disp" class="w-11 h-10 rounded-xl bg-sky-500 text-white font-mono font-extrabold text-base flex items-center justify-center shadow shrink-0">🎲 6</span>
                     </div>
 
                     <div class="flex justify-between text-[11px] px-1 text-pink-200/85 font-semibold">
-                        <span id="ludo-p1-score">🩷 P1 Finish: 0/4</span>
-                        <span id="ludo-p2-score">🩵 P2 Finish: 0/4</span>
+                        <span id="ludo-p1-score">🔴 P1 Finish: 0/4</span>
+                        <span id="ludo-p2-score">🔵 P2 Finish: 0/4</span>
                     </div>
 
                     <p id="ludo-log" class="text-[11px] text-pink-100 bg-slate-950/60 border border-pink-400/20 px-3 py-1.5 rounded-xl text-center leading-snug">
                         Kocok dadu! Lempar angka 6 untuk mengeluarkan bidak dari kandang.
                     </p>
 
-                    <div id="ludo-board" class="ludo-grid w-full relative"></div>
+                    <div class="ludo-board-frame w-full relative">
+                        <div id="ludo-board" class="ludo-grid"></div>
+                    </div>
 
                     <div class="flex items-center justify-between gap-3 pt-1">
                         <button id="btn-ludo-roll" onclick="rollLudoDice()" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-sky-400 to-indigo-600 text-white font-bold text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
@@ -374,8 +381,8 @@
                                 Berhasil mengantarkan seluruh 4 bidak ke garis FINISH!
                             </p>
                             <div class="grid grid-cols-2 gap-2 text-[11px] font-bold">
-                                <div id="ludo-modal-p1" class="glass-sub rounded-xl p-2 text-pink-200">🩷 P1: 4/4</div>
-                                <div id="ludo-modal-p2" class="glass-sub rounded-xl p-2 text-cyan-200">🩵 P2: 0/4</div>
+                                <div id="ludo-modal-p1" class="glass-sub rounded-xl p-2 text-red-200">🔴 P1: 4/4</div>
+                                <div id="ludo-modal-p2" class="glass-sub rounded-xl p-2 text-sky-200">🔵 P2: 0/4</div>
                             </div>
                             <button onclick="resetLudoGame()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-pink-500 to-fuchsia-600 text-slate-950 font-extrabold text-xs shadow-lg active:scale-95 transition">
                                 <i class="fas fa-rotate-right mr-1"></i> Main Lagi
@@ -956,10 +963,10 @@
             if (p2Name) {
                 document.getElementById('p2-name-display').innerText = p2Name + (myRole === 'p2' ? ' (Kamu)' : '');
                 document.getElementById('p2-name-display').className = 'font-bold text-xs text-white truncate';
-                document.getElementById('p2-avatar').className = 'w-9 h-9 mx-auto rounded-full bg-gradient-to-tr from-cyan-400 to-purple-500 text-white flex items-center justify-center font-bold text-xs mb-1 shadow';
+                document.getElementById('p2-avatar').className = 'w-9 h-9 mx-auto rounded-full bg-gradient-to-tr from-sky-400 to-blue-600 text-white flex items-center justify-center font-bold text-xs mb-1 shadow';
                 document.getElementById('p2-avatar').innerHTML = '<i class="fas fa-heart"></i>';
-                document.getElementById('p2-status-pill').innerText = 'Online • Cyan';
-                document.getElementById('p2-status-pill').className = 'inline-block text-[10px] font-semibold text-cyan-300 bg-cyan-500/20 px-2 py-0.5 rounded-full mt-0.5';
+                document.getElementById('p2-status-pill').innerText = 'Online • Biru';
+                document.getElementById('p2-status-pill').className = 'inline-block text-[10px] font-semibold text-sky-300 bg-sky-500/20 px-2 py-0.5 rounded-full mt-0.5';
                 document.getElementById('pair-heart-icon').className = 'fas fa-heart text-2xl text-pink-400 heart-beat';
                 document.getElementById('pair-status-badge').innerText = 'Terhubung!';
                 document.getElementById('pair-status-badge').className = 'text-[10px] font-bold text-pink-300 mt-1';
@@ -1056,11 +1063,12 @@
         };
 
         // ============================================================
-        // 1. LUDO KLASIK ASLI
+        // 1. LUDO KLASIK ASLI (GAYA PAPAN REFERENSI)
         // ============================================================
         const P1_START_IDX = 1;
         const P2_START_IDX = 27;
         const SAFE_TRACK_INDICES = new Set([1, 9, 14, 22, 27, 35, 40, 48]);
+        const STAR_TRACK_INDICES = new Set([9, 22, 35, 48]);
 
         const LUDO_TRACK_COORDS = [
             [6,0], [6,1], [6,2], [6,3], [6,4], [6,5],
@@ -1080,6 +1088,11 @@
         const P1_HOME_COORDS = [[7,1], [7,2], [7,3], [7,4], [7,5], [7,6]];
         const P2_HOME_COORDS = [[7,13], [7,12], [7,11], [7,10], [7,9], [7,8]];
 
+        const RED_HOME_SET = new Set(['7,1','7,2','7,3','7,4','7,5','7,6']);
+        const GREEN_HOME_SET = new Set(['1,7','2,7','3,7','4,7','5,7','6,7']);
+        const YELLOW_HOME_SET = new Set(['7,13','7,12','7,11','7,10','7,9','7,8']);
+        const BLUE_HOME_SET = new Set(['13,7','12,7','11,7','10,7','9,7','8,7']);
+
         let isRollingLudoDice = false;
         let lastAnnouncedLudoWinner = null;
         let lastLudoActionSoundKey = null;
@@ -1093,7 +1106,7 @@
                 lastEvent: null,
                 p1Tokens: [-1, -1, -1, -1],
                 p2Tokens: [-1, -1, -1, -1],
-                log: 'Giliran Pemain 1 (Pink)! Kocok dadu untuk mulai.'
+                log: 'Giliran Pemain 1 (Merah)! Kocok dadu untuk mulai.'
             };
         }
 
@@ -1140,8 +1153,8 @@
 
             const p1Finished = l.p1Tokens.filter(s => s === 56).length;
             const p2Finished = l.p2Tokens.filter(s => s === 56).length;
-            document.getElementById('ludo-p1-score').innerText = `🩷 ${p1Name}: ${p1Finished}/4`;
-            document.getElementById('ludo-p2-score').innerText = `🩵 ${p2Name}: ${p2Finished}/4`;
+            document.getElementById('ludo-p1-score').innerText = `🔴 ${p1Name}: ${p1Finished}/4`;
+            document.getElementById('ludo-p2-score').innerText = `🔵 ${p2Name}: ${p2Finished}/4`;
 
             document.getElementById('ludo-turn-badge').innerText = l.winner
                 ? `🏆 Pemenang: ${l.winner === 'p1' ? p1Name : p2Name}!`
@@ -1157,11 +1170,11 @@
 
             const roleTag = document.getElementById('ludo-role-tag');
             if (myRole === 'p1') {
-                roleTag.innerText = `Kamu: ${p1Name} (Pink)`;
-                roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/25 text-pink-200';
+                roleTag.innerText = `Kamu: ${p1Name} (Merah)`;
+                roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/25 text-red-200';
             } else {
-                roleTag.innerText = `Kamu: ${p2Name} (Cyan)`;
-                roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/25 text-cyan-200';
+                roleTag.innerText = `Kamu: ${p2Name} (Biru)`;
+                roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-500/25 text-sky-200';
             }
 
             const trackMap = new Map();
@@ -1170,53 +1183,100 @@
                 trackMap.set(`${r},${c}`, i);
             }
 
-            const p1HomeMap = new Map();
-            P1_HOME_COORDS.forEach(([r, c], idx) => p1HomeMap.set(`${r},${c}`, idx));
-
-            const p2HomeMap = new Map();
-            P2_HOME_COORDS.forEach(([r, c], idx) => p2HomeMap.set(`${r},${c}`, idx));
+            const redYardSlots = { '1,1': 0, '1,4': 1, '4,1': 2, '4,4': 3 };
+            const greenYardSlots = { '1,10': 0, '1,13': 1, '4,10': 2, '4,13': 3 };
+            const blueYardSlots = { '10,1': 0, '10,4': 1, '13,1': 2, '13,4': 3 };
+            const yellowYardSlots = { '10,10': 0, '10,13': 1, '13,10': 2, '13,13': 3 };
 
             const board = document.getElementById('ludo-board');
             board.innerHTML = '';
 
             for (let r = 0; r < 15; r++) {
                 for (let c = 0; c < 15; c++) {
+                    const key = `${r},${c}`;
                     const cell = document.createElement('div');
                     cell.style.gridRow = r + 1;
                     cell.style.gridColumn = c + 1;
-                    cell.className = 'flex items-center justify-center text-[8px] relative border border-white/5';
+                    cell.className = 'flex items-center justify-center text-[8px] relative';
 
-                    if (r >= 9 && c <= 5) {
-                        cell.className += ' bg-pink-950/85';
-                        if ((r === 10 || r === 12) && (c === 1 || c === 3)) {
-                            const idx = (r === 10 && c === 1) ? 0 : (r === 10 && c === 3) ? 1 : (r === 12 && c === 1) ? 2 : 3;
+                    const inRedYard = r <= 5 && c <= 5;
+                    const inGreenYard = r <= 5 && c >= 9;
+                    const inBlueYard = r >= 9 && c <= 5;
+                    const inYellowYard = r >= 9 && c >= 9;
+                    const inCenter = r >= 6 && r <= 8 && c >= 6 && c <= 8;
+
+                    if (inRedYard) {
+                        cell.style.backgroundColor = '#ef233c';
+                        if (r >= 1 && r <= 4 && c >= 1 && c <= 4) {
+                            cell.style.backgroundColor = '#ffffff';
+                            cell.style.border = '1px solid #1e293b';
+                        }
+                        if (key in redYardSlots) {
+                            const idx = redYardSlots[key];
                             if (l.p1Tokens[idx] === -1) {
                                 const movable = isMyTurn && l.rolled && myRole === 'p1' && canTokenMove(-1, l.dice);
-                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-pink-500 border-2 border-white shadow-lg flex items-center justify-center text-[10px] font-bold text-white active:scale-90 transition ${movable ? 'ring-2 ring-amber-300 animate-bounce cursor-pointer' : ''}">🩷</button>`;
+                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#ef233c] border-2 border-[#1e293b] shadow flex items-center justify-center text-[8px] font-bold text-white active:scale-90 transition ${movable ? 'ring-2 ring-amber-400 animate-bounce cursor-pointer z-10' : ''}"></button>`;
+                            } else {
+                                cell.innerHTML = `<span class="w-3 h-3 rounded-full border border-slate-300 bg-slate-100 inline-block"></span>`;
                             }
                         }
-                    } else if (r <= 5 && c >= 9) {
-                        cell.className += ' bg-cyan-950/85';
-                        if ((r === 2 || r === 4) && (c === 10 || c === 12)) {
-                            const idx = (r === 2 && c === 10) ? 0 : (r === 2 && c === 12) ? 1 : (r === 4 && c === 10) ? 2 : 3;
+                    } else if (inGreenYard) {
+                        cell.style.backgroundColor = '#16a34a';
+                        if (r >= 1 && r <= 4 && c >= 10 && c <= 13) {
+                            cell.style.backgroundColor = '#ffffff';
+                            cell.style.border = '1px solid #1e293b';
+                        }
+                        if (key in greenYardSlots) {
+                            cell.innerHTML = `<span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#16a34a] border-2 border-[#1e293b] inline-block"></span>`;
+                        }
+                    } else if (inBlueYard) {
+                        cell.style.backgroundColor = '#0284c7';
+                        if (r >= 10 && r <= 13 && c >= 1 && c <= 4) {
+                            cell.style.backgroundColor = '#ffffff';
+                            cell.style.border = '1px solid #1e293b';
+                        }
+                        if (key in blueYardSlots) {
+                            const idx = blueYardSlots[key];
                             if (l.p2Tokens[idx] === -1) {
                                 const movable = isMyTurn && l.rolled && myRole === 'p2' && canTokenMove(-1, l.dice);
-                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-cyan-400 border-2 border-white shadow-lg flex items-center justify-center text-[10px] font-bold text-slate-950 active:scale-90 transition ${movable ? 'ring-2 ring-amber-300 animate-bounce cursor-pointer' : ''}">🩵</button>`;
+                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#0284c7] border-2 border-[#1e293b] shadow flex items-center justify-center text-[8px] font-bold text-white active:scale-90 transition ${movable ? 'ring-2 ring-amber-300 animate-bounce cursor-pointer z-10' : ''}"></button>`;
+                            } else {
+                                cell.innerHTML = `<span class="w-3 h-3 rounded-full border border-slate-300 bg-slate-100 inline-block"></span>`;
                             }
                         }
-                    } else if (r >= 6 && r <= 8 && c >= 6 && c <= 8) {
-                        cell.className += ' bg-gradient-to-br from-pink-500/35 to-cyan-500/35';
-                        if (r === 7 && c === 7) cell.innerHTML = '🏆';
+                    } else if (inYellowYard) {
+                        cell.style.backgroundColor = '#facc15';
+                        if (r >= 10 && r <= 13 && c >= 10 && c <= 13) {
+                            cell.style.backgroundColor = '#ffffff';
+                            cell.style.border = '1px solid #1e293b';
+                        }
+                        if (key in yellowYardSlots) {
+                            cell.innerHTML = `<span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#facc15] border-2 border-[#1e293b] inline-block"></span>`;
+                        }
+                    } else if (inCenter) {
+                        cell.style.backgroundColor = '#ffffff';
+                        if (r === 7 && c === 7) {
+                            cell.innerHTML = `
+                                <svg viewBox="0 0 100 100" class="w-full h-full">
+                                    <polygon points="0,0 50,50 0,100" fill="#ef233c" stroke="#1e293b" stroke-width="2"/>
+                                    <polygon points="0,0 100,0 50,50" fill="#16a34a" stroke="#1e293b" stroke-width="2"/>
+                                    <polygon points="100,0 100,100 50,50" fill="#facc15" stroke="#1e293b" stroke-width="2"/>
+                                    <polygon points="0,100 100,100 50,50" fill="#0284c7" stroke="#1e293b" stroke-width="2"/>
+                                </svg>
+                            `;
+                        }
                     } else {
-                        const key = `${r},${c}`;
-                        if (p1HomeMap.has(key)) {
-                            cell.className += ' bg-pink-600/45';
-                        } else if (p2HomeMap.has(key)) {
-                            cell.className += ' bg-cyan-500/45';
-                        } else if (trackMap.has(key) && SAFE_TRACK_INDICES.has(trackMap.get(key))) {
-                            cell.className += ' bg-amber-500/20';
+                        cell.style.border = '0.5px solid #94a3b8';
+                        if (RED_HOME_SET.has(key) || key === '6,1') {
+                            cell.style.backgroundColor = '#ef233c';
+                        } else if (GREEN_HOME_SET.has(key) || key === '1,8') {
+                            cell.style.backgroundColor = '#16a34a';
+                        } else if (YELLOW_HOME_SET.has(key) || key === '8,13') {
+                            cell.style.backgroundColor = '#facc15';
+                        } else if (BLUE_HOME_SET.has(key) || key === '13,6') {
+                            cell.style.backgroundColor = '#0284c7';
                         } else {
-                            cell.className += ' bg-slate-900/90';
+                            cell.style.backgroundColor = '#ffffff';
                         }
 
                         const tokensHere = [];
@@ -1236,11 +1296,19 @@
                         if (tokensHere.length > 0) {
                             cell.innerHTML = tokensHere.map(t => {
                                 const canClick = isMyTurn && l.rolled && t.player === myRole && canTokenMove(t.steps, l.dice);
-                                const bgCol = t.player === 'p1' ? 'bg-pink-500 text-white' : 'bg-cyan-400 text-slate-950';
-                                return `<button ${canClick ? `onclick="clickLudoToken(${t.idx})"` : ''} class="w-4 h-4 sm:w-5 sm:h-5 rounded-full ${bgCol} border border-white font-bold text-[8px] flex items-center justify-center shadow ${canClick ? 'ring-2 ring-amber-300 animate-bounce cursor-pointer z-10' : ''}">${t.player === 'p1' ? '🩷' : '🩵'}</button>`;
+                                const bgCol = t.player === 'p1' ? 'bg-[#ef233c] text-white' : 'bg-[#0284c7] text-white';
+                                return `<button ${canClick ? `onclick="clickLudoToken(${t.idx})"` : ''} class="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${bgCol} border border-[#1e293b] font-bold text-[7px] flex items-center justify-center shadow ${canClick ? 'ring-2 ring-amber-400 animate-bounce cursor-pointer z-10' : ''}"></button>`;
                             }).join('');
-                        } else if (trackMap.has(key) && SAFE_TRACK_INDICES.has(trackMap.get(key))) {
-                            cell.innerHTML = '<span class="text-[7px] text-amber-300/70">★</span>';
+                        } else if (trackMap.has(key)) {
+                            const trIdx = trackMap.get(key);
+                            if (STAR_TRACK_INDICES.has(trIdx)) {
+                                const starColor = trIdx === 9 ? 'text-[#ef233c]' : trIdx === 22 ? 'text-[#16a34a]' : trIdx === 35 ? 'text-[#eab308]' : 'text-[#0284c7]';
+                                cell.innerHTML = `<span class="text-[9px] leading-none font-bold ${starColor}">★</span>`;
+                            } else if (trIdx === 1) {
+                                cell.innerHTML = `<span class="text-[8px] leading-none font-extrabold text-white">→</span>`;
+                            } else if (trIdx === 27) {
+                                cell.innerHTML = `<span class="text-[8px] leading-none font-extrabold text-white">←</span>`;
+                            }
                         }
                     }
 
@@ -1256,11 +1324,11 @@
             const winnerModal = document.getElementById('ludo-winner-modal');
             if (l.winner) {
                 const winnerName = l.winner === 'p1' ? p1Name : p2Name;
-                const winnerColor = l.winner === 'p1' ? 'Pink' : 'Cyan';
+                const winnerColor = l.winner === 'p1' ? 'Merah' : 'Biru';
                 document.getElementById('ludo-winner-name').innerText = `${winnerName} (${winnerColor}) Menang!`;
                 document.getElementById('ludo-winner-detail').innerText = `Selamat! ${winnerName} berhasil menyelesaikan 4 bidak ke FINISH terlebih dahulu.`;
-                document.getElementById('ludo-modal-p1').innerText = `🩷 ${p1Name}: ${p1Finished}/4`;
-                document.getElementById('ludo-modal-p2').innerText = `🩵 ${p2Name}: ${p2Finished}/4`;
+                document.getElementById('ludo-modal-p1').innerText = `🔴 ${p1Name}: ${p1Finished}/4`;
+                document.getElementById('ludo-modal-p2').innerText = `🔵 ${p2Name}: ${p2Finished}/4`;
                 winnerModal.classList.remove('hidden');
             } else {
                 winnerModal.classList.add('hidden');
