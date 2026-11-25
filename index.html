@@ -620,8 +620,11 @@
             <!-- 6. TRUTH OR DARE -->
             <div id="view-tod" class="hidden space-y-3">
                 <div class="glass-card rounded-3xl p-5 text-center space-y-4">
-                    <div class="inline-flex items-center gap-1.5 bg-fuchsia-500/20 border border-fuchsia-400/30 text-fuchsia-200 text-[11px] font-bold px-3 py-1 rounded-full">
-                        <i class="fas fa-fire-alt text-fuchsia-400"></i> Truth or Dare Pasangan
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center gap-1.5 bg-fuchsia-500/20 border border-fuchsia-400/30 text-fuchsia-200 text-[11px] font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-fire-alt text-fuchsia-400"></i> Truth or Dare Pasangan
+                        </span>
+                        <span class="text-[10px] font-bold text-pink-300/80">50 Truth • 50 Dare</span>
                     </div>
                     <div class="p-3 rounded-2xl bg-gradient-to-r from-pink-500 to-fuchsia-600 text-white shadow">
                         <p class="text-[11px] opacity-90">Giliran Saat Ini:</p>
@@ -630,15 +633,17 @@
                     <div class="grid grid-cols-2 gap-3 pt-1">
                         <button onclick="pickTod('truth')" class="py-4 px-3 rounded-2xl bg-sky-500/15 border-2 border-sky-400/40 text-sky-200 flex flex-col items-center gap-1.5 active:scale-95 transition">
                             <i class="fas fa-comment-dots text-2xl text-sky-400"></i>
-                            <span class="font-display font-bold text-base">TRUTH</span>
+                            <span class="font-display font-bold text-base">❤️ TRUTH</span>
+                            <span class="text-[10px] text-sky-300/75">Jujur (50 Soal)</span>
                         </button>
                         <button onclick="pickTod('dare')" class="py-4 px-3 rounded-2xl bg-rose-500/15 border-2 border-rose-400/40 text-rose-200 flex flex-col items-center gap-1.5 active:scale-95 transition">
                             <i class="fas fa-bolt text-2xl text-rose-400"></i>
-                            <span class="font-display font-bold text-base">DARE</span>
+                            <span class="font-display font-bold text-base">🔥 DARE</span>
+                            <span class="text-[10px] text-rose-300/75">Tantangan (50 Aksi)</span>
                         </button>
                     </div>
                     <div id="tod-result-box" class="hidden p-4 rounded-2xl glass-sub border border-pink-400/30 text-center space-y-2.5">
-                        <span id="tod-type-badge" class="inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-pink-500/25 text-pink-200">TRUTH</span>
+                        <span id="tod-type-badge" class="inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-pink-500/25 text-pink-200">TRUTH #1</span>
                         <p id="tod-card-text" class="font-display font-bold text-white text-sm leading-relaxed"></p>
                         <button onclick="nextTodTurn()" class="px-4 py-2 rounded-xl bg-pink-500 text-white text-xs font-bold active:scale-95 transition">Selesai / Ganti Giliran</button>
                     </div>
@@ -2094,7 +2099,7 @@
         };
 
         // ============================================================
-        // 4. UNO (DESAIN KARTU KLASIK REFERENSI)
+        // 4. UNO
         // ============================================================
         const UNO_COLORS = ['red', 'yellow', 'green', 'blue'];
 
@@ -2354,7 +2359,7 @@
         };
 
         // ============================================================
-        // 5, 6, 7. QUIZ, TRUTH OR DARE & TEBAK HATI
+        // 5, 6, 7. QUIZ, TRUTH OR DARE (50 TRUTH & 50 DARE) & TEBAK HATI
         // ============================================================
         const QUIZ_BANK = [
             { q: 'Kencan paling berkesan buat kalian biasanya di mana?', opts: ['Kedai kopi / cafe santai', 'Jalan malam keliling kota', 'Nonton film berdua', 'Kulineran kaki lima'] },
@@ -2422,18 +2427,113 @@
         };
 
         const TOD_TRUTH = [
-            'Sebutkan momen paling romantis saat kita berdua!',
-            'Apa hal kecil dari pasanganmu yang paling bikin kamu senyum?',
-            'Kapan pertama kali kamu ngerasa klik banget sama pasanganmu?'
+            'Apa hal pertama yang membuat kamu jatuh cinta kepadaku?',
+            'Pernahkah kamu menyembunyikan sesuatu dariku?',
+            'Apa sifatku yang paling membuatmu nyaman?',
+            'Apa sifatku yang paling membuatmu kesal?',
+            'Pernahkah kamu cemburu tetapi tidak mengakuinya?',
+            'Apa ketakutan terbesarmu dalam hubungan kita?',
+            'Apakah kamu pernah meragukan hubungan kita?',
+            'Apa hal yang belum pernah berani kamu katakan kepadaku?',
+            'Pernahkah kamu menangis karena sikapku?',
+            'Apa momen paling membahagiakan selama bersama aku?',
+            'Apakah kamu pernah membandingkanku dengan mantan?',
+            'Apa hal yang paling kamu rindukan ketika kita berjauhan?',
+            'Siapa yang lebih romantis di antara kita?',
+            'Apa kebohongan kecil yang pernah kamu lakukan kepadaku?',
+            'Apa hal yang membuatmu merasa tidak dicintai?',
+            'Pernahkah kamu berpura-pura baik-baik saja padahal sedang kecewa kepadaku?',
+            'Apa bagian dari diriku yang paling kamu sukai?',
+            'Apa kebiasaan anehku yang paling kamu ingat?',
+            'Kalau kita bertengkar, siapa yang biasanya lebih egois?',
+            'Apa hal yang paling kamu takutkan jika kehilangan aku?',
+            'Pernahkah kamu merasa bosan denganku?',
+            'Apa kenangan kita yang tidak akan pernah kamu lupakan?',
+            'Apa hadiah dariku yang paling berkesan?',
+            'Apa hal paling romantis yang ingin kamu lakukan bersamaku?',
+            'Apakah kamu pernah diam-diam memeriksa media sosial seseorang?',
+            'Apa yang membuatmu jatuh cinta lagi kepadaku setiap hari?',
+            'Pernahkah kamu merasa kurang diperhatikan olehku?',
+            'Apa hal yang paling membuatmu insecure dalam hubungan?',
+            'Apa yang ingin kamu ubah dari hubungan kita?',
+            'Apakah kamu percaya aku adalah orang yang tepat untuk masa depanmu?',
+            'Apa hal paling memalukan yang pernah kamu lakukan demi aku?',
+            'Pernahkah kamu ingin marah tetapi memilih diam?',
+            'Apa yang paling kamu sukai ketika kita sedang berdua?',
+            'Kalau aku tiba-tiba menghilang sehari, apa yang akan kamu lakukan?',
+            'Apa satu hal yang tidak bisa kamu toleransi dalam hubungan?',
+            'Pernahkah kamu merasa takut untuk jujur kepadaku?',
+            'Apa impian terbesarmu yang ingin diwujudkan bersama aku?',
+            'Siapa yang lebih sering meminta maaf setelah bertengkar?',
+            'Apa hal yang membuatmu yakin untuk mempertahankan hubungan ini?',
+            'Apakah kamu pernah berpikir untuk mengakhiri hubungan kita?',
+            'Apa panggilan sayang favoritmu dariku?',
+            'Apa hal kecil dariku yang selalu membuatmu tersenyum?',
+            'Apa rahasia masa lalumu yang belum pernah kamu ceritakan?',
+            'Kalau bisa mengulang satu momen bersama aku, momen apa yang kamu pilih?',
+            'Apa yang paling kamu harapkan dariku sebagai pasangan?',
+            'Apakah kamu sudah membayangkan pernikahan bersama aku?',
+            'Apa yang akan kamu lakukan jika keluarga tidak menyetujui hubungan kita?',
+            'Menurutmu, apa kekurangan terbesar kita sebagai pasangan?',
+            'Seberapa besar rasa cintamu kepadaku dari skala 1–100?',
+            'Jika harus memilih sekali lagi, apakah kamu tetap akan memilih aku? Mengapa?'
         ];
+
         const TOD_DARE = [
-            'Kirim voice note bernyanyi ke pasanganmu sekarang!',
-            'Kirim 3 emoji paling menggambarkan perasaanmu ke pasangan sekarang.',
-            'Ketik pesan pujian tulus untuk pasanganmu di chat room.'
+            'Tatap mataku selama 1 menit tanpa tertawa.',
+            'Sebutkan 10 alasan kamu mencintaiku.',
+            'Nyanyikan lagu romantis untukku.',
+            'Peluk aku selama 1 menit.',
+            'Buat gombalan paling romantis dalam 30 detik.',
+            'Tirukan ekspresi wajahku ketika sedang marah.',
+            'Ucapkan "Aku sayang kamu" dengan 5 gaya berbeda.',
+            'Ceritakan pertama kali kamu merasa jatuh cinta kepadaku.',
+            'Berikan pujian tentang penampilanku sebanyak 5 kali.',
+            'Pegang tanganku sambil mengatakan sesuatu yang romantis.',
+            'Kirim voice note berisi ungkapan cinta.',
+            'Buat puisi cinta spontan untukku.',
+            'Sebutkan 5 hal yang paling kamu ingat tentang aku.',
+            'Tirukan cara aku berbicara ketika sedang manja.',
+            'Berikan kecupan di kening jika sama-sama nyaman.',
+            'Buat janji romantis yang akan kamu tepati.',
+            'Biarkan aku memilih foto profilmu selama 1 hari.',
+            'Joget mengikuti lagu yang aku pilih selama 30 detik.',
+            'Ceritakan bagaimana kamu akan melamarku.',
+            'Ucapkan 3 hal yang ingin kamu lakukan bersamaku.',
+            'Panggil aku dengan nama paling romantis selama 10 menit.',
+            'Berikan pijatan ringan di bahuku selama 1 menit.',
+            'Buat caption romantis tentang hubungan kita.',
+            'Tatap mataku dan jangan mengalihkan pandangan selama 30 detik.',
+            'Ceritakan 1 kenangan yang membuatmu hampir menangis karena bahagia.',
+            'Biarkan aku memilih satu pertanyaan tambahan yang harus kamu jawab.',
+            'Tirukan gaya saat pertama kali kamu mendekatiku.',
+            'Berikan pelukan dari belakang jika sama-sama nyaman.',
+            'Sebutkan 5 kelebihan yang aku miliki.',
+            'Buat rayuan paling absurd sampai aku tertawa.',
+            'Ceritakan 3 hal yang ingin kamu perbaiki dari dirimu.',
+            'Ucapkan kalimat romantis tanpa menggunakan kata cinta atau sayang.',
+            'Buat video singkat menyatakan perasaanmu kepadaku.',
+            'Biarkan aku memilih lagu yang harus kamu nyanyikan.',
+            'Ceritakan rencana kencan impianmu bersama aku.',
+            'Berikan aku nama panggilan baru yang unik.',
+            'Tunjukkan ekspresi wajahmu ketika sedang cemburu.',
+            'Katakan sesuatu yang selama ini malu kamu ungkapkan.',
+            'Pegang kedua tanganku dan ucapkan terima kasih atas kehadiranku.',
+            'Buat surat cinta singkat dalam waktu 2 menit.',
+            'Ceritakan 5 alasan mengapa hubungan kita harus dipertahankan.',
+            'Tirukan gaya kita ketika sedang bertengkar.',
+            'Berikan aku pujian tanpa berhenti selama 30 detik.',
+            'Buat simulasi adegan saat kita pertama kali bertemu.',
+            'Sebutkan 3 hal yang ingin kamu capai bersamaku dalam 5 tahun.',
+            'Tunjukkan foto kita yang paling kamu sukai dan jelaskan alasannya.',
+            'Bisikkan kalimat romantis di telingaku jika sama-sama nyaman.',
+            'Minta maaf atas satu kesalahan yang pernah kamu lakukan.',
+            'Katakan satu hal yang membuatmu takut kehilangan aku.',
+            'Peluk aku dan katakan apa harapan terbesarmu untuk hubungan ini.'
         ];
 
         function createInitialTodState() {
-            return { turn: 'p1', type: null, text: '' };
+            return { turn: 'p1', type: null, num: null, text: '' };
         }
 
         function renderTodView(data, p1Name, p2Name) {
@@ -2442,7 +2542,8 @@
             const resBox = document.getElementById('tod-result-box');
             if (t.text) {
                 resBox.classList.remove('hidden');
-                document.getElementById('tod-type-badge').innerText = (t.type || 'TRUTH').toUpperCase();
+                const label = (t.type || 'TRUTH').toUpperCase();
+                document.getElementById('tod-type-badge').innerText = t.num ? `${label} #${t.num}` : label;
                 document.getElementById('tod-card-text').innerText = t.text;
             } else {
                 resBox.classList.add('hidden');
@@ -2453,8 +2554,13 @@
             if (!currentRoomCode || !latestRoomData) return;
             const t = JSON.parse(JSON.stringify(latestRoomData.tod || createInitialTodState()));
             const pool = type === 'truth' ? TOD_TRUTH : TOD_DARE;
+            let idx = Math.floor(Math.random() * pool.length);
+            if (pool.length > 1 && t.type === type && t.num === idx + 1) {
+                idx = (idx + 1) % pool.length;
+            }
             t.type = type;
-            t.text = pool[Math.floor(Math.random() * pool.length)];
+            t.num = idx + 1;
+            t.text = pool[idx];
             playPopSound(700);
             await updateDoc(getRoomDocRef(currentRoomCode), { tod: t });
         };
@@ -2463,7 +2569,7 @@
             if (!currentRoomCode || !latestRoomData) return;
             const curTurn = latestRoomData.tod?.turn || 'p1';
             await updateDoc(getRoomDocRef(currentRoomCode), {
-                tod: { turn: curTurn === 'p1' ? 'p2' : 'p1', type: null, text: '' }
+                tod: { turn: curTurn === 'p1' ? 'p2' : 'p1', type: null, num: null, text: '' }
             });
             showToast('Giliran berikutnya!');
         };
