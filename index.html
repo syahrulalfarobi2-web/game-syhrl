@@ -109,6 +109,61 @@
             aspect-ratio: 1 / 1;
             gap: 2px;
         }
+
+        .uno-classic-card {
+            position: relative;
+            border-radius: 0.7rem;
+            border: 2.5px solid #ffffff;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka', sans-serif;
+        }
+        .uno-oval {
+            position: relative;
+            width: 78%;
+            height: 68%;
+            background: #ffffff;
+            border-radius: 999px;
+            transform: rotate(-28deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
+        }
+        .uno-oval-wild {
+            position: relative;
+            width: 82%;
+            height: 70%;
+            border-radius: 999px;
+            transform: rotate(-28deg);
+            overflow: hidden;
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .uno-corner-tl {
+            position: absolute;
+            top: 3px;
+            left: 5px;
+            font-weight: 700;
+            line-height: 1;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .uno-corner-br {
+            position: absolute;
+            bottom: 3px;
+            right: 5px;
+            font-weight: 700;
+            line-height: 1;
+            transform: rotate(180deg);
+            z-index: 5;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between">
@@ -522,9 +577,7 @@
                                 <span class="font-display font-extrabold text-sm text-pink-400 tracking-wider">UNO</span>
                                 <span class="text-[10px] text-pink-200/70">+ Ambil</span>
                             </button>
-                            <div id="uno-discard-card" class="w-20 h-28 rounded-2xl border-2 border-white/80 shadow-2xl flex flex-col items-center justify-center text-white font-display font-extrabold text-xl bg-rose-600">
-                                <span id="uno-discard-val">7</span>
-                            </div>
+                            <div id="uno-discard-card" class="uno-classic-card w-20 h-28 bg-rose-600"></div>
                         </div>
                         <p id="uno-active-color-label" class="text-[11px] font-bold text-pink-200">Warna Aktif: RED</p>
                     </div>
@@ -533,9 +586,9 @@
                         <p class="text-xs font-bold text-white">Pilih Warna Kartu Wild:</p>
                         <div class="grid grid-cols-4 gap-2">
                             <button onclick="chooseUnoWildColor('red')" class="py-2 rounded-xl bg-rose-500 text-white font-bold text-xs">Merah</button>
-                            <button onclick="chooseUnoWildColor('blue')" class="py-2 rounded-xl bg-sky-500 text-white font-bold text-xs">Biru</button>
-                            <button onclick="chooseUnoWildColor('green')" class="py-2 rounded-xl bg-emerald-500 text-white font-bold text-xs">Hijau</button>
                             <button onclick="chooseUnoWildColor('yellow')" class="py-2 rounded-xl bg-amber-400 text-slate-950 font-bold text-xs">Kuning</button>
+                            <button onclick="chooseUnoWildColor('green')" class="py-2 rounded-xl bg-emerald-500 text-white font-bold text-xs">Hijau</button>
+                            <button onclick="chooseUnoWildColor('blue')" class="py-2 rounded-xl bg-sky-500 text-white font-bold text-xs">Biru</button>
                         </div>
                     </div>
 
@@ -1063,7 +1116,7 @@
         };
 
         // ============================================================
-        // 1. LUDO KLASIK ASLI (GAYA PAPAN REFERENSI)
+        // 1. LUDO KLASIK ASLI
         // ============================================================
         const P1_START_IDX = 1;
         const P2_START_IDX = 27;
@@ -2041,9 +2094,10 @@
         };
 
         // ============================================================
-        // 4. UNO
+        // 4. UNO (DESAIN KARTU KLASIK REFERENSI)
         // ============================================================
-        const UNO_COLORS = ['red', 'blue', 'green', 'yellow'];
+        const UNO_COLORS = ['red', 'yellow', 'green', 'blue'];
+
         function buildUnoDeck() {
             const deck = [];
             UNO_COLORS.forEach(c => {
@@ -2095,6 +2149,75 @@
             return { drawn: out, nextDeck: deck };
         }
 
+        function renderUnoCenterSymbol(card, isSmall) {
+            const val = card.val;
+            if (val === 'Wild') {
+                return `
+                    <div class="uno-oval-wild">
+                        <div class="w-full h-full grid grid-cols-2 grid-rows-2">
+                            <span class="bg-[#ef233c]"></span>
+                            <span class="bg-[#facc15]"></span>
+                            <span class="bg-[#0284c7]"></span>
+                            <span class="bg-[#16a34a]"></span>
+                        </div>
+                    </div>
+                `;
+            }
+            if (val === '+4') {
+                const sz = isSmall ? 'w-4 h-5' : 'w-5 h-7';
+                return `
+                    <div class="uno-oval bg-white relative">
+                        <span class="${sz} rounded-[2px] bg-[#ef233c] border border-white/80 -rotate-12 -translate-x-2 -translate-y-1"></span>
+                        <span class="${sz} rounded-[2px] bg-[#0284c7] border border-white/80 -rotate-6 -translate-x-0.5 translate-y-1"></span>
+                        <span class="${sz} rounded-[2px] bg-[#facc15] border border-white/80 rotate-6 translate-x-0.5 -translate-y-1"></span>
+                        <span class="${sz} rounded-[2px] bg-[#16a34a] border border-white/80 rotate-12 translate-x-2 translate-y-1"></span>
+                    </div>
+                `;
+            }
+            if (val === '+2') {
+                const sz = isSmall ? 'w-4 h-6' : 'w-6 h-8';
+                return `
+                    <div class="uno-oval relative">
+                        <span class="${sz} rounded-[3px] bg-current border border-white -rotate-12 -translate-x-1 -translate-y-0.5 opacity-85"></span>
+                        <span class="${sz} rounded-[3px] bg-current border border-white rotate-6 translate-x-1 translate-y-0.5"></span>
+                    </div>
+                `;
+            }
+            if (val === 'Skip') {
+                return `<div class="uno-oval"><span class="${isSmall ? 'text-base' : 'text-2xl'} font-extrabold leading-none">⊘</span></div>`;
+            }
+            if (val === 'Rev') {
+                return `<div class="uno-oval"><span class="${isSmall ? 'text-base' : 'text-2xl'} font-extrabold leading-none">⇄</span></div>`;
+            }
+            const underline = (val === '6' || val === '9') ? 'underline decoration-2 underline-offset-2' : '';
+            return `<div class="uno-oval"><span class="${isSmall ? 'text-lg' : 'text-3xl'} font-extrabold leading-none ${underline}">${val}</span></div>`;
+        }
+
+        function renderUnoCardHtml(card, isSmall = false) {
+            const bgMap = {
+                red: 'bg-[#ef233c] text-[#ef233c]',
+                yellow: 'bg-[#facc15] text-[#eab308]',
+                green: 'bg-[#16a34a] text-[#16a34a]',
+                blue: 'bg-[#0284c7] text-[#0284c7]',
+                wild: 'bg-[#0f172a] text-white'
+            };
+            const cornerCls = isSmall ? 'text-[9px]' : 'text-[11px]';
+            let cornerText = card.val;
+            if (card.val === 'Skip') cornerText = '⊘';
+            if (card.val === 'Rev') cornerText = '⇄';
+            if (card.val === 'Wild') cornerText = 'W';
+
+            const cornerUnder = (cornerText === '6' || cornerText === '9') ? 'underline' : '';
+
+            return `
+                <div class="${bgMap[card.color] || 'bg-slate-800 text-white'} w-full h-full relative flex items-center justify-center">
+                    <span class="uno-corner-tl ${cornerCls} text-white ${cornerUnder}">${cornerText}</span>
+                    ${renderUnoCenterSymbol(card, isSmall)}
+                    <span class="uno-corner-br ${cornerCls} text-white ${cornerUnder}">${cornerText}</span>
+                </div>
+            `;
+        }
+
         function renderUnoView(data, p1Name, p2Name) {
             const u = data.uno || createInitialUnoState();
             const myHand = myRole === 'p1' ? (u.p1Hand || []) : (u.p2Hand || []);
@@ -2113,15 +2236,7 @@
             turnBadge.className = `text-xs font-bold px-3 py-1 rounded-full ${isMyTurn ? 'bg-emerald-500/30 text-emerald-200 border border-emerald-400/40' : 'bg-pink-500/25 text-pink-200 border border-pink-400/30'}`;
 
             const disc = document.getElementById('uno-discard-card');
-            document.getElementById('uno-discard-val').innerText = u.topCard.val;
-            const colorMap = {
-                red: 'bg-rose-600 text-white',
-                blue: 'bg-sky-600 text-white',
-                green: 'bg-emerald-600 text-white',
-                yellow: 'bg-amber-400 text-slate-950',
-                wild: 'bg-purple-900 text-white'
-            };
-            disc.className = `w-20 h-28 rounded-2xl border-2 border-white shadow-2xl flex flex-col items-center justify-center font-display font-extrabold text-xl ${colorMap[u.topCard.color] || 'bg-slate-800 text-white'}`;
+            disc.innerHTML = renderUnoCardHtml(u.topCard, false);
 
             const colorPicker = document.getElementById('uno-color-picker');
             if (isMyTurn && u.waitingWild) {
@@ -2135,8 +2250,8 @@
             myHand.forEach((card, idx) => {
                 const btn = document.createElement('button');
                 btn.onclick = () => playUnoCard(idx);
-                btn.className = `shrink-0 w-16 h-24 rounded-2xl border-2 border-white/80 shadow flex flex-col items-center justify-center font-bold text-xs active:scale-95 transition ${colorMap[card.color] || 'bg-slate-700 text-white'}`;
-                btn.innerHTML = `<span>${card.val}</span>`;
+                btn.className = 'uno-classic-card shrink-0 w-16 h-24 active:scale-95 transition';
+                btn.innerHTML = renderUnoCardHtml(card, true);
                 handBox.appendChild(btn);
             });
         }
