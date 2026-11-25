@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>game buatan blek — Ludo Klasik Pasangan</title>
-    <!-- Tailwind CSS -->
+    <title>game buatan blek — Multiplayer Pasangan</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Tone.js untuk efek suara sintesis -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
     <style>
@@ -26,14 +22,14 @@
         .font-display { font-family: 'Fredoka', sans-serif; }
 
         .glass-card {
-            background: rgba(30, 16, 53, 0.75);
+            background: rgba(30, 16, 53, 0.78);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(244, 114, 182, 0.3);
             box-shadow: 0 14px 36px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
         .glass-sub {
-            background: rgba(15, 10, 32, 0.6);
+            background: rgba(15, 10, 32, 0.65);
             border: 1px solid rgba(232, 121, 249, 0.22);
         }
 
@@ -59,10 +55,21 @@
         .heart-beat { animation: pulseHeart 1.8s infinite ease-in-out; }
 
         @keyframes popIn {
-            0% { transform: scale(0.94); opacity: 0; }
+            0% { transform: scale(0.95); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-        .pop-in { animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .pop-in { animation: popIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes diceSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(-18deg) scale(1.14); }
+            50% { transform: rotate(18deg) scale(1.18); }
+            75% { transform: rotate(-12deg) scale(1.12); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        .dice-rolling {
+            animation: diceSpin 0.24s infinite linear;
+        }
 
         .dpad-btn {
             touch-action: manipulation;
@@ -84,18 +91,26 @@
             grid-template-rows: repeat(15, minmax(0, 1fr));
             aspect-ratio: 1 / 1;
             gap: 1px;
-            background: rgba(15, 10, 32, 0.9);
-            border: 2px solid rgba(244, 114, 182, 0.4);
+            background: rgba(15, 10, 32, 0.92);
+            border: 2px solid rgba(244, 114, 182, 0.45);
             border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .monopoly-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            grid-template-rows: repeat(7, minmax(0, 1fr));
+            aspect-ratio: 1 / 1;
+            gap: 2px;
         }
     </style>
 </head>
 <body class="flex flex-col items-center justify-between">
 
-    <!-- CONTAINER UTAMA -->
     <div id="app" class="w-full max-w-lg min-h-[100dvh] flex flex-col justify-between p-3.5 pb-24 relative">
 
-        <!-- HEADER / NAVBAR -->
+        <!-- HEADER -->
         <header class="flex items-center justify-between py-1.5 gap-2">
             <div class="flex items-center gap-2.5">
                 <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-fuchsia-600 text-white flex items-center justify-center shadow-lg shadow-pink-500/30 heart-beat shrink-0">
@@ -125,7 +140,7 @@
             </div>
         </header>
 
-        <!-- TOAST NOTIFIKASI KUSTOM -->
+        <!-- TOAST -->
         <div id="toast-box" class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] hidden pointer-events-none">
             <div class="bg-slate-950/95 border border-pink-400/40 text-pink-100 text-xs font-semibold px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-2 backdrop-blur-md">
                 <i id="toast-icon" class="fas fa-heart text-pink-400"></i>
@@ -140,17 +155,17 @@
                     <i class="fas fa-sparkles text-pink-400"></i> game buatan blek • Co-op 2 HP
                 </div>
                 <h2 class="font-display text-2xl font-bold text-white leading-snug">
-                    Ludo Klasik Asli, Pico Park 50 Level & Monopoli Berdua! 💕
+                    Ludo Klasik Asli, Pico Park 50 Level & Monopoli Berdua!
                 </h2>
                 <p class="text-xs text-pink-200/75 leading-relaxed">
-                    Buat room di HP pertama, lalu bagikan kode 5 hurufnya ke HP pasanganmu untuk main Ludo berdua secara real-time!
+                    Buat room di HP pertama, lalu bagikan kode 5 hurufnya ke HP pasanganmu untuk bermain bersama secara real-time.
                 </p>
 
                 <div class="text-left pt-1">
                     <label class="block text-xs font-bold text-pink-200 mb-1.5 ml-1">Nama Panggilanmu</label>
                     <div class="relative">
                         <i class="fas fa-heart absolute left-3.5 top-1/2 -translate-y-1/2 text-pink-400 text-sm"></i>
-                        <input type="text" id="input-nickname" maxlength="16" placeholder="Contoh: Ayang, Sayang, Blek..." 
+                        <input type="text" id="input-nickname" maxlength="16" placeholder="Contoh: Ayang, Sayang, Blek..."
                             class="w-full pl-10 pr-4 py-3 rounded-2xl bg-slate-950/60 border border-pink-400/30 focus:border-pink-400 focus:outline-none text-sm font-semibold text-white placeholder-pink-300/40 transition">
                     </div>
                 </div>
@@ -173,7 +188,7 @@
                 <div id="panel-join" class="hidden pt-1 space-y-3">
                     <div class="text-left">
                         <label class="block text-xs font-bold text-pink-200 mb-1.5 ml-1">Kode Room Pasangan (5 Karakter)</label>
-                        <input type="text" id="input-room-code" maxlength="5" placeholder="AB12C" 
+                        <input type="text" id="input-room-code" maxlength="5" placeholder="AB12C"
                             class="w-full px-4 py-3 rounded-2xl bg-slate-950/60 border border-pink-400/30 focus:border-pink-400 focus:outline-none text-center font-mono text-lg font-extrabold uppercase tracking-[0.25em] text-pink-300 placeholder-pink-300/30 transition">
                     </div>
                     <button onclick="joinRoom()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:brightness-110 text-white font-bold text-sm shadow-lg shadow-purple-600/30 active:scale-[0.98] transition flex items-center justify-center gap-2">
@@ -224,10 +239,9 @@
                 </div>
             </div>
 
-            <!-- Daftar Game -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between px-1">
-                    <h3 class="font-display text-sm font-bold text-pink-200">Pilih Permainan Berdua ✨</h3>
+                    <h3 class="font-display text-sm font-bold text-pink-200">Pilih Permainan Berdua</h3>
                     <span class="text-[10px] text-pink-300/70">7 Mode Seru</span>
                 </div>
 
@@ -240,7 +254,7 @@
                             <h4 class="font-display font-bold text-white text-sm truncate">Ludo Klasik Asli Berdua</h4>
                             <span class="text-[10px] font-extrabold bg-sky-400/25 text-sky-200 border border-sky-400/40 px-2 py-0.5 rounded-full shrink-0">KLASIK</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Papan Ludo asli 2 pemain! Keluar kandang dengan angka 6, pukul bidak lawan & capai garis finish.</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Papan Ludo 15x15 dua pemain dengan zona aman, pukul bidak lawan, dan jalur finish.</p>
                     </div>
                 </button>
 
@@ -253,7 +267,7 @@
                             <h4 class="font-display font-bold text-white text-sm truncate">Misi PICO PARK (50 Level)</h4>
                             <span class="text-[10px] font-bold bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded-full shrink-0">50 STAGE</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">50 Level platformer co-op bertahap dengan tombol, balok berat & platform dinamis.</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">50 level platformer co-op dengan saklar jembatan, balok dorong, dan pintu kunci.</p>
                     </div>
                 </button>
 
@@ -266,7 +280,7 @@
                             <h4 class="font-display font-bold text-white text-sm truncate">Monopoli Klasik (Bergantian)</h4>
                             <span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-200 px-2 py-0.5 rounded-full shrink-0">24 Petak</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Giliran bergantian adil, beli properti, bayar sewa otomatis & Dana Umum.</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Giliran bergantian, beli properti, bayar sewa otomatis, pajak, dan bonus putaran START.</p>
                     </div>
                 </button>
 
@@ -279,7 +293,7 @@
                             <h4 class="font-display font-bold text-white text-sm truncate">Kartu UNO Pasangan</h4>
                             <span class="text-[10px] font-bold bg-rose-500/20 text-rose-200 px-2 py-0.5 rounded-full shrink-0">2 Pemain</span>
                         </div>
-                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Adu habis kartu UNO interaktif lengkap dengan Wild, +2, +4, Skip & pilih warna!</p>
+                        <p class="text-[11px] text-pink-200/75 mt-0.5 leading-snug">Adu habis kartu UNO interaktif dengan Skip, Reverse, +2, Wild, +4, dan pemilih warna.</p>
                     </div>
                 </button>
 
@@ -317,25 +331,27 @@
                 <span id="game-mode-badge" class="text-xs font-bold text-pink-200 glass-card px-3 py-1.5 rounded-xl">Mode Aktif</span>
             </div>
 
-            <!-- 1. LUDO KLASIK ASLI -->
-            <div id="view-ludo" class="hidden space-y-2.5">
-                <div class="glass-card rounded-3xl p-3 space-y-2.5">
+            <!-- 1. LUDO -->
+            <div id="view-ludo" class="hidden space-y-2.5 relative">
+                <div class="glass-card rounded-3xl p-3 space-y-2.5 relative">
                     <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <span id="ludo-turn-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-pink-500/25 text-pink-200 border border-pink-400/30">Giliran...</span>
                             <span id="ludo-role-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/25 text-pink-200">Kamu: Pink</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span id="ludo-dice-disp" class="w-10 h-10 rounded-xl bg-sky-500 text-white font-mono font-extrabold text-lg flex items-center justify-center shadow">🎲 6</span>
-                        </div>
+                        <span id="ludo-dice-disp" class="w-11 h-10 rounded-xl bg-sky-500 text-white font-mono font-extrabold text-base flex items-center justify-center shadow shrink-0">🎲 6</span>
+                    </div>
+
+                    <div class="flex justify-between text-[11px] px-1 text-pink-200/85 font-semibold">
+                        <span id="ludo-p1-score">🩷 P1 Finish: 0/4</span>
+                        <span id="ludo-p2-score">🩵 P2 Finish: 0/4</span>
                     </div>
 
                     <p id="ludo-log" class="text-[11px] text-pink-100 bg-slate-950/60 border border-pink-400/20 px-3 py-1.5 rounded-xl text-center leading-snug">
                         Kocok dadu! Lempar angka 6 untuk mengeluarkan bidak dari kandang.
                     </p>
 
-                    <!-- Papan Ludo Klasik 15x15 -->
-                    <div id="ludo-board" class="ludo-board w-full relative"></div>
+                    <div id="ludo-board" class="ludo-grid w-full relative"></div>
 
                     <div class="flex items-center justify-between gap-3 pt-1">
                         <button id="btn-ludo-roll" onclick="rollLudoDice()" class="flex-1 py-3 rounded-2xl bg-gradient-to-r from-sky-400 to-indigo-600 text-white font-bold text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
@@ -345,10 +361,31 @@
                             Ulangi
                         </button>
                     </div>
+
+                    <!-- MODAL PEMENANG LUDO -->
+                    <div id="ludo-winner-modal" class="hidden absolute inset-0 z-30 rounded-3xl bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 pop-in">
+                        <div class="glass-card rounded-3xl p-6 w-full max-w-xs text-center space-y-3.5 border-2 border-amber-400/50 shadow-2xl">
+                            <div class="text-5xl animate-bounce">🏆</div>
+                            <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                                Juara Ludo Klasik
+                            </span>
+                            <h3 id="ludo-winner-name" class="font-display text-xl font-bold text-white">Pemain Menang!</h3>
+                            <p id="ludo-winner-detail" class="text-xs text-pink-100/85 leading-relaxed">
+                                Berhasil mengantarkan seluruh 4 bidak ke garis FINISH!
+                            </p>
+                            <div class="grid grid-cols-2 gap-2 text-[11px] font-bold">
+                                <div id="ludo-modal-p1" class="glass-sub rounded-xl p-2 text-pink-200">🩷 P1: 4/4</div>
+                                <div id="ludo-modal-p2" class="glass-sub rounded-xl p-2 text-cyan-200">🩵 P2: 0/4</div>
+                            </div>
+                            <button onclick="resetLudoGame()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-pink-500 to-fuchsia-600 text-slate-950 font-extrabold text-xs shadow-lg active:scale-95 transition">
+                                <i class="fas fa-rotate-right mr-1"></i> Main Lagi
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- 2. PICO PARK (50 LEVELS) -->
+            <!-- 2. PICO PARK -->
             <div id="view-picopark" class="hidden space-y-2.5">
                 <div class="glass-card rounded-3xl p-3 space-y-2.5">
                     <div class="flex items-center justify-between gap-2">
@@ -357,12 +394,10 @@
                                 <span id="pico-level-badge" class="text-[10px] font-extrabold uppercase bg-amber-500/25 text-amber-200 border border-amber-400/30 px-2 py-0.5 rounded-full">Level 1 / 50</span>
                                 <span id="pico-role-tag" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/25 text-pink-200">Kamu: P1 Pink</span>
                             </div>
-                            <h3 id="pico-level-title" class="font-display font-bold text-sm text-white mt-0.5">1. Jembatan Tombol</h3>
+                            <h3 id="pico-level-title" class="font-display font-bold text-sm text-white mt-0.5">1. Stage Tantangan 1</h3>
                         </div>
                         <div class="flex items-center gap-1.5">
-                            <span id="pico-key-status" class="text-xs font-bold px-2.5 py-1 rounded-xl bg-slate-950/60 border border-pink-400/20 text-amber-300">
-                                🔑 0/1
-                            </span>
+                            <span id="pico-key-status" class="text-xs font-bold px-2.5 py-1 rounded-xl bg-slate-950/60 border border-pink-400/20 text-amber-300">🔑 0/1</span>
                             <button onclick="resetPicoLevel()" title="Ulang Level" class="w-8 h-8 rounded-xl bg-rose-500/20 border border-rose-400/30 text-rose-200 hover:bg-rose-500/35 flex items-center justify-center text-xs active:scale-90 transition">
                                 <i class="fas fa-redo"></i>
                             </button>
@@ -370,7 +405,7 @@
                     </div>
 
                     <p id="pico-mission-hint" class="text-[11px] text-pink-200/85 bg-slate-950/50 border border-pink-400/15 px-3 py-1.5 rounded-xl leading-snug">
-                        Injak tombol merah agar jembatan terbuka untuk pasanganmu!
+                        Kerjasama tim untuk mengambil kunci dan membuka pintu!
                     </p>
 
                     <div id="pico-canvas-wrapper" class="relative w-full rounded-2xl overflow-hidden border-2 border-pink-400/30 bg-[#140c28] shadow-inner">
@@ -444,6 +479,9 @@
                             <button id="btn-mono-buy" onclick="buyMonopolyTile()" class="hidden py-2.5 px-3 rounded-xl bg-amber-500 text-slate-950 font-extrabold text-xs shadow active:scale-95 transition">
                                 Beli Properti
                             </button>
+                            <button onclick="resetMonopolyGame()" class="py-2.5 px-3 rounded-xl bg-rose-500/20 border border-rose-400/30 text-rose-200 font-bold text-xs active:scale-95 transition">
+                                Ulangi
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -467,7 +505,11 @@
                         </div>
                     </div>
 
-                    <div class="py-2 flex flex-col items-center justify-center space-y-2.5">
+                    <p id="uno-status-log" class="text-[11px] text-pink-100 text-center bg-slate-950/50 py-1.5 px-3 rounded-xl border border-pink-400/15">
+                        Cocokkan warna atau nilai kartu, atau ambil kartu dari dek.
+                    </p>
+
+                    <div class="py-1 flex flex-col items-center justify-center space-y-2.5">
                         <div class="flex items-center justify-center gap-5">
                             <button onclick="drawUnoCard()" class="w-20 h-28 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 border-2 border-pink-400/40 shadow-xl flex flex-col items-center justify-center gap-1 active:scale-95 transition">
                                 <span class="font-display font-extrabold text-sm text-pink-400 tracking-wider">UNO</span>
@@ -477,7 +519,7 @@
                                 <span id="uno-discard-val">7</span>
                             </div>
                         </div>
-                        <p id="uno-active-color-label" class="text-[11px] font-bold text-pink-200">Warna Aktif: Merah</p>
+                        <p id="uno-active-color-label" class="text-[11px] font-bold text-pink-200">Warna Aktif: RED</p>
                     </div>
 
                     <div id="uno-color-picker" class="hidden glass-sub p-3 rounded-2xl text-center space-y-2">
@@ -503,11 +545,15 @@
             <!-- 5. QUIZ -->
             <div id="view-quiz" class="hidden space-y-3">
                 <div class="glass-card rounded-3xl p-5 text-center space-y-4">
-                    <div class="inline-flex items-center gap-1.5 bg-pink-500/20 border border-pink-400/30 text-pink-200 text-[11px] font-bold px-3 py-1 rounded-full">
-                        <i class="fas fa-brain text-pink-400"></i> Seberapa Kenal
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center gap-1.5 bg-pink-500/20 border border-pink-400/30 text-pink-200 text-[11px] font-bold px-3 py-1 rounded-full">
+                            <i class="fas fa-brain text-pink-400"></i> Seberapa Kenal?
+                        </span>
+                        <span id="quiz-score-badge" class="text-[11px] font-bold text-amber-300">Skor Cocok: 0</span>
                     </div>
                     <h3 id="quiz-question" class="font-display text-lg font-bold text-white leading-snug">Memuat pertanyaan...</h3>
                     <div id="quiz-options" class="space-y-2 text-left"></div>
+                    <p id="quiz-status-text" class="text-[11px] text-pink-200/80"></p>
                 </div>
             </div>
 
@@ -521,19 +567,20 @@
                         <p class="text-[11px] opacity-90">Giliran Saat Ini:</p>
                         <p id="tod-turn-name" class="font-display text-lg font-bold">Nama Pemain</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-3 pt-2">
-                        <button onclick="pickTod('truth')" class="py-5 px-3 rounded-2xl bg-sky-500/15 border-2 border-sky-400/40 text-sky-200 flex flex-col items-center gap-1.5">
+                    <div class="grid grid-cols-2 gap-3 pt-1">
+                        <button onclick="pickTod('truth')" class="py-4 px-3 rounded-2xl bg-sky-500/15 border-2 border-sky-400/40 text-sky-200 flex flex-col items-center gap-1.5 active:scale-95 transition">
                             <i class="fas fa-comment-dots text-2xl text-sky-400"></i>
                             <span class="font-display font-bold text-base">TRUTH</span>
                         </button>
-                        <button onclick="pickTod('dare')" class="py-5 px-3 rounded-2xl bg-rose-500/15 border-2 border-rose-400/40 text-rose-200 flex flex-col items-center gap-1.5">
+                        <button onclick="pickTod('dare')" class="py-4 px-3 rounded-2xl bg-rose-500/15 border-2 border-rose-400/40 text-rose-200 flex flex-col items-center gap-1.5 active:scale-95 transition">
                             <i class="fas fa-bolt text-2xl text-rose-400"></i>
                             <span class="font-display font-bold text-base">DARE</span>
                         </button>
                     </div>
-                    <div id="tod-result-box" class="hidden p-4 rounded-2xl glass-sub border border-pink-400/30 text-center space-y-2">
-                        <p id="tod-card-text" class="font-display font-bold text-white text-sm"></p>
-                        <button onclick="nextTodTurn()" class="px-4 py-2 rounded-xl bg-pink-500 text-white text-xs font-bold">Selesai / Ganti Giliran</button>
+                    <div id="tod-result-box" class="hidden p-4 rounded-2xl glass-sub border border-pink-400/30 text-center space-y-2.5">
+                        <span id="tod-type-badge" class="inline-block text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-pink-500/25 text-pink-200">TRUTH</span>
+                        <p id="tod-card-text" class="font-display font-bold text-white text-sm leading-relaxed"></p>
+                        <button onclick="nextTodTurn()" class="px-4 py-2 rounded-xl bg-pink-500 text-white text-xs font-bold active:scale-95 transition">Selesai / Ganti Giliran</button>
                     </div>
                 </div>
             </div>
@@ -544,17 +591,19 @@
                     <div class="inline-flex items-center gap-1.5 bg-purple-500/25 border border-purple-400/30 text-purple-200 text-[11px] font-bold px-3 py-1 rounded-full">
                         <i class="fas fa-heart text-pink-400"></i> Tebak Hati Berdua
                     </div>
-                    <h3 class="font-display text-lg font-bold text-white">Kalian Lebih Pilih Mana? 🤔</h3>
+                    <h3 id="wyr-prompt" class="font-display text-lg font-bold text-white">Kalian Lebih Pilih Mana?</h3>
                     <div class="space-y-2.5">
-                        <button onclick="submitWyr('A')" class="w-full p-4 rounded-2xl glass-sub border-2 border-pink-400/30 text-left flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-xl bg-pink-500 text-white font-display font-bold flex items-center justify-center">A</span>
+                        <button onclick="submitWyr('A')" class="w-full p-4 rounded-2xl glass-sub border-2 border-pink-400/30 hover:border-pink-400 text-left flex items-center gap-3 transition active:scale-[0.99]">
+                            <span class="w-8 h-8 rounded-xl bg-pink-500 text-white font-display font-bold flex items-center justify-center shrink-0">A</span>
                             <span id="wyr-a" class="text-xs font-bold text-white">Pilihan A</span>
                         </button>
-                        <button onclick="submitWyr('B')" class="w-full p-4 rounded-2xl glass-sub border-2 border-indigo-400/30 text-left flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-xl bg-indigo-500 text-white font-display font-bold flex items-center justify-center">B</span>
+                        <button onclick="submitWyr('B')" class="w-full p-4 rounded-2xl glass-sub border-2 border-indigo-400/30 hover:border-indigo-400 text-left flex items-center gap-3 transition active:scale-[0.99]">
+                            <span class="w-8 h-8 rounded-xl bg-indigo-500 text-white font-display font-bold flex items-center justify-center shrink-0">B</span>
                             <span id="wyr-b" class="text-xs font-bold text-white">Pilihan B</span>
                         </button>
                     </div>
+                    <p id="wyr-status-text" class="text-[11px] text-pink-200/80"></p>
+                    <button onclick="nextWyrRound()" class="px-4 py-2 rounded-xl bg-purple-500/30 border border-purple-400/40 text-purple-100 text-xs font-bold">Pertanyaan Berikutnya</button>
                 </div>
             </div>
         </main>
@@ -597,12 +646,10 @@
         </div>
     </div>
 
-    <!-- SCRIPT UTAMA FIREBASE & GAME LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
 
         const appId = 'game-syahrul';
         const firebaseConfig = {
@@ -615,16 +662,22 @@
             measurementId: "G-RW3QETBE0H"
         };
 
-        let app, auth, db, analytics;
+        let app, auth, db;
         let currentUser = null;
         let currentRoomCode = null;
-        let myRole = null; 
+        let myRole = null;
         let myName = '';
         let roomUnsubscribe = null;
         let lastReactionId = null;
         let latestRoomData = null;
         let chatOpen = false;
         let lastChatCount = 0;
+
+        async function ensureAudioStarted() {
+            if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
+                await Tone.start();
+            }
+        }
 
         function playPopSound(freq = 523.25) {
             try {
@@ -637,6 +690,41 @@
                     synth.volume.value = -14;
                     synth.triggerAttackRelease(freq, "16n");
                 }
+            } catch (e) {}
+        }
+
+        async function playCaptureSound() {
+            try {
+                if (typeof Tone === 'undefined') return;
+                await ensureAudioStarted();
+                const poly = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'sawtooth' },
+                    envelope: { attack: 0.005, decay: 0.12, sustain: 0.04, release: 0.12 }
+                }).toDestination();
+                poly.volume.value = -12;
+                const now = Tone.now();
+                poly.triggerAttackRelease("G5", "16n", now);
+                poly.triggerAttackRelease("E5", "16n", now + 0.08);
+                poly.triggerAttackRelease("C5", "8n", now + 0.16);
+                setTimeout(() => poly.dispose(), 800);
+            } catch (e) {}
+        }
+
+        async function playWinSound() {
+            try {
+                if (typeof Tone === 'undefined') return;
+                await ensureAudioStarted();
+                const poly = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.01, decay: 0.18, sustain: 0.15, release: 0.35 }
+                }).toDestination();
+                poly.volume.value = -9;
+                const now = Tone.now();
+                poly.triggerAttackRelease("C5", "8n", now);
+                poly.triggerAttackRelease("E5", "8n", now + 0.12);
+                poly.triggerAttackRelease("G5", "8n", now + 0.24);
+                poly.triggerAttackRelease("C6", "4n", now + 0.36);
+                setTimeout(() => poly.dispose(), 1400);
             } catch (e) {}
         }
 
@@ -655,8 +743,6 @@
                 app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
-                try { analytics = getAnalytics(app); } catch(e){}
-
                 await signInAnonymously(auth);
                 currentUser = auth.currentUser;
                 statusEl.innerHTML = '<i class="fas fa-check-circle text-emerald-400 mr-1"></i> Terhubung & siap main 2 HP!';
@@ -709,11 +795,13 @@
                 p1: { uid: currentUser.uid, name: myName },
                 p2: null,
                 mode: 'menu',
-                round: 1,
                 ludo: createInitialLudoState(),
                 pico: createInitialPicoState(0),
                 mono: createInitialMonopolyState(),
                 uno: createInitialUnoState(),
+                quiz: createInitialQuizState(),
+                tod: createInitialTodState(),
+                wyr: createInitialWyrState(),
                 chats: [],
                 reaction: null,
                 updatedAt: Date.now()
@@ -907,6 +995,7 @@
                 allViews.forEach(v => document.getElementById(v).classList.add('hidden'));
 
                 if (data.mode === 'ludo') {
+                    stopPicoLoop();
                     document.getElementById('game-mode-badge').innerText = '🎲 Ludo Klasik Asli';
                     document.getElementById('view-ludo').classList.remove('hidden');
                     renderLudoBoardView(data, p1Name, p2Name || 'Pasangan');
@@ -925,14 +1014,17 @@
                         document.getElementById('view-uno').classList.remove('hidden');
                         renderUnoView(data, p1Name, p2Name || 'Pasangan');
                     } else if (data.mode === 'quiz') {
-                        document.getElementById('game-mode-badge').innerText = `Seberapa Kenal`;
+                        document.getElementById('game-mode-badge').innerText = '🧠 Seberapa Kenal?';
                         document.getElementById('view-quiz').classList.remove('hidden');
+                        renderQuizView(data, p1Name, p2Name || 'Pasangan');
                     } else if (data.mode === 'tod') {
-                        document.getElementById('game-mode-badge').innerText = `Truth or Dare`;
+                        document.getElementById('game-mode-badge').innerText = '🔥 Truth or Dare';
                         document.getElementById('view-tod').classList.remove('hidden');
+                        renderTodView(data, p1Name, p2Name || 'Pasangan');
                     } else if (data.mode === 'wyr') {
-                        document.getElementById('game-mode-badge').innerText = `Tebak Hati`;
+                        document.getElementById('game-mode-badge').innerText = '💜 Tebak Hati';
                         document.getElementById('view-wyr').classList.remove('hidden');
+                        renderWyrView(data, p1Name, p2Name || 'Pasangan');
                     }
                 }
             }
@@ -941,12 +1033,16 @@
         window.selectGameMode = async function(mode) {
             if (!currentRoomCode) return;
             playPopSound(587.33);
+            const cur = latestRoomData || {};
             const updates = {
                 mode,
-                ludo: mode === 'ludo' ? createInitialLudoState() : latestRoomData.ludo,
-                pico: mode === 'picopark' ? createInitialPicoState(0) : latestRoomData.pico,
-                mono: mode === 'monopoly' ? createInitialMonopolyState() : latestRoomData.mono,
-                uno: mode === 'uno' ? createInitialUnoState() : latestRoomData.uno,
+                ludo: mode === 'ludo' ? createInitialLudoState() : (cur.ludo || createInitialLudoState()),
+                pico: mode === 'picopark' ? createInitialPicoState(0) : (cur.pico || createInitialPicoState(0)),
+                mono: mode === 'monopoly' ? createInitialMonopolyState() : (cur.mono || createInitialMonopolyState()),
+                uno: mode === 'uno' ? createInitialUnoState() : (cur.uno || createInitialUnoState()),
+                quiz: mode === 'quiz' ? createInitialQuizState() : (cur.quiz || createInitialQuizState()),
+                tod: mode === 'tod' ? createInitialTodState() : (cur.tod || createInitialTodState()),
+                wyr: mode === 'wyr' ? createInitialWyrState() : (cur.wyr || createInitialWyrState()),
                 updatedAt: Date.now()
             };
             await updateDoc(getRoomDocRef(currentRoomCode), updates);
@@ -959,39 +1055,104 @@
             await updateDoc(getRoomDocRef(currentRoomCode), { mode: 'menu' });
         };
 
+        // ============================================================
+        // 1. LUDO KLASIK ASLI
+        // ============================================================
+        const P1_START_IDX = 1;
+        const P2_START_IDX = 27;
+        const SAFE_TRACK_INDICES = new Set([1, 9, 14, 22, 27, 35, 40, 48]);
 
-        // --- LUDO KLASIK ASLI (FULL 2-PLAYER BOARD) ---
-        // Path 52 petak keliling + home stretch
-        // P1 Start index: 0, P2 Start index: 26 (seberang)
+        const LUDO_TRACK_COORDS = [
+            [6,0], [6,1], [6,2], [6,3], [6,4], [6,5],
+            [5,6], [4,6], [3,6], [2,6], [1,6], [0,6],
+            [0,7], [0,8],
+            [1,8], [2,8], [3,8], [4,8], [5,8],
+            [6,9], [6,10], [6,11], [6,12], [6,13], [6,14],
+            [7,14], [8,14],
+            [8,13], [8,12], [8,11], [8,10], [8,9],
+            [9,8], [10,8], [11,8], [12,8], [13,8], [14,8],
+            [14,7], [14,6],
+            [13,6], [12,6], [11,6], [10,6], [9,6],
+            [8,5], [8,4], [8,3], [8,2], [8,1], [8,0],
+            [7,0]
+        ];
+
+        const P1_HOME_COORDS = [[7,1], [7,2], [7,3], [7,4], [7,5], [7,6]];
+        const P2_HOME_COORDS = [[7,13], [7,12], [7,11], [7,10], [7,9], [7,8]];
+
+        let isRollingLudoDice = false;
+        let lastAnnouncedLudoWinner = null;
+        let lastLudoActionSoundKey = null;
+
         function createInitialLudoState() {
             return {
-                turn: 'p1', // 'p1' (Pink) atau 'p2' (Cyan)
+                turn: 'p1',
                 dice: 6,
                 rolled: false,
-                p1Tokens: [-1, -1, -1, -1], // -1 = di kandang, 0..51 = track utama, 52..57 = home stretch, 58 = finish
+                winner: null,
+                lastEvent: null,
+                p1Tokens: [-1, -1, -1, -1],
                 p2Tokens: [-1, -1, -1, -1],
-                log: 'Giliran Pemain 1 (Pink) melempar dadu.'
+                log: 'Giliran Pemain 1 (Pink)! Kocok dadu untuk mulai.'
             };
         }
 
-        // Koordinat grid 15x15 untuk track utama Ludo (0 sampai 51)
-        const LUDO_TRACK_COORDS = [
-            [6,1], [6,2], [6,3], [6,4], [6,5], [5,6], [4,6], [3,6], [2,6], [1,6], [0,6], [0,7], [0,8],
-            [1,8], [2,8], [3,8], [4,8], [5,8], [6,9], [6,10], [6,11], [6,12], [6,13], [6,14], [7,14], [8,14],
-            [8,13], [8,12], [8,11], [8,10], [8,9], [9,8], [10,8], [11,8], [12,8], [13,8], [14,8], [14,7], [14,6],
-            [13,6], [12,6], [11,6], [10,6], [9,6], [8,5], [8,4], [8,3], [8,2], [8,1], [8,0], [7,0], [6,0]
-        ];
+        function getTrackIndex(player, steps) {
+            if (steps < 0 || steps > 50) return null;
+            const startIdx = player === 'p1' ? P1_START_IDX : P2_START_IDX;
+            return (startIdx + steps) % 52;
+        }
 
-        // Home Stretch Coords
-        const P1_HOME_COORDS = [[7,1], [7,2], [7,3], [7,4], [7,5], [7,6]]; // Menuju tengah [7,7]
-        const P2_HOME_COORDS = [[7,13], [7,12], [7,11], [7,10], [7,9], [7,8]];
+        function getTokenCoord(player, steps) {
+            if (steps < 0 || steps === 56) return null;
+            if (steps <= 50) {
+                return LUDO_TRACK_COORDS[getTrackIndex(player, steps)];
+            }
+            const homeIdx = steps - 51;
+            return player === 'p1' ? P1_HOME_COORDS[homeIdx] : P2_HOME_COORDS[homeIdx];
+        }
+
+        function canTokenMove(steps, roll) {
+            if (steps === 56) return false;
+            if (steps === -1) return roll === 6;
+            return steps + roll <= 56;
+        }
 
         function renderLudoBoardView(data, p1Name, p2Name) {
             const l = data.ludo || createInitialLudoState();
-            const isMyTurn = l.turn === myRole;
+            const isMyTurn = l.turn === myRole && !l.winner && !isRollingLudoDice;
 
-            document.getElementById('ludo-turn-badge').innerText = `Giliran: ${l.turn === 'p1' ? p1Name : p2Name}`;
-            document.getElementById('ludo-dice-disp').innerText = `🎲 ${l.dice}`;
+            if (l.lastEvent && l.lastEvent.id && l.lastEvent.id !== lastLudoActionSoundKey) {
+                lastLudoActionSoundKey = l.lastEvent.id;
+                if (l.lastEvent.type === 'win') {
+                    playWinSound();
+                } else if (l.lastEvent.type === 'capture') {
+                    playCaptureSound();
+                }
+            }
+
+            if (l.winner && lastAnnouncedLudoWinner !== l.winner) {
+                lastAnnouncedLudoWinner = l.winner;
+                playWinSound();
+            } else if (!l.winner) {
+                lastAnnouncedLudoWinner = null;
+            }
+
+            const p1Finished = l.p1Tokens.filter(s => s === 56).length;
+            const p2Finished = l.p2Tokens.filter(s => s === 56).length;
+            document.getElementById('ludo-p1-score').innerText = `🩷 ${p1Name}: ${p1Finished}/4`;
+            document.getElementById('ludo-p2-score').innerText = `🩵 ${p2Name}: ${p2Finished}/4`;
+
+            document.getElementById('ludo-turn-badge').innerText = l.winner
+                ? `🏆 Pemenang: ${l.winner === 'p1' ? p1Name : p2Name}!`
+                : `Giliran: ${l.turn === 'p1' ? p1Name : p2Name}`;
+
+            const diceEl = document.getElementById('ludo-dice-disp');
+            if (!isRollingLudoDice) {
+                diceEl.innerText = `🎲 ${l.dice}`;
+                diceEl.classList.remove('dice-rolling');
+            }
+
             document.getElementById('ludo-log').innerText = l.log;
 
             const roleTag = document.getElementById('ludo-role-tag');
@@ -1003,10 +1164,21 @@
                 roleTag.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/25 text-cyan-200';
             }
 
+            const trackMap = new Map();
+            for (let i = 0; i < 52; i++) {
+                const [r, c] = LUDO_TRACK_COORDS[i];
+                trackMap.set(`${r},${c}`, i);
+            }
+
+            const p1HomeMap = new Map();
+            P1_HOME_COORDS.forEach(([r, c], idx) => p1HomeMap.set(`${r},${c}`, idx));
+
+            const p2HomeMap = new Map();
+            P2_HOME_COORDS.forEach(([r, c], idx) => p2HomeMap.set(`${r},${c}`, idx));
+
             const board = document.getElementById('ludo-board');
             board.innerHTML = '';
 
-            // Render 15x15 grid cells
             for (let r = 0; r < 15; r++) {
                 for (let c = 0; c < 15; c++) {
                     const cell = document.createElement('div');
@@ -1014,61 +1186,61 @@
                     cell.style.gridColumn = c + 1;
                     cell.className = 'flex items-center justify-center text-[8px] relative border border-white/5';
 
-                    // Base Pink (Kiri Bawah: r:9-14, c:0-5)
                     if (r >= 9 && c <= 5) {
-                        cell.className += ' bg-pink-950/80';
+                        cell.className += ' bg-pink-950/85';
                         if ((r === 10 || r === 12) && (c === 1 || c === 3)) {
                             const idx = (r === 10 && c === 1) ? 0 : (r === 10 && c === 3) ? 1 : (r === 12 && c === 1) ? 2 : 3;
                             if (l.p1Tokens[idx] === -1) {
-                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-6 h-6 rounded-full bg-pink-500 border-2 border-white shadow-lg flex items-center justify-center text-[10px] font-bold text-white active:scale-90 transition">🩷</button>`;
+                                const movable = isMyTurn && l.rolled && myRole === 'p1' && canTokenMove(-1, l.dice);
+                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-pink-500 border-2 border-white shadow-lg flex items-center justify-center text-[10px] font-bold text-white active:scale-90 transition ${movable ? 'ring-2 ring-amber-300 animate-bounce cursor-pointer' : ''}">🩷</button>`;
                             }
                         }
-                    }
-                    // Base Cyan (Kanan Atas: r:0-5, c:9-14)
-                    else if (r <= 5 && c >= 9) {
-                        cell.className += ' bg-cyan-950/80';
+                    } else if (r <= 5 && c >= 9) {
+                        cell.className += ' bg-cyan-950/85';
                         if ((r === 2 || r === 4) && (c === 10 || c === 12)) {
                             const idx = (r === 2 && c === 10) ? 0 : (r === 2 && c === 12) ? 1 : (r === 4 && c === 10) ? 2 : 3;
                             if (l.p2Tokens[idx] === -1) {
-                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-6 h-6 rounded-full bg-cyan-400 border-2 border-white shadow-lg flex items-center justify-center text-[10px] font-bold text-slate-950 active:scale-90 transition">🩵</button>`;
+                                const movable = isMyTurn && l.rolled && myRole === 'p2' && canTokenMove(-1, l.dice);
+                                cell.innerHTML = `<button onclick="clickLudoToken(${idx})" class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-cyan-400 border-2 border-white shadow-lg flex items-center justify-center text-[10px] font-bold text-slate-950 active:scale-90 transition ${movable ? 'ring-2 ring-amber-300 animate-bounce cursor-pointer' : ''}">🩵</button>`;
                             }
                         }
-                    }
-                    // Home Tengah (r:6-8, c:6-8)
-                    else if (r >= 6 && r <= 8 && c >= 6 && c <= 8) {
-                        cell.className += ' bg-gradient-to-br from-pink-500/30 to-cyan-500/30';
+                    } else if (r >= 6 && r <= 8 && c >= 6 && c <= 8) {
+                        cell.className += ' bg-gradient-to-br from-pink-500/35 to-cyan-500/35';
                         if (r === 7 && c === 7) cell.innerHTML = '🏆';
-                    }
-                    // Jalur Track Utama
-                    else {
-                        cell.className += ' bg-slate-900/90';
-                        // Cek apakah ada token di koordinat ini
-                        let tokensHere = [];
-                        l.p1Tokens.forEach((pos, i) => {
-                            if (pos >= 0 && pos < 52) {
-                                const coord = LUDO_TRACK_COORDS[pos];
-                                if (coord && coord[0] === r && coord[1] === c) tokensHere.push({ player: 'p1', idx: i });
-                            } else if (pos >= 52 && pos < 58) {
-                                const hCoord = P1_HOME_COORDS[pos - 52];
-                                if (hCoord && hCoord[0] === r && hCoord[1] === c) tokensHere.push({ player: 'p1', idx: i });
+                    } else {
+                        const key = `${r},${c}`;
+                        if (p1HomeMap.has(key)) {
+                            cell.className += ' bg-pink-600/45';
+                        } else if (p2HomeMap.has(key)) {
+                            cell.className += ' bg-cyan-500/45';
+                        } else if (trackMap.has(key) && SAFE_TRACK_INDICES.has(trackMap.get(key))) {
+                            cell.className += ' bg-amber-500/20';
+                        } else {
+                            cell.className += ' bg-slate-900/90';
+                        }
+
+                        const tokensHere = [];
+                        l.p1Tokens.forEach((steps, i) => {
+                            const coord = getTokenCoord('p1', steps);
+                            if (coord && coord[0] === r && coord[1] === c) {
+                                tokensHere.push({ player: 'p1', idx: i, steps });
                             }
                         });
-                        l.p2Tokens.forEach((pos, i) => {
-                            if (pos >= 0 && pos < 52) {
-                                const coord = LUDO_TRACK_COORDS[pos];
-                                if (coord && coord[0] === r && coord[1] === c) tokensHere.push({ player: 'p2', idx: i });
-                            } else if (pos >= 52 && pos < 58) {
-                                const hCoord = P2_HOME_COORDS[pos - 52];
-                                if (hCoord && hCoord[0] === r && hCoord[1] === c) tokensHere.push({ player: 'p2', idx: i });
+                        l.p2Tokens.forEach((steps, i) => {
+                            const coord = getTokenCoord('p2', steps);
+                            if (coord && coord[0] === r && coord[1] === c) {
+                                tokensHere.push({ player: 'p2', idx: i, steps });
                             }
                         });
 
                         if (tokensHere.length > 0) {
                             cell.innerHTML = tokensHere.map(t => {
-                                const canClick = isMyTurn && l.rolled && t.player === myRole;
+                                const canClick = isMyTurn && l.rolled && t.player === myRole && canTokenMove(t.steps, l.dice);
                                 const bgCol = t.player === 'p1' ? 'bg-pink-500 text-white' : 'bg-cyan-400 text-slate-950';
-                                return `<button ${canClick ? `onclick="clickLudoToken(${t.idx})"` : ''} class="w-5 h-5 rounded-full ${bgCol} border border-white font-bold text-[8px] flex items-center justify-center shadow ${canClick ? 'animate-bounce cursor-pointer' : ''}">${t.player === 'p1' ? '🩷' : '🩵'}</button>`;
+                                return `<button ${canClick ? `onclick="clickLudoToken(${t.idx})"` : ''} class="w-4 h-4 sm:w-5 sm:h-5 rounded-full ${bgCol} border border-white font-bold text-[8px] flex items-center justify-center shadow ${canClick ? 'ring-2 ring-amber-300 animate-bounce cursor-pointer z-10' : ''}">${t.player === 'p1' ? '🩷' : '🩵'}</button>`;
                             }).join('');
+                        } else if (trackMap.has(key) && SAFE_TRACK_INDICES.has(trackMap.get(key))) {
+                            cell.innerHTML = '<span class="text-[7px] text-amber-300/70">★</span>';
                         }
                     }
 
@@ -1077,94 +1249,172 @@
             }
 
             const btnRoll = document.getElementById('btn-ludo-roll');
-            btnRoll.disabled = !isMyTurn || l.rolled;
-            btnRoll.className = `flex-1 py-3 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2 ${isMyTurn && !l.rolled ? 'bg-gradient-to-r from-sky-400 to-indigo-600 text-white cursor-pointer' : 'bg-slate-800 text-slate-400 cursor-not-allowed'}`;
+            const canRoll = isMyTurn && !l.rolled && !l.winner && !isRollingLudoDice;
+            btnRoll.disabled = !canRoll;
+            btnRoll.className = `flex-1 py-3 rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition flex items-center justify-center gap-2 ${canRoll ? 'bg-gradient-to-r from-sky-400 to-indigo-600 text-white cursor-pointer' : 'bg-slate-800 text-slate-400 cursor-not-allowed'}`;
+
+            const winnerModal = document.getElementById('ludo-winner-modal');
+            if (l.winner) {
+                const winnerName = l.winner === 'p1' ? p1Name : p2Name;
+                const winnerColor = l.winner === 'p1' ? 'Pink' : 'Cyan';
+                document.getElementById('ludo-winner-name').innerText = `${winnerName} (${winnerColor}) Menang!`;
+                document.getElementById('ludo-winner-detail').innerText = `Selamat! ${winnerName} berhasil menyelesaikan 4 bidak ke FINISH terlebih dahulu.`;
+                document.getElementById('ludo-modal-p1').innerText = `🩷 ${p1Name}: ${p1Finished}/4`;
+                document.getElementById('ludo-modal-p2').innerText = `🩵 ${p2Name}: ${p2Finished}/4`;
+                winnerModal.classList.remove('hidden');
+            } else {
+                winnerModal.classList.add('hidden');
+            }
         }
 
         window.rollLudoDice = async function() {
-            if (!currentRoomCode || !latestRoomData) return;
-            const l = JSON.parse(JSON.stringify(latestRoomData.ludo));
-            if (l.turn !== myRole || l.rolled) return;
-            playPopSound(720);
+            if (!currentRoomCode || !latestRoomData || isRollingLudoDice) return;
+            const currentLudo = latestRoomData.ludo;
+            if (!currentLudo || currentLudo.turn !== myRole || currentLudo.rolled || currentLudo.winner) return;
 
-            const roll = Math.floor(Math.random() * 6) + 1;
-            l.dice = roll;
-            l.rolled = true;
-            l.log = `${myName} melempar dadu dan mendapatkan angka **${roll}**! Pilih bidak untuk melangkah.`;
+            await ensureAudioStarted();
+            isRollingLudoDice = true;
+            const btnRoll = document.getElementById('btn-ludo-roll');
+            const diceEl = document.getElementById('ludo-dice-disp');
+            const logEl = document.getElementById('ludo-log');
 
-            await updateDoc(getRoomDocRef(currentRoomCode), { ludo: l });
+            btnRoll.disabled = true;
+            btnRoll.className = 'flex-1 py-3 rounded-2xl font-bold text-xs shadow-lg bg-slate-800 text-slate-400 cursor-not-allowed flex items-center justify-center gap-2';
+            diceEl.classList.add('dice-rolling');
+            logEl.innerText = `${myName} sedang mengocok dadu...`;
+
+            let ticks = 0;
+            const spinInterval = setInterval(() => {
+                ticks++;
+                const tempFace = Math.floor(Math.random() * 6) + 1;
+                diceEl.innerText = `🎲 ${tempFace}`;
+                playPopSound(480 + ticks * 45);
+            }, 70);
+
+            const finalRoll = Math.floor(Math.random() * 6) + 1;
+
+            setTimeout(async () => {
+                clearInterval(spinInterval);
+                diceEl.classList.remove('dice-rolling');
+                diceEl.innerText = `🎲 ${finalRoll}`;
+                isRollingLudoDice = false;
+
+                if (!currentRoomCode || !latestRoomData) return;
+                const l = JSON.parse(JSON.stringify(latestRoomData.ludo));
+                if (l.turn !== myRole || l.rolled || l.winner) {
+                    renderLudoBoardView(latestRoomData, latestRoomData.p1?.name || 'Pemain 1', latestRoomData.p2?.name || 'Pasangan');
+                    return;
+                }
+
+                const myTokens = myRole === 'p1' ? l.p1Tokens : l.p2Tokens;
+                const hasMove = myTokens.some(s => canTokenMove(s, finalRoll));
+
+                l.dice = finalRoll;
+                if (!hasMove) {
+                    l.turn = myRole === 'p1' ? 'p2' : 'p1';
+                    l.rolled = false;
+                    l.log = `${myName} mendapat dadu ${finalRoll}, tidak ada bidak yang bisa jalan. Giliran berganti!`;
+                } else {
+                    l.rolled = true;
+                    l.log = `${myName} mendapat dadu ${finalRoll}! Pilih bidak yang berkedip untuk melangkah.`;
+                }
+
+                await updateDoc(getRoomDocRef(currentRoomCode), { ludo: l });
+            }, 560);
         };
 
         window.clickLudoToken = async function(idx) {
-            if (!currentRoomCode || !latestRoomData) return;
+            if (!currentRoomCode || !latestRoomData || isRollingLudoDice) return;
             const l = JSON.parse(JSON.stringify(latestRoomData.ludo));
-            if (l.turn !== myRole || !l.rolled) return;
+            if (l.turn !== myRole || !l.rolled || l.winner) return;
 
             const isP1 = myRole === 'p1';
-            let tokens = isP1 ? l.p1Tokens : l.p2Tokens;
-            let pos = tokens[idx];
+            const myTokens = isP1 ? l.p1Tokens : l.p2Tokens;
+            const oppTokens = isP1 ? l.p2Tokens : l.p1Tokens;
+            const currentSteps = myTokens[idx];
             const roll = l.dice;
 
-            // Jika di kandang (-1)
-            if (pos === -1) {
-                if (roll === 6) {
-                    tokens[idx] = isP1 ? 0 : 26; // Keluar ke titik start masing-masing
-                    playPopSound(880);
-                    l.log = `${myName} mengeluarkan bidak dari kandang!`;
-                } else {
-                    return showToast('Butuh angka 6 untuk keluar kandang!', 'fa-exclamation-circle text-amber-400');
-                }
-            } else {
-                // Di track atau home stretch
-                let newPos = pos + roll;
-                if (newPos > 58) {
-                    return showToast('Angka dadu terlalu besar untuk finish!', 'fa-exclamation-circle text-amber-400');
-                }
-                tokens[idx] = newPos;
-                playPopSound(750);
-                l.log = `${myName} melangkah sejauh ${roll} petak.`;
+            if (!canTokenMove(currentSteps, roll)) {
+                return showToast('Bidak ini belum bisa bergerak dengan dadu tersebut!', 'fa-exclamation-circle text-amber-400');
+            }
 
-                // Cek tangkap bidak lawan di track utama (0..51)
-                if (newPos < 52) {
-                    const oppTokens = isP1 ? l.p2Tokens : l.p1Tokens;
-                    oppTokens.forEach((opPos, opIdx) => {
-                        if (opPos === newPos) {
-                            oppTokens[opIdx] = -1; // Pukul kembali ke kandang!
-                            playPopSound(950);
-                            showToast('Bidak lawan terpukul kembali ke kandang! ⚔️', 'fa-bolt text-amber-400');
+            const newSteps = currentSteps === -1 ? 0 : currentSteps + roll;
+            myTokens[idx] = newSteps;
+            playPopSound(currentSteps === -1 ? 880 : 750);
+
+            let captured = false;
+            if (newSteps <= 50) {
+                const myTrackIdx = getTrackIndex(myRole, newSteps);
+                const oppRole = isP1 ? 'p2' : 'p1';
+                if (!SAFE_TRACK_INDICES.has(myTrackIdx)) {
+                    oppTokens.forEach((opSteps, opIdx) => {
+                        if (opSteps >= 0 && opSteps <= 50 && getTrackIndex(oppRole, opSteps) === myTrackIdx) {
+                            oppTokens[opIdx] = -1;
+                            captured = true;
                         }
                     });
                 }
             }
 
-            // Ganti giliran (kecuali dapat angka 6)
-            if (roll !== 6) {
-                l.turn = isP1 ? 'p2' : 'p1';
+            const wonGame = myTokens.every(s => s === 56);
+
+            if (wonGame) {
+                l.winner = myRole;
+                l.rolled = false;
+                l.log = `🎉 ${myName} menyelesaikan 4 bidak dan memenangkan Ludo!`;
+                l.lastEvent = { id: Date.now(), type: 'win' };
+                lastLudoActionSoundKey = l.lastEvent.id;
+                playWinSound();
+            } else if (captured) {
+                l.lastEvent = { id: Date.now(), type: 'capture' };
+                lastLudoActionSoundKey = l.lastEvent.id;
+                playCaptureSound();
+                showToast('Bidak lawan terpukul ke kandang! ⚔️', 'fa-bolt text-amber-400');
+                l.log = `${myName} memukul bidak lawan ke kandang!`;
+                if (roll !== 6) {
+                    l.turn = isP1 ? 'p2' : 'p1';
+                }
+                l.rolled = false;
+            } else {
+                if (newSteps === 56) {
+                    l.log = `${myName} mengantarkan bidak ke FINISH! 🏆`;
+                } else {
+                    l.log = `${myName} melangkah ${roll} petak.`;
+                }
+                if (roll !== 6) {
+                    l.turn = isP1 ? 'p2' : 'p1';
+                }
+                l.rolled = false;
             }
-            l.rolled = false;
 
             await updateDoc(getRoomDocRef(currentRoomCode), { ludo: l });
         };
 
         window.resetLudoGame = async function() {
             if (!currentRoomCode) return;
+            isRollingLudoDice = false;
+            lastAnnouncedLudoWinner = null;
+            lastLudoActionSoundKey = null;
+            playPopSound(523.25);
             await updateDoc(getRoomDocRef(currentRoomCode), { ludo: createInitialLudoState() });
         };
 
-
-        // --- PICO PARK ENGINE (50 GENERATED LEVELS) ---
+        // ============================================================
+        // 2. PICO PARK (50 LEVELS)
+        // ============================================================
         const PICO_W = 480, PICO_H = 270, PLAYER_W = 22, PLAYER_H = 26, GRAVITY = 0.55, JUMP_VEL = -9.6, MOVE_SPEED = 3.1;
         const PICO_LEVELS = [];
         for (let i = 0; i < 50; i++) {
-            let keyCount = (i % 3) + 1;
-            let keys = [];
+            const keyCount = (i % 3) + 1;
+            const keys = [];
             for (let k = 0; k < keyCount; k++) {
-                keys.push({ id: `k${k+1}`, x: 120 + k * 110 + (i * 7) % 40, y: 70 + (k * 40 + i * 5) % 90 });
+                keys.push({ id: `k${k + 1}`, x: 120 + k * 110 + (i * 7) % 40, y: 70 + (k * 40 + i * 5) % 90 });
             }
             PICO_LEVELS.push({
-                title: `${i+1}. Stage Tantangan ${i+1}`,
-                hint: `Tingkat ${i+1}: Kerjasama tim untuk mengambil ${keyCount} kunci dan membuka pintu!`,
-                spawnP1: { x: 20, y: 200 }, spawnP2: { x: 50, y: 200 },
+                title: `${i + 1}. Stage Tantangan ${i + 1}`,
+                hint: `Tingkat ${i + 1}: Kerjasama tim untuk mengambil ${keyCount} kunci dan membuka pintu!`,
+                spawnP1: { x: 20, y: 200 },
+                spawnP2: { x: 50, y: 200 },
                 platforms: [
                     { x: 0, y: 235, w: 480, h: 35 },
                     { x: 80 + (i * 12) % 180, y: 165 - (i * 3) % 40, w: 100, h: 12 },
@@ -1172,7 +1422,7 @@
                 ],
                 bridges: [{ id: 'b1', x: 180, y: 165, w: 90, h: 12, switchId: 'sw1' }],
                 switches: [{ id: 'sw1', x: 100, y: 157, w: 25, h: 8, color: i % 2 === 0 ? '#f43f5e' : '#06b6d4' }],
-                keys: keys,
+                keys,
                 door: { x: 430, y: 193, w: 30, h: 42 },
                 block: i >= 5 ? { x: 130, y: 195, w: 40, h: 40 } : null,
                 movingPlat: i >= 10 ? { x: 140, y: 135, w: 70, h: 12, minX: 100, maxX: 340, dir: 1, speed: 1.2 + (i % 4) * 0.3 } : null
@@ -1185,12 +1435,27 @@
                 levelIndex: lvlIdx % PICO_LEVELS.length,
                 p1: { x: lvl.spawnP1.x, y: lvl.spawnP1.y, vx: 0, vy: 0, facing: 1 },
                 p2: { x: lvl.spawnP2.x, y: lvl.spawnP2.y, vx: 0, vy: 0, facing: 1 },
-                collectedKeys: [], blockX: lvl.block ? lvl.block.x : null, doorHoldTicks: 0, cleared: false
+                collectedKeys: [],
+                blockX: lvl.block ? lvl.block.x : null,
+                doorHoldTicks: 0,
+                cleared: false
             };
         }
 
         let picoAnimId = null;
-        let picoLocal = { levelIndex: 0, me: { x: 24, y: 200, vx: 0, vy: 0, facing: 1, grounded: false }, partner: { x: 54, y: 200, targetX: 54, targetY: 200 }, collectedKeys: [], blockX: null, movingX: 140, movingDir: 1, doorHoldTicks: 0, cleared: false, lastSyncTime: 0 };
+        let picoActiveNames = { p1: 'Pemain 1', p2: 'Pasangan' };
+        let picoLocal = {
+            levelIndex: 0,
+            me: { x: 24, y: 200, vx: 0, vy: 0, facing: 1, grounded: false },
+            partner: { x: 54, y: 200, targetX: 54, targetY: 200 },
+            collectedKeys: [],
+            blockX: null,
+            movingX: 140,
+            movingDir: 1,
+            doorHoldTicks: 0,
+            cleared: false,
+            lastSyncTime: 0
+        };
         const picoInput = { left: false, right: false, jump: false };
 
         function setupPicoControls() {
@@ -1209,18 +1474,19 @@
             bindBtn('btn-pico-jump', 'jump');
 
             window.addEventListener('keydown', (e) => {
-                if (['ArrowLeft','a','A'].includes(e.key)) picoInput.left = true;
-                if (['ArrowRight','d','D'].includes(e.key)) picoInput.right = true;
-                if (['ArrowUp','w','W',' '].includes(e.key)) picoInput.jump = true;
+                if (['ArrowLeft', 'a', 'A'].includes(e.key)) picoInput.left = true;
+                if (['ArrowRight', 'd', 'D'].includes(e.key)) picoInput.right = true;
+                if (['ArrowUp', 'w', 'W', ' '].includes(e.key)) picoInput.jump = true;
             });
             window.addEventListener('keyup', (e) => {
-                if (['ArrowLeft','a','A'].includes(e.key)) picoInput.left = false;
-                if (['ArrowRight','d','D'].includes(e.key)) picoInput.right = false;
-                if (['ArrowUp','w','W',' '].includes(e.key)) picoInput.jump = false;
+                if (['ArrowLeft', 'a', 'A'].includes(e.key)) picoInput.left = false;
+                if (['ArrowRight', 'd', 'D'].includes(e.key)) picoInput.right = false;
+                if (['ArrowUp', 'w', 'W', ' '].includes(e.key)) picoInput.jump = false;
             });
         }
 
         function syncPicoFromRemote(data, p1Name, p2Name) {
+            picoActiveNames = { p1: p1Name, p2: p2Name };
             const pState = data.pico || createInitialPicoState(0);
             const lvlIdx = pState.levelIndex || 0;
             const lvl = PICO_LEVELS[lvlIdx];
@@ -1276,10 +1542,10 @@
                 overlay.classList.add('hidden');
             }
 
-            startPicoLoop(p1Name, p2Name);
+            startPicoLoop();
         }
 
-        function startPicoLoop(p1Name, p2Name) {
+        function startPicoLoop() {
             if (picoAnimId) return;
             const canvas = document.getElementById('pico-canvas');
             const ctx = canvas.getContext('2d');
@@ -1295,18 +1561,24 @@
 
             let lastTime = performance.now();
             function loop(now) {
-                if (!latestRoomData || latestRoomData.mode !== 'picopark') { picoAnimId = null; return; }
+                if (!latestRoomData || latestRoomData.mode !== 'picopark') {
+                    picoAnimId = null;
+                    return;
+                }
                 const dt = Math.min((now - lastTime) / 16.67, 2);
                 lastTime = now;
                 updatePicoPhysics(dt);
-                drawPicoScene(ctx, p1Name, p2Name);
+                drawPicoScene(ctx, picoActiveNames.p1, picoActiveNames.p2);
                 picoAnimId = requestAnimationFrame(loop);
             }
             picoAnimId = requestAnimationFrame(loop);
         }
 
         function stopPicoLoop() {
-            if (picoAnimId) { cancelAnimationFrame(picoAnimId); picoAnimId = null; }
+            if (picoAnimId) {
+                cancelAnimationFrame(picoAnimId);
+                picoAnimId = null;
+            }
         }
 
         function rectsOverlap(a, b) {
@@ -1355,7 +1627,7 @@
             if (me.x < 0) me.x = 0;
             if (me.x > PICO_W - PLAYER_W) me.x = PICO_W - PLAYER_W;
 
-            let myBox = { x: me.x, y: me.y, w: PLAYER_W, h: PLAYER_H };
+            const myBox = { x: me.x, y: me.y, w: PLAYER_W, h: PLAYER_H };
             for (const s of solids) {
                 if (rectsOverlap(myBox, s)) {
                     if (me.vx > 0) me.x = s.x - PLAYER_W;
@@ -1407,8 +1679,10 @@
             lvl.keys.forEach(k => {
                 if (!picoLocal.collectedKeys.includes(k.id)) {
                     if (rectsOverlap(myBox, { x: k.x - 8, y: k.y - 8, w: 18, h: 18 })) {
-                        newlyCollectedKey = k.id; picoLocal.collectedKeys.push(k.id);
-                        playPopSound(880); showToast('Kunci didapat! 🔑', 'fa-key text-amber-400');
+                        newlyCollectedKey = k.id;
+                        picoLocal.collectedKeys.push(k.id);
+                        playPopSound(880);
+                        showToast('Kunci didapat! 🔑', 'fa-key text-amber-400');
                     }
                 }
             });
@@ -1417,9 +1691,12 @@
             if (allKeysGot && rectsOverlap(myBox, lvl.door) && rectsOverlap(partnerBox, lvl.door)) {
                 picoLocal.doorHoldTicks += dt;
                 if (picoLocal.doorHoldTicks >= 40 && !picoLocal.cleared) {
-                    picoLocal.cleared = true; playPopSound(1046.5);
+                    picoLocal.cleared = true;
+                    playPopSound(1046.5);
                 }
-            } else { picoLocal.doorHoldTicks = 0; }
+            } else {
+                picoLocal.doorHoldTicks = 0;
+            }
 
             const nowMs = Date.now();
             if (nowMs - picoLocal.lastSyncTime > 90 || newlyCollectedKey || picoLocal.cleared || blockMoved) {
@@ -1512,25 +1789,26 @@
         window.resetPicoLevel = async function() {
             if (!currentRoomCode || !latestRoomData) return;
             playPopSound(440);
-            await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(latestRoomData.pico.levelIndex || 0) });
+            await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(latestRoomData.pico?.levelIndex || 0) });
         };
 
         window.nextPicoLevel = async function() {
             if (!currentRoomCode || !latestRoomData) return;
             playPopSound(783.99);
-            const next = ((latestRoomData.pico.levelIndex || 0) + 1) % PICO_LEVELS.length;
+            const next = ((latestRoomData.pico?.levelIndex || 0) + 1) % PICO_LEVELS.length;
             await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(next) });
         };
 
         window.jumpPicoLevelInput = async function() {
-            const val = parseInt(document.getElementById('input-jump-pico').value);
+            const val = parseInt(document.getElementById('input-jump-pico').value, 10);
             if (isNaN(val) || val < 1 || val > 50) return showToast('Pilih level antara 1 sampai 50!', 'fa-exclamation-circle text-amber-400');
             playPopSound(587.33);
             await updateDoc(getRoomDocRef(currentRoomCode), { pico: createInitialPicoState(val - 1) });
         };
 
-
-        // --- MONOPOLI ENGINE ---
+        // ============================================================
+        // 3. MONOPOLI KLASIK
+        // ============================================================
         const MONO_TILES = [
             { id: 0, name: 'START', type: 'start', color: '#10b981' },
             { id: 1, name: 'Jl. Kenangan', type: 'prop', price: 60, rent: 12, color: '#92400e' },
@@ -1557,7 +1835,12 @@
             { id: 22, name: 'Kesempatan', type: 'chance', color: '#f59e0b' },
             { id: 23, name: 'Istana Blek', type: 'prop', price: 350, rent: 70, color: '#2563eb' }
         ];
-        const GRID_COORDS = [[7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],[6,7],[5,7],[4,7],[3,7],[2,7],[1,7],[1,6],[1,5],[1,4],[1,3],[1,2],[1,1],[2,1],[3,1],[4,1],[5,1],[6,1]];
+        const GRID_COORDS = [
+            [7,1],[7,2],[7,3],[7,4],[7,5],[7,6],[7,7],
+            [6,7],[5,7],[4,7],[3,7],[2,7],[1,7],
+            [1,6],[1,5],[1,4],[1,3],[1,2],[1,1],
+            [2,1],[3,1],[4,1],[5,1],[6,1]
+        ];
 
         function createInitialMonopolyState() {
             return {
@@ -1574,6 +1857,8 @@
             document.getElementById('mono-p2-name').innerText = p2Name;
             document.getElementById('mono-p1-money').innerText = `${m.p1Money} Koin`;
             document.getElementById('mono-p2-money').innerText = `${m.p2Money} Koin`;
+            document.getElementById('mono-p1-card').className = `glass-sub rounded-2xl p-2.5 border-2 ${m.turn === 'p1' ? 'border-pink-500' : 'border-transparent'}`;
+            document.getElementById('mono-p2-card').className = `glass-sub rounded-2xl p-2.5 border-2 ${m.turn === 'p2' ? 'border-cyan-400' : 'border-transparent'}`;
             document.getElementById('mono-log').innerText = m.log;
 
             const board = document.getElementById('mono-board');
@@ -1582,7 +1867,8 @@
                 const [r, c] = GRID_COORDS[idx];
                 const owner = (m.owners || {})[tile.id];
                 const cell = document.createElement('div');
-                cell.style.gridRow = r; cell.style.gridColumn = c;
+                cell.style.gridRow = r;
+                cell.style.gridColumn = c;
                 cell.className = `rounded bg-slate-900/95 border flex flex-col justify-between overflow-hidden p-0.5 text-center relative ${owner === 'p1' ? 'border-pink-500' : owner === 'p2' ? 'border-cyan-400' : 'border-white/10'}`;
                 cell.innerHTML = `
                     <div class="h-1.5 w-full rounded-t" style="background:${tile.color}"></div>
@@ -1593,11 +1879,12 @@
             });
 
             const center = document.createElement('div');
-            center.style.gridRow = '2 / 7'; center.style.gridColumn = '2 / 7';
+            center.style.gridRow = '2 / 7';
+            center.style.gridColumn = '2 / 7';
             center.className = 'rounded-2xl bg-slate-950/90 border border-pink-400/20 flex flex-col items-center justify-center p-2 text-center space-y-1';
             center.innerHTML = `
                 <span class="text-[10px] font-bold text-pink-300">Giliran: ${m.turn === 'p1' ? p1Name : p2Name}</span>
-                <div class="flex items-center gap-2 text-xl"><span class="px-2 py-0.5 bg-white text-black font-bold rounded">${m.dice[0]}</span><span class="px-2 py-0.5 bg-white text-black font-bold rounded">${m.dice[1]}</span></div>
+                <div class="flex items-center gap-2 text-lg"><span class="px-2 py-0.5 bg-white text-slate-950 font-extrabold rounded">${m.dice[0]}</span><span class="px-2 py-0.5 bg-white text-slate-950 font-extrabold rounded">${m.dice[1]}</span></div>
             `;
             board.appendChild(center);
 
@@ -1611,8 +1898,11 @@
 
             btnRoll.disabled = !isMyTurn;
             if (isMyTurn && currTile.price && !tileOwner && myMoney >= currTile.price) {
-                btnBuy.classList.remove('hidden'); btnBuy.innerText = `Beli (${currTile.price})`;
-            } else { btnBuy.classList.add('hidden'); }
+                btnBuy.classList.remove('hidden');
+                btnBuy.innerText = `Beli (${currTile.price})`;
+            } else {
+                btnBuy.classList.add('hidden');
+            }
         }
 
         window.rollMonopolyDice = async function() {
@@ -1626,25 +1916,38 @@
             m.dice = [d1, d2];
 
             const isP1 = myRole === 'p1';
-            let pos = isP1 ? m.p1Pos : m.p2Pos;
-            pos = (pos + d1 + d2) % MONO_TILES.length;
+            const oldPos = isP1 ? m.p1Pos : m.p2Pos;
+            const totalSteps = d1 + d2;
+            let pos = (oldPos + totalSteps) % MONO_TILES.length;
+            const passedStart = oldPos + totalSteps >= MONO_TILES.length;
 
-            if (isP1) m.p1Pos = pos; else m.p2Pos = pos;
+            if (passedStart) {
+                if (isP1) m.p1Money += 200; else m.p2Money += 200;
+            }
 
             const tile = MONO_TILES[pos];
-            const owner = (m.owners || {})[tile.id];
-
-            if (tile.price && owner && owner !== myRole) {
-                if (isP1) { m.p1Money -= tile.rent; m.p2Money += tile.rent; }
-                else { m.p2Money -= tile.rent; m.p1Money += tile.rent; }
-                m.log = `${myName} mendarat di ${tile.name} milik pasangan & membayar sewa ${tile.rent} koin!`;
+            if (tile.type === 'gotojail') {
+                pos = 6;
+                m.log = `${myName} masuk ke PENJARA!`;
+            } else if (tile.type === 'chest' || tile.type === 'chance') {
+                const delta = Math.random() > 0.4 ? 100 : -80;
+                if (isP1) m.p1Money += delta; else m.p2Money += delta;
+                m.log = `${myName} di ${tile.name}: ${delta > 0 ? `+${delta}` : delta} koin!`;
             } else if (tile.type === 'tax') {
                 if (isP1) m.p1Money -= tile.amount; else m.p2Money -= tile.amount;
                 m.log = `${myName} membayar pajak ${tile.amount} koin.`;
             } else {
-                m.log = `${myName} melangkah ke ${tile.name}.`;
+                const owner = (m.owners || {})[tile.id];
+                if (tile.price && owner && owner !== myRole) {
+                    if (isP1) { m.p1Money -= tile.rent; m.p2Money += tile.rent; }
+                    else { m.p2Money -= tile.rent; m.p1Money += tile.rent; }
+                    m.log = `${myName} mendarat di ${tile.name} & bayar sewa ${tile.rent} koin!`;
+                } else {
+                    m.log = `${myName} melangkah ke ${tile.name}${passedStart ? ' (+200 START)' : ''}.`;
+                }
             }
 
+            if (isP1) m.p1Pos = pos; else m.p2Pos = pos;
             m.turn = isP1 ? 'p2' : 'p1';
             await updateDoc(getRoomDocRef(currentRoomCode), { mono: m });
         };
@@ -1655,44 +1958,86 @@
             const isP1 = myRole === 'p1';
             const pos = isP1 ? m.p1Pos : m.p2Pos;
             const tile = MONO_TILES[pos];
+            if (!tile.price || (m.owners && m.owners[tile.id])) return;
             if (isP1) m.p1Money -= tile.price; else m.p2Money -= tile.price;
-            m.owners = m.owners || {}; m.owners[tile.id] = myRole;
+            m.owners = m.owners || {};
+            m.owners[tile.id] = myRole;
             m.log = `${myName} berhasil membeli ${tile.name}!`;
+            playPopSound(840);
             await updateDoc(getRoomDocRef(currentRoomCode), { mono: m });
         };
 
+        window.resetMonopolyGame = async function() {
+            if (!currentRoomCode) return;
+            await updateDoc(getRoomDocRef(currentRoomCode), { mono: createInitialMonopolyState() });
+        };
 
-        // --- UNO ENGINE ---
+        // ============================================================
+        // 4. UNO
+        // ============================================================
         const UNO_COLORS = ['red', 'blue', 'green', 'yellow'];
         function buildUnoDeck() {
             const deck = [];
             UNO_COLORS.forEach(c => {
                 deck.push({ color: c, val: '0' });
-                for (let n = 1; n <= 9; n++) { deck.push({ color: c, val: String(n) }); deck.push({ color: c, val: String(n) }); }
-                ['Skip', 'Rev', '+2'].forEach(act => { deck.push({ color: c, val: act }); deck.push({ color: c, val: act }); });
+                for (let n = 1; n <= 9; n++) {
+                    deck.push({ color: c, val: String(n) });
+                    deck.push({ color: c, val: String(n) });
+                }
+                ['Skip', 'Rev', '+2'].forEach(act => {
+                    deck.push({ color: c, val: act });
+                    deck.push({ color: c, val: act });
+                });
             });
-            for (let i = 0; i < 4; i++) { deck.push({ color: 'wild', val: 'Wild' }); deck.push({ color: 'wild', val: '+4' }); }
+            for (let i = 0; i < 4; i++) {
+                deck.push({ color: 'wild', val: 'Wild' });
+                deck.push({ color: 'wild', val: '+4' });
+            }
             return deck.sort(() => Math.random() - 0.5);
         }
 
         function createInitialUnoState() {
             const deck = buildUnoDeck();
-            const p1Hand = deck.splice(0, 7), p2Hand = deck.splice(0, 7);
+            const p1Hand = deck.splice(0, 7);
+            const p2Hand = deck.splice(0, 7);
             let first = deck.pop();
-            while (first.color === 'wild') { deck.unshift(first); first = deck.pop(); }
-            return { deck, topCard: first, activeColor: first.color, turn: 'p1', p1Hand, p2Hand, waitingWild: false, winner: null };
+            while (!first || first.color === 'wild') {
+                if (first) deck.unshift(first);
+                first = deck.pop();
+            }
+            return {
+                deck,
+                topCard: first,
+                activeColor: first.color,
+                turn: 'p1',
+                p1Hand,
+                p2Hand,
+                waitingWild: false,
+                pendingDraw: 0,
+                log: 'Giliran Pemain 1!'
+            };
+        }
+
+        function drawFromDeck(deck, count) {
+            const out = [];
+            for (let i = 0; i < count; i++) {
+                if (!deck.length) deck = buildUnoDeck();
+                out.push(deck.pop());
+            }
+            return { drawn: out, nextDeck: deck };
         }
 
         function renderUnoView(data, p1Name, p2Name) {
             const u = data.uno || createInitialUnoState();
-            const myHand = myRole === 'p1' ? u.p1Hand : u.p2Hand;
-            const oppHandCount = myRole === 'p1' ? u.p2Hand.length : u.p1Hand.length;
+            const myHand = myRole === 'p1' ? (u.p1Hand || []) : (u.p2Hand || []);
+            const oppHandCount = myRole === 'p1' ? (u.p2Hand || []).length : (u.p1Hand || []).length;
             const oppName = myRole === 'p1' ? p2Name : p1Name;
 
             document.getElementById('uno-opp-name').innerText = oppName;
             document.getElementById('uno-opp-cards-count').innerText = `${oppHandCount} Kartu di tangan`;
             document.getElementById('uno-my-count').innerText = myHand.length;
-            document.getElementById('uno-active-color-label').innerText = `Warna Aktif: ${u.activeColor.toUpperCase()}`;
+            document.getElementById('uno-active-color-label').innerText = `Warna Aktif: ${(u.activeColor || 'red').toUpperCase()}`;
+            document.getElementById('uno-status-log').innerText = u.log || 'Mainkan kartu yang cocok.';
 
             const turnBadge = document.getElementById('uno-turn-badge');
             const isMyTurn = u.turn === myRole;
@@ -1700,14 +2045,18 @@
             turnBadge.className = `text-xs font-bold px-3 py-1 rounded-full ${isMyTurn ? 'bg-emerald-500/30 text-emerald-200 border border-emerald-400/40' : 'bg-pink-500/25 text-pink-200 border border-pink-400/30'}`;
 
             const disc = document.getElementById('uno-discard-card');
-            const valSpan = document.getElementById('uno-discard-val');
-            valSpan.innerText = u.topCard.val;
-            
-            const colorMap = { red: 'bg-rose-600', blue: 'bg-sky-600', green: 'bg-emerald-600', yellow: 'bg-amber-500 text-slate-950', wild: 'bg-purple-900' };
-            disc.className = `w-20 h-28 rounded-2xl border-2 border-white shadow-2xl flex flex-col items-center justify-center font-display font-extrabold text-xl ${colorMap[u.topCard.color] || 'bg-slate-800'}`;
+            document.getElementById('uno-discard-val').innerText = u.topCard.val;
+            const colorMap = {
+                red: 'bg-rose-600 text-white',
+                blue: 'bg-sky-600 text-white',
+                green: 'bg-emerald-600 text-white',
+                yellow: 'bg-amber-400 text-slate-950',
+                wild: 'bg-purple-900 text-white'
+            };
+            disc.className = `w-20 h-28 rounded-2xl border-2 border-white shadow-2xl flex flex-col items-center justify-center font-display font-extrabold text-xl ${colorMap[u.topCard.color] || 'bg-slate-800 text-white'}`;
 
             const colorPicker = document.getElementById('uno-color-picker');
-            if (isMyTurn && u.waitingWild && myRole === u.turn) {
+            if (isMyTurn && u.waitingWild) {
                 colorPicker.classList.remove('hidden');
             } else {
                 colorPicker.classList.add('hidden');
@@ -1718,7 +2067,7 @@
             myHand.forEach((card, idx) => {
                 const btn = document.createElement('button');
                 btn.onclick = () => playUnoCard(idx);
-                btn.className = `shrink-0 w-16 h-24 rounded-2xl border-2 border-white/80 shadow flex flex-col items-center justify-center font-bold text-white text-xs ${colorMap[card.color] || 'bg-slate-700'}`;
+                btn.className = `shrink-0 w-16 h-24 rounded-2xl border-2 border-white/80 shadow flex flex-col items-center justify-center font-bold text-xs active:scale-95 transition ${colorMap[card.color] || 'bg-slate-700 text-white'}`;
                 btn.innerHTML = `<span>${card.val}</span>`;
                 handBox.appendChild(btn);
             });
@@ -1729,37 +2078,74 @@
             const u = JSON.parse(JSON.stringify(latestRoomData.uno));
             if (u.turn !== myRole || u.waitingWild) return;
 
-            const handKey = myRole === 'p1' ? 'p1Hand' : 'p2Hand';
-            const card = u[handKey][idx];
+            const myKey = myRole === 'p1' ? 'p1Hand' : 'p2Hand';
+            const oppKey = myRole === 'p1' ? 'p2Hand' : 'p1Hand';
+            const oppRole = myRole === 'p1' ? 'p2' : 'p1';
+            const card = u[myKey][idx];
 
-            if (card.color !== 'wild' && card.color !== u.activeColor && card.val !== u.topCard.val) {
-                return showToast('Kartu tidak cocok!', 'fa-exclamation-circle text-amber-400');
+            const isMatch = card.color === 'wild' || card.color === u.activeColor || card.val === u.topCard.val;
+            if (!isMatch) {
+                return showToast('Kartu tidak cocok dengan warna atau nilai!', 'fa-exclamation-circle text-amber-400');
             }
 
             playPopSound(750);
-            u[handKey].splice(idx, 1);
+            u[myKey].splice(idx, 1);
+            u.topCard = card;
 
-            if (u[handKey].length === 0) {
-                showToast(`🏆 ${myName} Menang UNO!`, 'fa-trophy text-amber-400');
+            if (u[myKey].length === 0) {
+                u.log = `🏆 ${myName} memenangkan permainan UNO!`;
+                await updateDoc(getRoomDocRef(currentRoomCode), { uno: u });
+                return showToast(`🏆 ${myName} Menang UNO!`, 'fa-trophy text-amber-400');
             }
 
-            u.topCard = card;
-            if (card.color === 'wild') {
+            if (card.val === '+2') {
+                const res = drawFromDeck(u.deck || [], 2);
+                u.deck = res.nextDeck;
+                u[oppKey].push(...res.drawn);
+                u.activeColor = card.color;
+                u.turn = myRole;
+                u.log = `${myName} memainkan +2! Pasangan ambil 2 kartu.`;
+            } else if (card.val === 'Skip' || card.val === 'Rev') {
+                u.activeColor = card.color;
+                u.turn = myRole;
+                u.log = `${myName} memainkan ${card.val}! Giliran tetap di ${myName}.`;
+            } else if (card.color === 'wild') {
                 u.waitingWild = true;
+                u.pendingDraw = card.val === '+4' ? 4 : 0;
+                u.log = `${myName} memilih warna untuk ${card.val}...`;
             } else {
                 u.activeColor = card.color;
-                u.turn = myRole === 'p1' ? 'p2' : 'p1';
+                u.turn = oppRole;
+                u.log = `${myName} menurunkan kartu ${card.color.toUpperCase()} ${card.val}.`;
             }
+
             await updateDoc(getRoomDocRef(currentRoomCode), { uno: u });
         };
 
         window.chooseUnoWildColor = async function(color) {
             if (!currentRoomCode || !latestRoomData) return;
             const u = JSON.parse(JSON.stringify(latestRoomData.uno));
+            if (u.turn !== myRole || !u.waitingWild) return;
+
+            const oppKey = myRole === 'p1' ? 'p2Hand' : 'p1Hand';
+            const oppRole = myRole === 'p1' ? 'p2' : 'p1';
+
             u.activeColor = color;
             u.waitingWild = false;
-            u.turn = myRole === 'p1' ? 'p2' : 'p1';
             playPopSound(880);
+
+            if (u.pendingDraw > 0) {
+                const res = drawFromDeck(u.deck || [], u.pendingDraw);
+                u.deck = res.nextDeck;
+                u[oppKey].push(...res.drawn);
+                u.turn = myRole;
+                u.log = `${myName} memilih ${color.toUpperCase()} (+4 ke lawan)!`;
+            } else {
+                u.turn = oppRole;
+                u.log = `${myName} memilih warna ${color.toUpperCase()}.`;
+            }
+            u.pendingDraw = 0;
+
             await updateDoc(getRoomDocRef(currentRoomCode), { uno: u });
         };
 
@@ -1768,13 +2154,14 @@
             const u = JSON.parse(JSON.stringify(latestRoomData.uno));
             if (u.turn !== myRole || u.waitingWild) return;
 
-            if (!u.deck || u.deck.length === 0) u.deck = buildUnoDeck();
-            const drawn = u.deck.pop();
-            const handKey = myRole === 'p1' ? 'p1Hand' : 'p2Hand';
-            u[handKey].push(drawn);
-            u.turn = myRole === 'p1' ? 'p2' : 'p1';
+            const myKey = myRole === 'p1' ? 'p1Hand' : 'p2Hand';
+            const oppRole = myRole === 'p1' ? 'p2' : 'p1';
+            const res = drawFromDeck(u.deck || [], 1);
+            u.deck = res.nextDeck;
+            u[myKey].push(...res.drawn);
+            u.turn = oppRole;
+            u.log = `${myName} mengambil 1 kartu.`;
             playPopSound(500);
-            showToast('Mengambil 1 kartu.');
             await updateDoc(getRoomDocRef(currentRoomCode), { uno: u });
         };
 
@@ -1783,22 +2170,173 @@
             await updateDoc(getRoomDocRef(currentRoomCode), { uno: createInitialUnoState() });
         };
 
-        window.pickTod = function(type) {
-            const list = type === 'truth' ? ["Sebutkan momen paling romantis saat kita berdua!"] : ["Kirim voice note bernyanyi ke pasanganmu sekarang!"];
-            document.getElementById('tod-result-box').classList.remove('hidden');
-            document.getElementById('tod-card-text').innerText = list[0];
-        };
-        window.nextTodTurn = function() {
-            document.getElementById('tod-result-box').classList.add('hidden');
-            showToast('Giliran berikutnya!');
-        };
-        window.submitWyr = function(opt) {
-            showToast(`Pilihan ${opt} terkunci! Menunggu pasangan...`);
+        // ============================================================
+        // 5, 6, 7. QUIZ, TRUTH OR DARE & TEBAK HATI
+        // ============================================================
+        const QUIZ_BANK = [
+            { q: 'Kencan paling berkesan buat kalian biasanya di mana?', opts: ['Kedai kopi / cafe santai', 'Jalan malam keliling kota', 'Nonton film berdua', 'Kulineran kaki lima'] },
+            { q: 'Siapa yang lebih sering memulai chat duluan?', opts: ['Pemain 1', 'Pemain 2', 'Sama-sama sering', 'Tergantung mood'] },
+            { q: 'Kalau lagi ngambek, cara paling ampuh bikin baikan?', opts: ['Dikasih makanan favorit', 'Diajak ngobrol pelan', 'Dipeluk / diperhatikan', 'Dikasih waktu sebentar'] }
+        ];
+
+        function createInitialQuizState() {
+            return { idx: 0, p1Ans: null, p2Ans: null, matched: 0 };
+        }
+
+        function renderQuizView(data, p1Name, p2Name) {
+            const qState = data.quiz || createInitialQuizState();
+            const item = QUIZ_BANK[qState.idx % QUIZ_BANK.length];
+            document.getElementById('quiz-score-badge').innerText = `Skor Cocok: ${qState.matched || 0}`;
+            document.getElementById('quiz-question').innerText = item.q;
+
+            const myAns = myRole === 'p1' ? qState.p1Ans : qState.p2Ans;
+            const oppAns = myRole === 'p1' ? qState.p2Ans : qState.p1Ans;
+            const oppName = myRole === 'p1' ? p2Name : p1Name;
+
+            const box = document.getElementById('quiz-options');
+            box.innerHTML = item.opts.map((opt, i) => {
+                const picked = myAns === i;
+                return `<button onclick="answerQuiz(${i})" class="w-full p-3 rounded-2xl glass-sub border-2 ${picked ? 'border-pink-400 bg-pink-500/20' : 'border-white/10'} text-xs font-bold text-white flex items-center justify-between transition active:scale-[0.99]">
+                    <span>${opt}</span>
+                    ${picked ? '<i class="fas fa-check-circle text-pink-400"></i>' : ''}
+                </button>`;
+            }).join('');
+
+            const statusEl = document.getElementById('quiz-status-text');
+            if (myAns !== null && oppAns !== null) {
+                statusEl.innerText = myAns === oppAns
+                    ? '🎉 Jawaban kalian COCOK! Lanjut soal berikutnya...'
+                    : `Jawaban berbeda (${oppName} memilih opsi ${oppAns + 1}). Lanjut soal berikutnya...`;
+            } else if (myAns !== null) {
+                statusEl.innerText = `Menunggu jawaban ${oppName}...`;
+            } else {
+                statusEl.innerText = 'Pilih jawabanmu untuk melihat kecocokan.';
+            }
+        }
+
+        window.answerQuiz = async function(optIdx) {
+            if (!currentRoomCode || !latestRoomData) return;
+            const qState = JSON.parse(JSON.stringify(latestRoomData.quiz || createInitialQuizState()));
+            if (myRole === 'p1') qState.p1Ans = optIdx; else qState.p2Ans = optIdx;
+            playPopSound(650);
+
+            if (qState.p1Ans !== null && qState.p2Ans !== null) {
+                if (qState.p1Ans === qState.p2Ans) qState.matched = (qState.matched || 0) + 1;
+                await updateDoc(getRoomDocRef(currentRoomCode), { quiz: qState });
+                setTimeout(async () => {
+                    if (!currentRoomCode) return;
+                    const nextQ = {
+                        idx: (qState.idx + 1) % QUIZ_BANK.length,
+                        p1Ans: null,
+                        p2Ans: null,
+                        matched: qState.matched
+                    };
+                    await updateDoc(getRoomDocRef(currentRoomCode), { quiz: nextQ });
+                }, 1400);
+            } else {
+                await updateDoc(getRoomDocRef(currentRoomCode), { quiz: qState });
+            }
         };
 
+        const TOD_TRUTH = [
+            'Sebutkan momen paling romantis saat kita berdua!',
+            'Apa hal kecil dari pasanganmu yang paling bikin kamu senyum?',
+            'Kapan pertama kali kamu ngerasa klik banget sama pasanganmu?'
+        ];
+        const TOD_DARE = [
+            'Kirim voice note bernyanyi ke pasanganmu sekarang!',
+            'Kirim 3 emoji paling menggambarkan perasaanmu ke pasangan sekarang.',
+            'Ketik pesan pujian tulus untuk pasanganmu di chat room.'
+        ];
+
+        function createInitialTodState() {
+            return { turn: 'p1', type: null, text: '' };
+        }
+
+        function renderTodView(data, p1Name, p2Name) {
+            const t = data.tod || createInitialTodState();
+            document.getElementById('tod-turn-name').innerText = t.turn === 'p1' ? p1Name : p2Name;
+            const resBox = document.getElementById('tod-result-box');
+            if (t.text) {
+                resBox.classList.remove('hidden');
+                document.getElementById('tod-type-badge').innerText = (t.type || 'TRUTH').toUpperCase();
+                document.getElementById('tod-card-text').innerText = t.text;
+            } else {
+                resBox.classList.add('hidden');
+            }
+        }
+
+        window.pickTod = async function(type) {
+            if (!currentRoomCode || !latestRoomData) return;
+            const t = JSON.parse(JSON.stringify(latestRoomData.tod || createInitialTodState()));
+            const pool = type === 'truth' ? TOD_TRUTH : TOD_DARE;
+            t.type = type;
+            t.text = pool[Math.floor(Math.random() * pool.length)];
+            playPopSound(700);
+            await updateDoc(getRoomDocRef(currentRoomCode), { tod: t });
+        };
+
+        window.nextTodTurn = async function() {
+            if (!currentRoomCode || !latestRoomData) return;
+            const curTurn = latestRoomData.tod?.turn || 'p1';
+            await updateDoc(getRoomDocRef(currentRoomCode), {
+                tod: { turn: curTurn === 'p1' ? 'p2' : 'p1', type: null, text: '' }
+            });
+            showToast('Giliran berikutnya!');
+        };
+
+        const WYR_BANK = [
+            { a: 'Liburan ke pantai berdua', b: 'Staycation santai di villa / hotel' },
+            { a: 'Sarapan bareng tiap pagi', b: 'Jalan malam sebelum tidur' },
+            { a: 'Kejutan kecil tanpa alasan', b: 'Rencana liburan matang jauh hari' }
+        ];
+
+        function createInitialWyrState() {
+            return { idx: 0, p1Pick: null, p2Pick: null };
+        }
+
+        function renderWyrView(data, p1Name, p2Name) {
+            const w = data.wyr || createInitialWyrState();
+            const item = WYR_BANK[w.idx % WYR_BANK.length];
+            document.getElementById('wyr-a').innerText = item.a;
+            document.getElementById('wyr-b').innerText = item.b;
+
+            const statusEl = document.getElementById('wyr-status-text');
+            if (w.p1Pick && w.p2Pick) {
+                statusEl.innerText = w.p1Pick === w.p2Pick
+                    ? `💖 Sama-sama pilih ${w.p1Pick}! Hati kalian searah.`
+                    : `Pilihan berbeda: ${p1Name} pilih ${w.p1Pick}, ${p2Name} pilih ${w.p2Pick}.`;
+            } else if ((myRole === 'p1' && w.p1Pick) || (myRole === 'p2' && w.p2Pick)) {
+                statusEl.innerText = 'Pilihanmu sudah terkunci. Menunggu pasangan...';
+            } else {
+                statusEl.innerText = 'Pilih A atau B.';
+            }
+        }
+
+        window.submitWyr = async function(opt) {
+            if (!currentRoomCode || !latestRoomData) return;
+            const w = JSON.parse(JSON.stringify(latestRoomData.wyr || createInitialWyrState()));
+            if (myRole === 'p1') w.p1Pick = opt; else w.p2Pick = opt;
+            playPopSound(680);
+            await updateDoc(getRoomDocRef(currentRoomCode), { wyr: w });
+        };
+
+        window.nextWyrRound = async function() {
+            if (!currentRoomCode || !latestRoomData) return;
+            const curIdx = latestRoomData.wyr?.idx || 0;
+            await updateDoc(getRoomDocRef(currentRoomCode), {
+                wyr: { idx: (curIdx + 1) % WYR_BANK.length, p1Pick: null, p2Pick: null }
+            });
+        };
+
+        // ============================================================
+        // REAKSI EMOJI
+        // ============================================================
         window.sendReaction = async function(emoji, label) {
             if (!currentRoomCode) return;
-            await updateDoc(getRoomDocRef(currentRoomCode), { reaction: { id: Date.now(), emoji, label, sender: myName } });
+            await updateDoc(getRoomDocRef(currentRoomCode), {
+                reaction: { id: Date.now(), emoji, label, sender: myName }
+            });
         };
 
         function spawnFloatingEmojis(emoji, senderName, label) {
@@ -1806,7 +2344,8 @@
             for (let i = 0; i < 4; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div');
-                    el.className = 'floating-emoji text-3xl'; el.innerText = emoji;
+                    el.className = 'floating-emoji text-3xl';
+                    el.innerText = emoji;
                     el.style.left = (20 + Math.random() * 60) + 'vw';
                     document.body.appendChild(el);
                     setTimeout(() => el.remove(), 2500);
